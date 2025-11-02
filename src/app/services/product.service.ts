@@ -76,6 +76,20 @@ export class ProductService {
     return await Promise.all(uploadPromises);
   }
 
+  // Get all products (Admin)
+  async getAllProducts(): Promise<Product[]> {
+    const q = query(
+      collection(this.firestore, 'products'),
+      orderBy('createdAt', 'desc')
+    );
+    
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({
+      productId: doc.id,
+      ...doc.data()
+    } as Product));
+  }
+
   // Get approved products (for customers)
   async getApprovedProducts(): Promise<Product[]> {
     const q = query(

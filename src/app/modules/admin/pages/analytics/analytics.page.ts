@@ -53,8 +53,8 @@ export class AnalyticsPage implements OnInit {
       ]);
 
       this.stats.totalUsers = users.length;
-      this.stats.totalProducts = products.filter(p => p.approved).length;
-      this.stats.pendingProducts = products.filter(p => !p.approved).length;
+      this.stats.totalProducts = products.filter((p: any) => p.approved).length;
+      this.stats.pendingProducts = products.filter((p: any) => !p.approved).length;
       this.stats.totalOrders = platformStats.totalOrders;
       this.stats.totalRevenue = platformStats.totalRevenue;
       this.stats.ordersToday = platformStats.ordersToday;

@@ -59,8 +59,10 @@ export class ChatsPage implements OnInit {
 
   selectChat(chat: Chat) {
     this.selectedChat = chat;
-    this.loadMessages(chat.chatId);
-    this.chatService.markMessagesAsRead(chat.chatId, this.currentUserId);
+    if (chat.chatId) {
+      this.loadMessages(chat.chatId);
+      this.chatService.markMessagesAsRead(chat.chatId, this.currentUserId);
+    }
   }
 
   loadMessages(chatId: string) {
@@ -76,7 +78,7 @@ export class ChatsPage implements OnInit {
   }
 
   async sendMessage() {
-    if (!this.newMessage.trim() || !this.selectedChat) return;
+    if (!this.newMessage.trim() || !this.selectedChat || !this.selectedChat.chatId) return;
 
     try {
       await this.chatService.sendMessage(
