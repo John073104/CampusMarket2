@@ -1,0 +1,81 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()" defaultHref="/landing"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Sign Up</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="signup-container">
+    <div class="logo-section">
+      <ion-icon name="person-add" class="logo-icon" color="primary"></ion-icon>
+      <h1>Create Account</h1>
+      <p>Join CampusMarket today</p>
+    </div>
+
+    <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
+      <ion-list>
+        <ion-item>
+          <ion-input 
+            label="Full Name" 
+            labelPlacement="floating"
+            type="text" 
+            formControlName="name"
+            placeholder="Enter your name">
+          </ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="signupForm.get('name')?.invalid && signupForm.get('name')?.touched">
+          <p class="ion-padding-start"><small>Name must be at least 2 characters</small></p>
+        </ion-text>
+
+        <ion-item>
+          <ion-input 
+            label="Email" 
+            labelPlacement="floating"
+            type="email" 
+            formControlName="email"
+            placeholder="Enter your email">
+          </ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+          <p class="ion-padding-start"><small>Please enter a valid email</small></p>
+        </ion-text>
+
+        <ion-item>
+          <ion-input 
+            label="Password" 
+            labelPlacement="floating"
+            [type]="showPassword ? 'text' : 'password'" 
+            formControlName="password"
+            placeholder="Enter your password">
+          </ion-input>
+          <ion-button slot="end" fill="clear" (click)="togglePasswordVisibility()">
+            <ion-icon [name]="showPassword ? 'eye-off' : 'eye'"></ion-icon>
+          </ion-button>
+        </ion-item>
+        <ion-text color="danger" *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
+          <p class="ion-padding-start"><small>Password must be at least 6 characters</small></p>
+        </ion-text>
+      </ion-list>
+
+      <div class="ion-padding-top">
+        <ion-button 
+          expand="block" 
+          type="submit" 
+          [disabled]="signupForm.invalid">
+          Create Account
+        </ion-button>
+      </div>
+    </form>
+
+    <div class="extra-actions ion-text-center ion-padding-top">
+      <p>Already have an account? 
+        <ion-text color="primary" (click)="goToLogin()">
+          <strong style="cursor: pointer;">Login</strong>
+        </ion-text>
+      </p>
+    </div>
+  </div>
+</ion-content>

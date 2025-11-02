@@ -1,0 +1,73 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Users Management</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-searchbar 
+      [(ngModel)]="searchTerm" 
+      (ionInput)="filterUsers()"
+      placeholder="Search users...">
+    </ion-searchbar>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="selectedRole" (ionChange)="filterUsers()">
+      <ion-segment-button value="all">
+        <ion-label>All</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="customer">
+        <ion-label>Customers</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="seller">
+        <ion-label>Sellers</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="admin">
+        <ion-label>Admins</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  }
+
+  @if (!loading && filteredUsers.length > 0) {
+    <ion-list>
+      @for (user of filteredUsers; track user.userId) {
+        <ion-item>
+          <ion-avatar slot="start">
+            <img [src]="user.profileImage || 'assets/avatar-placeholder.png'" [alt]="user.name" />
+          </ion-avatar>
+
+          <ion-label>
+            <h2>{{ user.name || user.email }}</h2>
+            <p>{{ user.email }}</p>
+            <ion-badge [color]="getRoleColor(user.role)">{{ user.role | uppercase }}</ion-badge>
+          </ion-label>
+
+          <ion-toggle 
+            slot="end"
+            [checked]="user.isActive"
+            (ionChange)="toggleUserStatus(user)">
+          </ion-toggle>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  @if (!loading && filteredUsers.length === 0) {
+    <div class="empty-state">
+      <ion-icon name="people-outline" size="large"></ion-icon>
+      <h2>No Users Found</h2>
+      <p>Try adjusting your filters</p>
+    </div>
+  }
+</ion-content>

@@ -1,0 +1,98 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/customer/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Profile</ion-title>
+    <ion-buttons slot="end">
+      @if (!editing) {
+        <ion-button (click)="toggleEdit()">
+          <ion-icon name="create"></ion-icon>
+        </ion-button>
+      }
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (user) {
+    <div class="profile-container">
+      <div class="profile-header">
+        <ion-avatar class="large-avatar">
+          <img [src]="user.profileImage || 'assets/avatar-placeholder.png'" [alt]="user.name" />
+        </ion-avatar>
+        <h2>{{ user.name || 'User' }}</h2>
+        <p>{{ user.email }}</p>
+        <ion-badge [color]="user.role === 'seller' ? 'warning' : 'primary'">
+          {{ user.role | uppercase }}
+        </ion-badge>
+      </div>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Account Information</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">Full Name</ion-label>
+              <ion-input 
+                [(ngModel)]="user.name"
+                [readonly]="!editing"
+                type="text">
+              </ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Email</ion-label>
+              <ion-input 
+                [value]="user.email"
+                readonly
+                type="email">
+              </ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Phone Number</ion-label>
+              <ion-input 
+                [(ngModel)]="user.phone"
+                [readonly]="!editing"
+                type="tel"
+                placeholder="Enter phone number">
+              </ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Member Since</ion-label>
+              <ion-input 
+                [value]="user.dateJoined?.toDate?.() | date:'mediumDate'"
+                readonly>
+              </ion-input>
+            </ion-item>
+          </ion-list>
+
+          @if (editing) {
+            <div class="edit-actions">
+              <ion-button expand="block" (click)="saveProfile()" [disabled]="loading">
+                @if (loading) {
+                  <ion-spinner name="crescent"></ion-spinner>
+                } @else {
+                  Save Changes
+                }
+              </ion-button>
+              <ion-button expand="block" fill="outline" (click)="toggleEdit()">
+                Cancel
+              </ion-button>
+            </div>
+          }
+        </ion-card-content>
+      </ion-card>
+
+      <ion-button expand="block" color="danger" (click)="logout()">
+        <ion-icon name="log-out" slot="start"></ion-icon>
+        Logout
+      </ion-button>
+    </div>
+  }
+</ion-content>

@@ -1,0 +1,152 @@
+<ion-content class="landing-content">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <ion-icon name="storefront" class="hero-icon"></ion-icon>
+      <h1>Campus Market</h1>
+      <p class="tagline">Buy and Sell within Your Campus Community</p>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="features-section">
+    <h2 class="section-title">Why Choose Campus Market?</h2>
+    
+    <div class="features-grid">
+      <div class="feature-card">
+        <ion-icon name="shield-checkmark" color="success"></ion-icon>
+        <h3>Safe & Trusted</h3>
+        <p>Trade with verified students from your campus</p>
+      </div>
+
+      <div class="feature-card">
+        <ion-icon name="flash" color="warning"></ion-icon>
+        <h3>Quick Deals</h3>
+        <p>Fast transactions with instant messaging</p>
+      </div>
+
+      <div class="feature-card">
+        <ion-icon name="people" color="primary"></ion-icon>
+        <h3>Community</h3>
+        <p>Support your fellow students</p>
+      </div>
+
+      <div class="feature-card">
+        <ion-icon name="pricetag" color="tertiary"></ion-icon>
+        <h3>Great Prices</h3>
+        <p>Find affordable deals on campus essentials</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Benefits Section -->
+  <div class="benefits-section">
+    <div class="benefit-item buyer">
+      <div class="benefit-icon">
+        <ion-icon name="cart" color="primary"></ion-icon>
+      </div>
+      <div class="benefit-content">
+        <h3>For Buyers</h3>
+        <ul>
+          <li>Browse hundreds of campus products</li>
+          <li>Easy search and filtering</li>
+          <li>Secure ordering system</li>
+          <li>Track your orders in real-time</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="benefit-item seller">
+      <div class="benefit-icon">
+        <ion-icon name="rocket" color="success"></ion-icon>
+      </div>
+      <div class="benefit-content">
+        <h3>For Sellers</h3>
+        <ul>
+          <li>List products for free</li>
+          <li>Reach campus-wide audience</li>
+          <li>Manage orders efficiently</li>
+          <li>Analytics dashboard</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Section -->
+  <div class="cta-section">
+    <h2>Ready to Get Started?</h2>
+    <p>Join thousands of students buying and selling on Campus Market</p>
+    
+    <div class="cta-buttons">
+      <ion-button 
+        expand="block" 
+        size="large" 
+        color="primary"
+        (click)="goToLogin()">
+        <ion-icon name="log-in" slot="start"></ion-icon>
+        Sign In
+      </ion-button>
+
+      <ion-button 
+        expand="block" 
+        size="large" 
+        fill="outline"
+        color="success"
+        (click)="goToSignup()">
+        <ion-icon name="person-add" slot="start"></ion-icon>
+        Create Account
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Testimonials Section -->
+  <div class="testimonials-section">
+    <h2 class="section-title">What Students Say</h2>
+    
+    <div class="testimonials-grid">
+      <ion-card class="testimonial-card">
+        <ion-card-content>
+          <div class="quote-icon">
+            <ion-icon name="chatbox-ellipses"></ion-icon>
+          </div>
+          <p>"Best platform to buy textbooks and supplies. Saved so much money!"</p>
+          <div class="author">
+            <strong>Sarah M.</strong>
+            <span>Computer Science</span>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="testimonial-card">
+        <ion-card-content>
+          <div class="quote-icon">
+            <ion-icon name="chatbox-ellipses"></ion-icon>
+          </div>
+          <p>"Sold my old gadgets quickly. The interface is super easy to use!"</p>
+          <div class="author">
+            <strong>John D.</strong>
+            <span>Engineering</span>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="testimonial-card">
+        <ion-card-content>
+          <div class="quote-icon">
+            <ion-icon name="chatbox-ellipses"></ion-icon>
+          </div>
+          <p>"Great community marketplace. Found everything I needed for my dorm!"</p>
+          <div class="author">
+            <strong>Emily R.</strong>
+            <span>Business Admin</span>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>&copy; 2024 Campus Market. All rights reserved.</p>
+  </div>
+</ion-content>

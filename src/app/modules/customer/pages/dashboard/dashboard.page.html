@@ -1,0 +1,83 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Customer Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="dashboard-container">
+    <div class="welcome-header">
+      <h1>Hi, {{ userName }}! 👋</h1>
+      <p class="subtitle">Browse products and start shopping</p>
+    </div>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToProducts()">
+            <ion-card-content>
+              <ion-icon name="storefront" color="primary" class="big-icon"></ion-icon>
+              <h2>Browse Products</h2>
+              <p>Explore items from campus sellers</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToCart()">
+            <ion-card-content>
+              <ion-icon name="cart" color="success" class="big-icon"></ion-icon>
+              <h2>My Cart</h2>
+              <p>View items in your cart</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToOrders()">
+            <ion-card-content>
+              <ion-icon name="receipt" color="warning" class="big-icon"></ion-icon>
+              <h2>My Orders</h2>
+              <p>Track your purchases</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToChats()">
+            <ion-card-content>
+              <ion-icon name="chatbubbles" color="tertiary" class="big-icon"></ion-icon>
+              <h2>Messages</h2>
+              <p>Chat with sellers</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToProfile()">
+            <ion-card-content>
+              <ion-icon name="person" color="medium" class="big-icon"></ion-icon>
+              <h2>Profile</h2>
+              <p>Manage your account</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToApplySeller()">
+            <ion-card-content>
+              <ion-icon name="business" color="danger" class="big-icon"></ion-icon>
+              <h2>Become a Seller</h2>
+              <p>Apply to sell on campus</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

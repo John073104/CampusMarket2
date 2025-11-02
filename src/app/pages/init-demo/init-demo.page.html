@@ -1,0 +1,84 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/landing"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Initialize Demo Users</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="init-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Demo User Setup</ion-card-title>
+        <ion-card-subtitle>Create demo accounts for testing</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p>Click the button below to create these demo accounts in Firebase:</p>
+        
+        <ion-list>
+          <ion-item>
+            <ion-icon name="shield-checkmark" slot="start" color="danger"></ion-icon>
+            <ion-label>
+              <h3>Admin</h3>
+              <p>admin@campus.com / admin123</p>
+            </ion-label>
+          </ion-item>
+          
+          <ion-item>
+            <ion-icon name="storefront" slot="start" color="warning"></ion-icon>
+            <ion-label>
+              <h3>Seller</h3>
+              <p>seller@campus.com / seller123</p>
+            </ion-label>
+          </ion-item>
+          
+          <ion-item>
+            <ion-icon name="cart" slot="start" color="success"></ion-icon>
+            <ion-label>
+              <h3>Customer</h3>
+              <p>customer@campus.com / customer123</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+
+        <div class="ion-padding-top">
+          <ion-button 
+            expand="block" 
+            (click)="initializeUsers()" 
+            [disabled]="isInitializing"
+            color="primary">
+            <ion-icon name="rocket" slot="start"></ion-icon>
+            {{ isInitializing ? 'Creating Users...' : 'Initialize Demo Users' }}
+          </ion-button>
+        </div>
+
+        <div class="logs-section" *ngIf="logs.length > 0">
+          <h3>Status Log:</h3>
+          <div class="log-item" *ngFor="let log of logs">{{ log }}</div>
+        </div>
+
+        <div class="ion-padding-top" *ngIf="status === 'success'">
+          <ion-button expand="block" (click)="goToLogin()" color="success">
+            <ion-icon name="log-in" slot="start"></ion-icon>
+            Go to Login
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Important Notes</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-note>
+          <p>⚠️ Make sure you have enabled Email/Password authentication in Firebase Console first!</p>
+          <p>📍 Go to: Firebase Console → Authentication → Sign-in method → Email/Password → Enable</p>
+        </ion-note>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

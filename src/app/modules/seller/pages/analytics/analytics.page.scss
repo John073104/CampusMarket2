@@ -1,0 +1,133 @@
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 15px;
+
+  p {
+    color: var(--ion-color-medium);
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  padding: 16px;
+}
+
+.stat-card {
+  margin: 0;
+
+  ion-card-content {
+    text-align: center;
+    padding: 20px;
+  }
+
+  .stat-icon {
+    margin-bottom: 10px;
+
+    ion-icon {
+      font-size: 2.5rem;
+    }
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 10px 0 5px;
+    color: var(--ion-color-dark);
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+
+  &.revenue {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  }
+
+  &.orders {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+  }
+
+  &.products {
+    background: linear-gradient(135deg, #e2e3e5 0%, #d6d8db 100%);
+  }
+
+  &.pending {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  }
+
+  &.completed {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  }
+}
+
+.section {
+  padding: 0 16px 16px;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--ion-color-dark);
+    }
+  }
+}
+
+.order-card {
+  margin-bottom: 12px;
+
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0 0 5px;
+    }
+
+    .order-id {
+      font-size: 0.85rem;
+      color: var(--ion-color-medium);
+      margin: 0;
+    }
+  }
+
+  .order-details {
+    p {
+      margin: 5px 0;
+      font-size: 0.9rem;
+      color: var(--ion-color-medium-shade);
+    }
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+
+  ion-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+}

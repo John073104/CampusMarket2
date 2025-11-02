@@ -1,0 +1,73 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-title>Admin Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="dashboard-container">
+    <div class="welcome-header">
+      <h1>Hi, Admin {{ userName }}! 👋</h1>
+      <p class="subtitle">Manage the campus marketplace</p>
+    </div>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToUsers()">
+            <ion-card-content>
+              <ion-icon name="people" color="primary" class="big-icon"></ion-icon>
+              <h2>Manage Users</h2>
+              <p>View and manage all users</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToSellerApplications()">
+            <ion-card-content>
+              <ion-icon name="document-text" color="warning" class="big-icon"></ion-icon>
+              <h2>Seller Applications</h2>
+              <p>Review and approve sellers</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToPendingProducts()">
+            <ion-card-content>
+              <ion-icon name="cube" color="tertiary" class="big-icon"></ion-icon>
+              <h2>Pending Products</h2>
+              <p>Approve product listings</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToOrders()">
+            <ion-card-content>
+              <ion-icon name="receipt" color="success" class="big-icon"></ion-icon>
+              <h2>All Orders</h2>
+              <p>Monitor all transactions</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToAnalytics()">
+            <ion-card-content>
+              <ion-icon name="bar-chart" color="danger" class="big-icon"></ion-icon>
+              <h2>Platform Analytics</h2>
+              <p>View system statistics</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

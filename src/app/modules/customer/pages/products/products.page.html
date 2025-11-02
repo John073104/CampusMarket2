@@ -1,0 +1,99 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/customer/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Browse Products</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/customer/cart">
+        <ion-icon name="cart"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  
+  <!-- Search Bar -->
+  <ion-toolbar>
+    <ion-searchbar 
+      [(ngModel)]="searchTerm" 
+      (ionInput)="onSearchChange()"
+      placeholder="Search products..."
+      animated>
+    </ion-searchbar>
+  </ion-toolbar>
+  
+  <!-- Category Filter -->
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="selectedCategory" (ionChange)="onCategoryChange()" scrollable>
+      <ion-segment-button *ngFor="let category of categories" [value]="category">
+        <ion-label>{{ category }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading Spinner -->
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading products...</p>
+    </div>
+  }
+
+  <!-- Products Grid -->
+  @if (!loading && filteredProducts.length > 0) {
+    <div class="products-grid">
+      @for (product of filteredProducts; track product.productId) {
+        <ion-card (click)="viewProduct(product.productId!)" button>
+          <!-- Product Image -->
+          <div class="product-image-container">
+            <img [src]="product.images[0] || 'assets/placeholder.png'" [alt]="product.title" />
+            @if (product.stock < 5) {
+              <ion-badge color="danger" class="stock-badge">
+                Low Stock
+              </ion-badge>
+            }
+          </div>
+
+          <ion-card-header>
+            <ion-card-title>{{ product.title }}</ion-card-title>
+            <ion-card-subtitle>
+              <ion-icon name="person-circle"></ion-icon>
+              {{ product.sellerName }}
+            </ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content>
+            <p class="product-description">{{ product.description | slice:0:100 }}{{ product.description.length > 100 ? '...' : '' }}</p>
+            
+            <div class="product-footer">
+              <div class="price-section">
+                <span class="price">₱{{ product.price | number:'1.2-2' }}</span>
+                <ion-badge [color]="product.category === 'Electronics' ? 'primary' : product.category === 'Books' ? 'secondary' : 'tertiary'">
+                  {{ product.category }}
+                </ion-badge>
+              </div>
+              
+              <ion-button 
+                expand="block" 
+                (click)="addToCart(product, $event)"
+                [disabled]="product.stock === 0">
+                <ion-icon name="cart" slot="start"></ion-icon>
+                {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!loading && filteredProducts.length === 0) {
+    <div class="empty-state">
+      <ion-icon name="cart-outline" size="large"></ion-icon>
+      <h2>No Products Found</h2>
+      <p>Try adjusting your search or filters</p>
+    </div>
+  }
+</ion-content>

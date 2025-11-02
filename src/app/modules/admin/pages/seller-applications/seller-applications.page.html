@@ -1,0 +1,108 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Seller Applications</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="selectedStatus" (ionChange)="loadApplications()">
+      <ion-segment-button value="pending">
+        <ion-label>Pending</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="approved">
+        <ion-label>Approved</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="rejected">
+        <ion-label>Rejected</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  }
+
+  @if (!loading && applications.length === 0) {
+    <div class="empty-state">
+      <ion-icon name="document-text-outline" size="large"></ion-icon>
+      <h2>No Applications</h2>
+      <p>No {{ selectedStatus }} applications found</p>
+    </div>
+  }
+
+  @if (!loading && applications.length > 0) {
+    <ion-list>
+      @for (app of applications; track app.applicationId) {
+        <ion-card>
+          <ion-card-header>
+            <div class="app-header">
+              <div>
+                <ion-card-title>{{ app.userName }}</ion-card-title>
+                <ion-card-subtitle>{{ app.userEmail }}</ion-card-subtitle>
+              </div>
+              <ion-badge [color]="app.status === 'pending' ? 'warning' : app.status === 'approved' ? 'success' : 'danger'">
+                {{ app.status | uppercase }}
+              </ion-badge>
+            </div>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div class="application-details">
+              <div class="detail-section">
+                <h3>Reason for Selling</h3>
+                <p>{{ app.reasonForSelling }}</p>
+              </div>
+
+              @if (app.businessDescription) {
+                <div class="detail-section">
+                  <h3>Business Description</h3>
+                  <p>{{ app.businessDescription }}</p>
+                </div>
+              }
+
+              <div class="detail-section">
+                <p class="date-info">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  Submitted: {{ formatDate(app.submittedAt) }}
+                </p>
+                @if (app.reviewedAt) {
+                  <p class="date-info">
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    Reviewed: {{ formatDate(app.reviewedAt) }}
+                  </p>
+                }
+              </div>
+            </div>
+
+            @if (app.status === 'pending') {
+              <div class="action-buttons">
+                <ion-button 
+                  expand="block" 
+                  color="success"
+                  (click)="approveApplication(app.applicationId!, app.userId)">
+                  <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+                  Approve
+                </ion-button>
+                
+                <ion-button 
+                  expand="block" 
+                  color="danger"
+                  fill="outline"
+                  (click)="rejectApplication(app.applicationId!)">
+                  <ion-icon name="close-circle" slot="start"></ion-icon>
+                  Reject
+                </ion-button>
+              </div>
+            }
+          </ion-card-content>
+        </ion-card>
+      }
+    </ion-list>
+  }
+</ion-content>

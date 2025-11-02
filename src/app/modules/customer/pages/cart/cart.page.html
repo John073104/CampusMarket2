@@ -1,0 +1,89 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/customer/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Shopping Cart</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (cartItems.length === 0) {
+    <div class="empty-cart">
+      <ion-icon name="cart-outline" size="large"></ion-icon>
+      <h2>Your cart is empty</h2>
+      <p>Add some products to get started!</p>
+      <ion-button expand="block" (click)="continueShopping()">
+        Browse Products
+      </ion-button>
+    </div>
+  }
+
+  @if (cartItems.length > 0) {
+    <div class="cart-container">
+      <ion-list>
+        @for (item of cartItems; track item.productId) {
+          <ion-item-sliding>
+            <ion-item>
+              <ion-thumbnail slot="start">
+                <img [src]="item.productImage || 'assets/placeholder.png'" [alt]="item.productName" />
+              </ion-thumbnail>
+              
+              <ion-label>
+                <h2>{{ item.productName }}</h2>
+                <p>{{ item.sellerName }}</p>
+                <h3 class="price">₱{{ item.price | number:'1.2-2' }}</h3>
+              </ion-label>
+
+              <div class="quantity-controls" slot="end">
+                <ion-button fill="clear" size="small" (click)="updateQuantity(item, -1)">
+                  <ion-icon name="remove-circle"></ion-icon>
+                </ion-button>
+                <span class="quantity">{{ item.quantity }}</span>
+                <ion-button fill="clear" size="small" (click)="updateQuantity(item, 1)">
+                  <ion-icon name="add-circle"></ion-icon>
+                </ion-button>
+              </div>
+            </ion-item>
+
+            <ion-item-options side="end">
+              <ion-item-option color="danger" (click)="removeItem(item.productId)">
+                <ion-icon name="trash" slot="icon-only"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        }
+      </ion-list>
+
+      <!-- Cart Summary -->
+      <ion-card class="cart-summary">
+        <ion-card-header>
+          <ion-card-title>Order Summary</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="summary-row">
+            <span>Items ({{ getItemCount() }})</span>
+            <span>₱{{ getTotal() | number:'1.2-2' }}</span>
+          </div>
+          <div class="summary-row total">
+            <strong>Total</strong>
+            <strong>₱{{ getTotal() | number:'1.2-2' }}</strong>
+          </div>
+
+          <ion-button 
+            expand="block" 
+            size="large"
+            (click)="checkout()"
+            [disabled]="loading">
+            @if (loading) {
+              <ion-spinner name="crescent"></ion-spinner>
+            } @else {
+              <ion-icon name="card" slot="start"></ion-icon>
+              Proceed to Checkout
+            }
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  }
+</ion-content>

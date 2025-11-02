@@ -1,0 +1,73 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/seller/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>My Products</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="addNewProduct()">
+        <ion-icon name="add-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading your products...</p>
+    </div>
+  }
+
+  @if (!loading && products.length === 0) {
+    <div class="empty-state">
+      <ion-icon name="cube-outline" size="large"></ion-icon>
+      <h2>No Products Yet</h2>
+      <p>Start selling by adding your first product!</p>
+      <ion-button expand="block" (click)="addNewProduct()">
+        <ion-icon name="add" slot="start"></ion-icon>
+        Add Product
+      </ion-button>
+    </div>
+  }
+
+  @if (!loading && products.length > 0) {
+    <ion-list>
+      @for (product of products; track product.productId) {
+        <ion-item-sliding>
+          <ion-item>
+            <ion-thumbnail slot="start">
+              <img [src]="product.images[0] || 'assets/placeholder.png'" [alt]="product.title" />
+            </ion-thumbnail>
+
+            <ion-label>
+              <h2>{{ product.title }}</h2>
+              <p>₱{{ product.price | number:'1.2-2' }} • Stock: {{ product.stock }}</p>
+              <ion-badge [color]="getStatusColor(product.approved)">
+                {{ getStatusText(product.approved) }}
+              </ion-badge>
+            </ion-label>
+
+            <ion-button fill="clear" slot="end" (click)="editProduct(product.productId!)">
+              <ion-icon name="create" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <ion-item-options side="end">
+            <ion-item-option color="danger" (click)="deleteProduct(product.productId!)">
+              <ion-icon name="trash" slot="icon-only"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      }
+    </ion-list>
+  }
+
+  <!-- FAB Button -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="addNewProduct()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

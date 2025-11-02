@@ -1,0 +1,122 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/seller/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Analytics</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="loadAnalytics()">
+        <ion-icon slot="icon-only" name="refresh"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading analytics...</p>
+    </div>
+  } @else {
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <!-- Total Revenue -->
+      <ion-card class="stat-card revenue">
+        <ion-card-content>
+          <div class="stat-icon">
+            <ion-icon name="cash" color="success"></ion-icon>
+          </div>
+          <h2 class="stat-value">₱{{ stats.totalRevenue.toFixed(2) }}</h2>
+          <p class="stat-label">Total Revenue</p>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Total Orders -->
+      <ion-card class="stat-card orders">
+        <ion-card-content>
+          <div class="stat-icon">
+            <ion-icon name="receipt" color="primary"></ion-icon>
+          </div>
+          <h2 class="stat-value">{{ stats.totalOrders }}</h2>
+          <p class="stat-label">Total Orders</p>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Active Products -->
+      <ion-card class="stat-card products">
+        <ion-card-content>
+          <div class="stat-icon">
+            <ion-icon name="cube" color="tertiary"></ion-icon>
+          </div>
+          <h2 class="stat-value">{{ stats.activeProducts }}/{{ stats.totalProducts }}</h2>
+          <p class="stat-label">Active Products</p>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Pending Orders -->
+      <ion-card class="stat-card pending">
+        <ion-card-content>
+          <div class="stat-icon">
+            <ion-icon name="hourglass" color="warning"></ion-icon>
+          </div>
+          <h2 class="stat-value">{{ stats.pendingOrders }}</h2>
+          <p class="stat-label">Pending Orders</p>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Completed Orders -->
+      <ion-card class="stat-card completed">
+        <ion-card-content>
+          <div class="stat-icon">
+            <ion-icon name="checkmark-circle" color="success"></ion-icon>
+          </div>
+          <h2 class="stat-value">{{ stats.completedOrders }}</h2>
+          <p class="stat-label">Completed Orders</p>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="section">
+      <div class="section-header">
+        <h2>Recent Orders</h2>
+      </div>
+
+      @if (recentOrders.length === 0) {
+        <ion-card>
+          <ion-card-content class="empty-state">
+            <ion-icon name="receipt-outline" color="medium"></ion-icon>
+            <p>No orders yet</p>
+          </ion-card-content>
+        </ion-card>
+      } @else {
+        @for (order of recentOrders; track order.orderId) {
+          <ion-card class="order-card">
+            <ion-card-content>
+              <div class="order-header">
+                <div>
+                  <h3>{{ order.customerName }}</h3>
+                  <p class="order-id">Order #{{ order.orderId }}</p>
+                </div>
+                <ion-badge [color]="getStatusColor(order.status)">
+                  {{ order.status }}
+                </ion-badge>
+              </div>
+              
+              <div class="order-details">
+                <p><strong>Items:</strong> {{ order.items.length }}</p>
+                <p><strong>Total:</strong> ₱{{ order.totalPrice.toFixed(2) }}</p>
+                <p><strong>Date:</strong> {{ order.createdAt.toDate() | date:'short' }}</p>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        }
+      }
+    </div>
+  }
+</ion-content>

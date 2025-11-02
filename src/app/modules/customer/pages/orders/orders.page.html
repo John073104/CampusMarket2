@@ -1,0 +1,89 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/customer/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>My Orders</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="selectedStatus" (ionChange)="loadOrders()">
+      <ion-segment-button value="all">
+        <ion-label>All</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="placed">
+        <ion-label>Placed</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="preparing">
+        <ion-label>Preparing</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="ready">
+        <ion-label>Ready</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="completed">
+        <ion-label>Completed</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading orders...</p>
+    </div>
+  }
+
+  @if (!loading && getFilteredOrders().length === 0) {
+    <div class="empty-state">
+      <ion-icon name="receipt-outline" size="large"></ion-icon>
+      <h2>No Orders Yet</h2>
+      <p>Start shopping to see your orders here!</p>
+      <ion-button expand="block" routerLink="/customer/products">
+        Browse Products
+      </ion-button>
+    </div>
+  }
+
+  @if (!loading && getFilteredOrders().length > 0) {
+    <ion-list>
+      @for (order of getFilteredOrders(); track order.orderId) {
+        <ion-card (click)="viewOrderDetail(order.orderId!)" button>
+          <ion-card-header>
+            <div class="order-header">
+              <div>
+                <ion-card-subtitle>Order #{{ order.orderId?.slice(-8) }}</ion-card-subtitle>
+                <ion-card-title>{{ order.sellerName }}</ion-card-title>
+              </div>
+              <ion-badge [color]="getStatusColor(order.status)">
+                {{ order.status | uppercase }}
+              </ion-badge>
+            </div>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div class="order-items">
+              @for (item of order.items; track item.productId) {
+                <div class="order-item">
+                  <span>{{ item.productName }} × {{ item.quantity }}</span>
+                  <span>₱{{ (item.price * item.quantity) | number:'1.2-2' }}</span>
+                </div>
+              }
+            </div>
+
+            <div class="order-footer">
+              <div class="order-date">
+                <ion-icon name="calendar-outline"></ion-icon>
+                {{ formatDate(order.createdAt) }}
+              </div>
+              <div class="order-total">
+                <strong>Total: ₱{{ order.totalPrice | number:'1.2-2' }}</strong>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+    </ion-list>
+  }
+</ion-content>

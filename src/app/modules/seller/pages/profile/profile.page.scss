@@ -1,0 +1,98 @@
+.profile-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.profile-header {
+  text-align: center;
+  padding: 30px 20px;
+
+  .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    ion-icon {
+      font-size: 3.5rem;
+      color: white;
+    }
+  }
+
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 10px;
+    color: var(--ion-color-dark);
+  }
+
+  .role-badge {
+    margin: 0;
+  }
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--ion-color-light);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  ion-icon {
+    font-size: 1.5rem;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .label {
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+    margin: 0 0 5px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .value {
+    font-size: 1rem;
+    color: var(--ion-color-dark);
+    margin: 0;
+    word-break: break-word;
+  }
+}
+
+form {
+  ion-item {
+    --padding-start: 0;
+    margin-bottom: 20px;
+
+    ion-label {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+  }
+
+  .button-group {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+.actions {
+  margin-top: 30px;
+
+  ion-button {
+    font-weight: 600;
+  }
+}

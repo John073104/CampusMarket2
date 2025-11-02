@@ -1,0 +1,83 @@
+<ion-header>
+  <ion-toolbar color="warning">
+    <ion-title>Seller Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="dashboard-container">
+    <div class="welcome-header">
+      <h1>Hi, {{ userName }}! 👋</h1>
+      <p class="subtitle">Manage your products and orders</p>
+    </div>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToAddProduct()">
+            <ion-card-content>
+              <ion-icon name="add-circle" color="success" class="big-icon"></ion-icon>
+              <h2>Add New Product</h2>
+              <p>List a new item for sale</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToProducts()">
+            <ion-card-content>
+              <ion-icon name="cube" color="primary" class="big-icon"></ion-icon>
+              <h2>My Products</h2>
+              <p>View and manage your listings</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToOrders()">
+            <ion-card-content>
+              <ion-icon name="receipt" color="warning" class="big-icon"></ion-icon>
+              <h2>Orders</h2>
+              <p>Manage customer orders</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToChats()">
+            <ion-card-content>
+              <ion-icon name="chatbubbles" color="tertiary" class="big-icon"></ion-icon>
+              <h2>Messages</h2>
+              <p>Chat with customers</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToAnalytics()">
+            <ion-card-content>
+              <ion-icon name="bar-chart" color="danger" class="big-icon"></ion-icon>
+              <h2>Analytics</h2>
+              <p>View sales statistics</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToProfile()">
+            <ion-card-content>
+              <ion-icon name="person" color="medium" class="big-icon"></ion-icon>
+              <h2>Profile</h2>
+              <p>Manage your account</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

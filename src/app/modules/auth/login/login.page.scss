@@ -1,0 +1,54 @@
+.login-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+
+  .logo-section {
+    text-align: center;
+    margin-bottom: 30px;
+
+    .logo-icon {
+      font-size: 80px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 10px 0;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    p {
+      color: var(--ion-color-medium);
+      font-size: 16px;
+    }
+  }
+
+  ion-list {
+    background: transparent;
+
+    ion-item {
+      --background: transparent;
+      margin-bottom: 10px;
+    }
+  }
+
+  .extra-actions {
+    margin-top: 20px;
+
+    p {
+      margin: 5px 0;
+    }
+  }
+
+  .demo-accounts {
+    ion-card {
+      ion-card-content {
+        p {
+          margin: 8px 0;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}

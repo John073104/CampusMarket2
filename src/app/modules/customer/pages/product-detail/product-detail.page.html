@@ -1,0 +1,121 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/customer/products"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Product Details</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/customer/cart">
+        <ion-icon name="cart"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading -->
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  }
+
+  <!-- Product Details -->
+  @if (!loading && product) {
+    <div class="product-detail-container">
+      <!-- Image Gallery -->
+      <div class="image-gallery">
+        <div class="main-image">
+          <img [src]="product.images[selectedImageIndex] || 'assets/placeholder.png'" [alt]="product.title" />
+        </div>
+        @if (product.images.length > 1) {
+          <div class="thumbnail-container">
+            @for (image of product.images; track $index; let i = $index) {
+              <div 
+                class="thumbnail"
+                [class.active]="i === selectedImageIndex"
+                (click)="selectImage(i)">
+                <img [src]="image" [alt]="product.title" />
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Product Info -->
+      <div class="product-info">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>{{ product.title }}</ion-card-title>
+            <ion-card-subtitle>
+              <ion-icon name="person-circle"></ion-icon>
+              {{ product.sellerName }}
+            </ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content>
+            <!-- Price and Category -->
+            <div class="price-category">
+              <h2 class="price">₱{{ product.price | number:'1.2-2' }}</h2>
+              <ion-badge [color]="product.category === 'Electronics' ? 'primary' : 'secondary'">
+                {{ product.category }}
+              </ion-badge>
+            </div>
+
+            <!-- Stock Status -->
+            <div class="stock-info">
+              <ion-chip [color]="product.stock > 10 ? 'success' : product.stock > 0 ? 'warning' : 'danger'">
+                <ion-icon [name]="product.stock > 0 ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+                <ion-label>{{ product.stock }} items available</ion-label>
+              </ion-chip>
+            </div>
+
+            <!-- Description -->
+            <div class="description-section">
+              <h3>Description</h3>
+              <p>{{ product.description }}</p>
+            </div>
+
+            <!-- Quantity Selector -->
+            @if (product.stock > 0) {
+              <div class="quantity-selector">
+                <h3>Quantity</h3>
+                <div class="quantity-controls">
+                  <ion-button fill="outline" (click)="decrementQuantity()" [disabled]="quantity <= 1">
+                    <ion-icon name="remove"></ion-icon>
+                  </ion-button>
+                  <span class="quantity-display">{{ quantity }}</span>
+                  <ion-button fill="outline" (click)="incrementQuantity()" [disabled]="quantity >= product.stock">
+                    <ion-icon name="add"></ion-icon>
+                  </ion-button>
+                </div>
+              </div>
+            }
+
+            <!-- Add to Cart Button -->
+            <ion-button 
+              expand="block" 
+              size="large"
+              (click)="addToCart()"
+              [disabled]="product.stock === 0"
+              class="add-to-cart-btn">
+              <ion-icon name="cart" slot="start"></ion-icon>
+              {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+  }
+
+  <!-- Not Found -->
+  @if (!loading && !product) {
+    <div class="not-found">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <h2>Product Not Found</h2>
+      <ion-button fill="outline" (click)="goBack()">
+        Go Back
+      </ion-button>
+    </div>
+  }
+</ion-content>

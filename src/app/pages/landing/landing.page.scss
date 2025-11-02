@@ -1,0 +1,294 @@
+.landing-content {
+  --background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.hero-section {
+  background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.1;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0 0 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .tagline {
+    font-size: 1.2rem;
+    margin: 0;
+    opacity: 0.95;
+    font-weight: 500;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.section-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+  margin: 0 0 30px;
+}
+
+.features-section {
+  padding: 50px 20px;
+  background: white;
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .feature-card {
+    text-align: center;
+    padding: 30px 20px;
+    background: var(--ion-color-light);
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    ion-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+
+    h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 0 0 10px;
+      color: var(--ion-color-dark);
+    }
+
+    p {
+      margin: 0;
+      color: var(--ion-color-medium);
+      line-height: 1.5;
+    }
+  }
+}
+
+.benefits-section {
+  padding: 50px 20px;
+  background: var(--ion-color-light);
+
+  .benefit-item {
+    max-width: 800px;
+    margin: 0 auto 40px;
+    display: flex;
+    gap: 20px;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .benefit-icon {
+      flex-shrink: 0;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--ion-color-light);
+
+      ion-icon {
+        font-size: 2.5rem;
+      }
+    }
+
+    .benefit-content {
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 15px;
+        color: var(--ion-color-dark);
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 20px;
+        
+        li {
+          margin-bottom: 10px;
+          color: var(--ion-color-medium-shade);
+          line-height: 1.6;
+        }
+      }
+    }
+  }
+}
+
+.cta-section {
+  padding: 60px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
+  color: white;
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 15px;
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin: 0 0 30px;
+    opacity: 0.95;
+  }
+
+  .cta-buttons {
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    ion-button {
+      font-size: 1.1rem;
+      font-weight: 600;
+      --background: white;
+      --color: var(--ion-color-primary);
+      
+      &[fill="outline"] {
+        --border-color: white;
+        --color: white;
+      }
+    }
+  }
+}
+
+.testimonials-section {
+  padding: 50px 20px;
+  background: white;
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .testimonial-card {
+    ion-card-content {
+      text-align: center;
+      padding: 30px 20px;
+
+      .quote-icon {
+        ion-icon {
+          font-size: 2.5rem;
+          color: var(--ion-color-primary);
+          opacity: 0.3;
+          margin-bottom: 15px;
+        }
+      }
+
+      p {
+        font-style: italic;
+        color: var(--ion-color-medium-shade);
+        line-height: 1.6;
+        margin: 0 0 20px;
+      }
+
+      .author {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        strong {
+          color: var(--ion-color-dark);
+          font-size: 1rem;
+        }
+
+        span {
+          color: var(--ion-color-medium);
+          font-size: 0.85rem;
+        }
+      }
+    }
+  }
+}
+
+.footer {
+  padding: 30px 20px;
+  text-align: center;
+  background: var(--ion-color-dark);
+  color: white;
+
+  p {
+    margin: 0;
+    opacity: 0.8;
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 40px 20px;
+
+    .hero-icon {
+      font-size: 4rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    .tagline {
+      font-size: 1rem;
+    }
+  }
+
+  .benefit-item {
+    flex-direction: column !important;
+    text-align: center;
+
+    .benefit-icon {
+      margin: 0 auto;
+    }
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+}

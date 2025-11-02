@@ -1,0 +1,97 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>All Orders</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-searchbar 
+      [(ngModel)]="searchTerm" 
+      (ionInput)="filterOrders()"
+      placeholder="Search orders...">
+    </ion-searchbar>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="selectedStatus" (ionChange)="filterOrders()" scrollable>
+      <ion-segment-button value="all">
+        <ion-label>All</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="placed">
+        <ion-label>Placed</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="confirmed">
+        <ion-label>Confirmed</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="ready_for_pickup">
+        <ion-label>Ready</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="completed">
+        <ion-label>Completed</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="cancelled">
+        <ion-label>Cancelled</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  }
+
+  @if (!loading && filteredOrders.length === 0) {
+    <div class="empty-state">
+      <ion-icon name="receipt-outline" size="large"></ion-icon>
+      <h2>No Orders Found</h2>
+      <p>Try adjusting your filters</p>
+    </div>
+  }
+
+  @if (!loading && filteredOrders.length > 0) {
+    <div class="orders-container">
+      @for (order of filteredOrders; track order.orderId) {
+        <ion-card>
+          <ion-card-header>
+            <div class="order-header">
+              <div>
+                <ion-card-subtitle>Order #{{ order.orderId?.slice(-8) }}</ion-card-subtitle>
+                <ion-card-title class="customer-name">{{ order.customerName }}</ion-card-title>
+                <p class="seller-name">Seller: {{ order.sellerName }}</p>
+              </div>
+              <ion-badge [color]="getStatusColor(order.status)">
+                {{ order.status | uppercase }}
+              </ion-badge>
+            </div>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div class="order-items">
+              @for (item of order.items; track item.productId) {
+                <div class="order-item">
+                  <span class="item-name">{{ item.productName }} × {{ item.quantity }}</span>
+                  <span class="item-price">₱{{ (item.price * item.quantity) | number:'1.2-2' }}</span>
+                </div>
+              }
+            </div>
+
+            <div class="order-footer">
+              <div class="order-date">
+                <ion-icon name="calendar-outline"></ion-icon>
+                {{ formatDate(order.createdAt) }}
+              </div>
+              <div class="order-total">
+                <strong>₱{{ order.totalPrice | number:'1.2-2' }}</strong>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+    </div>
+  }
+</ion-content>

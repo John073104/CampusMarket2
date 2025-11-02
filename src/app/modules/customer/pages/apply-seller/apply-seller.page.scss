@@ -1,0 +1,72 @@
+.form-container {
+  padding: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 15px;
+  background: var(--ion-color-primary-tint);
+  border-radius: 8px;
+  margin-bottom: 20px;
+
+  ion-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  p {
+    margin: 0;
+    line-height: 1.5;
+    color: var(--ion-color-primary-shade);
+  }
+}
+
+ion-item {
+  --padding-start: 0;
+  margin-bottom: 20px;
+
+  ion-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+}
+
+.benefits-section {
+  margin: 30px 0;
+
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ion-color-primary);
+    margin-bottom: 15px;
+  }
+
+  .benefits-list {
+    background: transparent;
+    padding: 0;
+
+    ion-item {
+      --background: transparent;
+      margin-bottom: 10px;
+
+      ion-icon {
+        font-size: 24px;
+      }
+
+      ion-label {
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+ion-button {
+  margin-top: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}

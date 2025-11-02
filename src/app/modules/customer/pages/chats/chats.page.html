@@ -1,0 +1,74 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()" [defaultHref]="selectedChat ? '' : '/customer/dashboard'"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ selectedChat ? getOtherParticipantName(selectedChat) : 'Messages' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading chats...</p>
+    </div>
+  } @else if (!selectedChat) {
+    <!-- Chat List -->
+    @if (chats.length === 0) {
+      <div class="empty-state">
+        <ion-icon name="chatbubbles-outline"></ion-icon>
+        <h2>No Messages Yet</h2>
+        <p>Start shopping to chat with sellers!</p>
+      </div>
+    } @else {
+      <ion-list>
+        @for (chat of chats; track chat.chatId) {
+          <ion-item button (click)="selectChat(chat)">
+            <ion-avatar slot="start">
+              <ion-icon name="person-circle-outline"></ion-icon>
+            </ion-avatar>
+            <ion-label>
+              <h2>{{ getOtherParticipantName(chat) }}</h2>
+              <p>{{ chat.lastMessage }}</p>
+            </ion-label>
+            @if (getUnreadCount(chat) > 0) {
+              <ion-badge color="danger" slot="end">{{ getUnreadCount(chat) }}</ion-badge>
+            }
+          </ion-item>
+        }
+      </ion-list>
+    }
+  } @else {
+    <!-- Chat Messages -->
+    <div #chatContent class="chat-messages">
+      @for (message of messages; track message.messageId) {
+        <div [class]="message.senderId === currentUserId ? 'message message-sent' : 'message message-received'">
+          <div class="message-content">
+            @if (message.senderId !== currentUserId) {
+              <p class="message-sender">{{ message.senderName }}</p>
+            }
+            <p class="message-text">{{ message.text }}</p>
+            <p class="message-time">{{ message.timestamp | date:'short' }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Message Input -->
+    <ion-footer>
+      <ion-toolbar>
+        <ion-item lines="none">
+          <ion-input 
+            [(ngModel)]="newMessage" 
+            placeholder="Type a message..."
+            (keyup.enter)="sendMessage()"
+          ></ion-input>
+          <ion-button slot="end" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+            <ion-icon name="send" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-toolbar>
+    </ion-footer>
+  }
+</ion-content>

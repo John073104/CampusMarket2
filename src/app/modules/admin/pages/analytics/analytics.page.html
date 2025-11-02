@@ -1,0 +1,124 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Platform Analytics</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading analytics...</p>
+    </div>
+  } @else {
+    <!-- Statistics Cards -->
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6" size-md="3">
+          <ion-card color="primary">
+            <ion-card-content class="stat-card">
+              <ion-icon name="people-outline" class="stat-icon"></ion-icon>
+              <h2>{{ stats.totalUsers }}</h2>
+              <p>Total Users</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        
+        <ion-col size="6" size-md="3">
+          <ion-card color="secondary">
+            <ion-card-content class="stat-card">
+              <ion-icon name="cube-outline" class="stat-icon"></ion-icon>
+              <h2>{{ stats.totalProducts }}</h2>
+              <p>Active Products</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        
+        <ion-col size="6" size-md="3">
+          <ion-card color="tertiary">
+            <ion-card-content class="stat-card">
+              <ion-icon name="cart-outline" class="stat-icon"></ion-icon>
+              <h2>{{ stats.totalOrders }}</h2>
+              <p>Total Orders</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        
+        <ion-col size="6" size-md="3">
+          <ion-card color="success">
+            <ion-card-content class="stat-card">
+              <ion-icon name="cash-outline" class="stat-icon"></ion-icon>
+              <h2>₱{{ stats.totalRevenue.toFixed(2) }}</h2>
+              <p>Total Revenue</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      
+      <!-- Today's Stats -->
+      <ion-row>
+        <ion-col size="6">
+          <ion-card>
+            <ion-card-content class="stat-card">
+              <ion-icon name="today-outline" class="stat-icon" color="warning"></ion-icon>
+              <h2>{{ stats.ordersToday }}</h2>
+              <p>Orders Today</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        
+        <ion-col size="6">
+          <ion-card>
+            <ion-card-content class="stat-card">
+              <ion-icon name="trending-up-outline" class="stat-icon" color="success"></ion-icon>
+              <h2>₱{{ stats.revenueToday.toFixed(2) }}</h2>
+              <p>Revenue Today</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      
+      <ion-row>
+        <ion-col size="12" size-md="6">
+          <ion-card>
+            <ion-card-content class="stat-card">
+              <ion-icon name="hourglass-outline" class="stat-icon" color="warning"></ion-icon>
+              <h2>{{ stats.pendingProducts }}</h2>
+              <p>Pending Products</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Recent Orders -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Recent Orders</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        @if (recentOrders.length === 0) {
+          <p class="ion-text-center">No orders yet</p>
+        } @else {
+          <ion-list>
+            @for (order of recentOrders; track order.orderId) {
+              <ion-item>
+                <ion-label>
+                  <h3>Order #{{ order.orderId?.substring(0, 8) }}</h3>
+                  <p>{{ order.customerName }} → {{ order.sellerName }}</p>
+                  <p>₱{{ order.totalPrice.toFixed(2) }}</p>
+                </ion-label>
+                <ion-badge [color]="order.status === 'completed' ? 'success' : order.status === 'cancelled' ? 'danger' : 'warning'" slot="end">
+                  {{ order.status }}
+                </ion-badge>
+              </ion-item>
+            }
+          </ion-list>
+        }
+      </ion-card-content>
+    </ion-card>
+  }
+</ion-content>

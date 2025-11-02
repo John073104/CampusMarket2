@@ -1,0 +1,89 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/customer/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Become a Seller</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="form-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Seller Application</ion-card-title>
+        <ion-card-subtitle>Tell us about your business</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="info-banner">
+          <ion-icon name="information-circle" color="primary"></ion-icon>
+          <p>Your application will be reviewed by our admin team. You'll be notified once approved.</p>
+        </div>
+
+        <form #applicationForm="ngForm">
+          <!-- Reason for Selling -->
+          <ion-item>
+            <ion-label position="stacked">Why do you want to sell on Campus Market? *</ion-label>
+            <ion-textarea 
+              [(ngModel)]="application.reasonForSelling"
+              name="reasonForSelling"
+              rows="4"
+              placeholder="Tell us your motivation..."
+              required>
+            </ion-textarea>
+          </ion-item>
+
+          <!-- Business Description -->
+          <ion-item>
+            <ion-label position="stacked">Business Description</ion-label>
+            <ion-textarea 
+              [(ngModel)]="application.businessDescription"
+              name="businessDescription"
+              rows="4"
+              placeholder="Describe what you plan to sell...">
+            </ion-textarea>
+          </ion-item>
+
+          <!-- Benefits List -->
+          <div class="benefits-section">
+            <h3>Seller Benefits</h3>
+            <ion-list class="benefits-list">
+              <ion-item lines="none">
+                <ion-icon name="checkmark-circle" color="success" slot="start"></ion-icon>
+                <ion-label>Reach thousands of campus students</ion-label>
+              </ion-item>
+              <ion-item lines="none">
+                <ion-icon name="checkmark-circle" color="success" slot="start"></ion-icon>
+                <ion-label>Easy product management</ion-label>
+              </ion-item>
+              <ion-item lines="none">
+                <ion-icon name="checkmark-circle" color="success" slot="start"></ion-icon>
+                <ion-label>Track orders in real-time</ion-label>
+              </ion-item>
+              <ion-item lines="none">
+                <ion-icon name="checkmark-circle" color="success" slot="start"></ion-icon>
+                <ion-label>Zero listing fees</ion-label>
+              </ion-item>
+            </ion-list>
+          </div>
+
+          <!-- Submit Button -->
+          <ion-button 
+            expand="block" 
+            size="large"
+            (click)="submitApplication()"
+            [disabled]="submitting || !applicationForm.valid">
+            @if (submitting) {
+              <ion-spinner name="crescent"></ion-spinner>
+              <span style="margin-left: 10px;">Submitting...</span>
+            } @else {
+              <ion-icon name="paper-plane" slot="start"></ion-icon>
+              Submit Application
+            }
+          </ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

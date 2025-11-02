@@ -1,0 +1,125 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/seller/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>My Profile</ion-title>
+    <ion-buttons slot="end">
+      @if (!editMode) {
+        <ion-button (click)="toggleEditMode()">
+          <ion-icon slot="icon-only" name="create"></ion-icon>
+        </ion-button>
+      }
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (user) {
+    <div class="profile-container">
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="avatar">
+          <ion-icon name="person" color="primary"></ion-icon>
+        </div>
+        <h2>{{ user.name || 'Seller' }}</h2>
+        <p class="role-badge">
+          <ion-badge color="success">Seller</ion-badge>
+        </p>
+      </div>
+
+      <!-- Profile Info Card -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Profile Information</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          @if (!editMode) {
+            <!-- View Mode -->
+            <div class="info-item">
+              <ion-icon name="mail" color="primary"></ion-icon>
+              <div>
+                <p class="label">Email</p>
+                <p class="value">{{ user.email }}</p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <ion-icon name="person" color="primary"></ion-icon>
+              <div>
+                <p class="label">Name</p>
+                <p class="value">{{ user.name || 'Not set' }}</p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <ion-icon name="call" color="primary"></ion-icon>
+              <div>
+                <p class="label">Phone</p>
+                <p class="value">{{ user.phone || 'Not set' }}</p>
+              </div>
+            </div>
+          } @else {
+            <!-- Edit Mode -->
+            <form #profileForm="ngForm">
+              <ion-item>
+                <ion-label position="stacked">Name *</ion-label>
+                <ion-input 
+                  [(ngModel)]="profileData.name"
+                  name="name"
+                  type="text"
+                  placeholder="Enter your name"
+                  required>
+                </ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Phone *</ion-label>
+                <ion-input 
+                  [(ngModel)]="profileData.phone"
+                  name="phone"
+                  type="tel"
+                  placeholder="Enter phone number"
+                  required>
+                </ion-input>
+              </ion-item>
+
+              <div class="button-group">
+                <ion-button 
+                  expand="block" 
+                  (click)="saveProfile()"
+                  [disabled]="saving || !profileForm.valid">
+                  @if (saving) {
+                    <ion-spinner name="crescent"></ion-spinner>
+                  } @else {
+                    <ion-icon name="save" slot="start"></ion-icon>
+                    Save Changes
+                  }
+                </ion-button>
+
+                <ion-button 
+                  expand="block" 
+                  fill="outline" 
+                  (click)="toggleEditMode()"
+                  [disabled]="saving">
+                  Cancel
+                </ion-button>
+              </div>
+            </form>
+          }
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Actions -->
+      @if (!editMode) {
+        <div class="actions">
+          <ion-button expand="block" color="danger" (click)="signOut()">
+            <ion-icon name="log-out" slot="start"></ion-icon>
+            Sign Out
+          </ion-button>
+        </div>
+      }
+    </div>
+  }
+</ion-content>

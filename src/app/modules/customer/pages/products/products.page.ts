@@ -1,0 +1,91 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { ProductService } from '../../../../services/product.service';
+import { CartService } from '../../../../services/cart.service';
+import { Product } from '../../../../models/product.model';
+
+@Component({
+  selector: 'app-products',
+  templateUrl: './products.page.html',
+  styleUrls: ['./products.page.scss'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, IonicModule]
+})
+export class ProductsPage implements OnInit {
+  products: Product[] = [];
+  filteredProducts: Product[] = [];
+  categories: string[] = ['All', 'Electronics', 'Books', 'Clothing', 'Food', 'Furniture', 'Other'];
+  selectedCategory: string = 'All';
+  searchTerm: string = '';
+  loading: boolean = false;
+
+  constructor(
+    private productService: ProductService,
+    private cartService: CartService,
+    private router: Router
+  ) { }
+
+  ngOnInit() {
+    this.loadProducts();
+  }
+
+  async loadProducts() {
+    this.loading = true;
+    try {
+      this.products = await this.productService.getApprovedProducts();
+      this.filteredProducts = [...this.products];
+    } catch (error) {
+      console.error('Error loading products:', error);
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  filterProducts() {
+    this.filteredProducts = this.products.filter(product => {
+      const matchesCategory = this.selectedCategory === 'All' || product.category === this.selectedCategory;
+      const matchesSearch = product.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                           product.description.toLowerCase().includes(this.searchTerm.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }
+
+  onCategoryChange() {
+    this.filterProducts();
+  }
+
+  onSearchChange() {
+    this.filterProducts();
+  }
+
+  viewProduct(productId: string) {
+    this.router.navigate(['/customer/product-detail', productId]);
+  }
+
+  async addToCart(product: Product, event: Event) {
+    event.stopPropagation();
+    try {
+      const cartItem = {
+        productId: product.productId!,
+        productName: product.title,
+        productImage: product.images[0] || '',
+        price: product.price,
+        quantity: 1,
+        sellerId: product.sellerId,
+        sellerName: product.sellerName
+      };
+      await this.cartService.addToCart(cartItem);
+      // Show success toast
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
+  }
+
+  goBack() {
+    this.router.navigate(['/customer/dashboard']);
+  }
+}
+

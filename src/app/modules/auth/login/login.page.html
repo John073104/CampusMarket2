@@ -1,0 +1,81 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()" defaultHref="/landing"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="login-container">
+    <div class="logo-section">
+      <ion-icon name="cart" class="logo-icon" color="primary"></ion-icon>
+      <h1>Welcome Back!</h1>
+      <p>Login to CampusMarket</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <ion-list>
+        <ion-item>
+          <ion-input 
+            label="Email" 
+            labelPlacement="floating"
+            type="email" 
+            formControlName="email"
+            placeholder="Enter your email">
+          </ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          <p class="ion-padding-start"><small>Please enter a valid email</small></p>
+        </ion-text>
+
+        <ion-item>
+          <ion-input 
+            label="Password" 
+            labelPlacement="floating"
+            [type]="showPassword ? 'text' : 'password'" 
+            formControlName="password"
+            placeholder="Enter your password">
+          </ion-input>
+          <ion-button slot="end" fill="clear" (click)="togglePasswordVisibility()">
+            <ion-icon [name]="showPassword ? 'eye-off' : 'eye'"></ion-icon>
+          </ion-button>
+        </ion-item>
+        <ion-text color="danger" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <p class="ion-padding-start"><small>Password must be at least 6 characters</small></p>
+        </ion-text>
+      </ion-list>
+
+      <div class="ion-padding-top">
+        <ion-button 
+          expand="block" 
+          type="submit" 
+          [disabled]="loginForm.invalid">
+          Login
+        </ion-button>
+      </div>
+    </form>
+
+    <div class="extra-actions ion-text-center ion-padding-top">
+      <p>Don't have an account? 
+        <ion-text color="primary" (click)="goToSignup()">
+          <strong style="cursor: pointer;">Sign Up</strong>
+        </ion-text>
+      </p>
+    </div>
+
+    <div class="demo-accounts ion-padding-top">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Demo Accounts</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p><strong>Admin:</strong> admin@campus.com / admin123</p>
+          <p><strong>Customer:</strong> customer@campus.com / customer123</p>
+          <p><strong>Seller:</strong> seller@campus.com / seller123</p>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

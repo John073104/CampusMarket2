@@ -1,0 +1,89 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/seller/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Orders</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  }
+
+  @if (!loading && orders.length === 0) {
+    <div class="empty-state">
+      <ion-icon name="receipt-outline" size="large"></ion-icon>
+      <h2>No Orders Yet</h2>
+      <p>Orders will appear here when customers buy your products</p>
+    </div>
+  }
+
+  @if (!loading && orders.length > 0) {
+    <ion-list>
+      @for (order of orders; track order.orderId) {
+        <ion-card>
+          <ion-card-header>
+            <div class="order-header">
+              <div>
+                <ion-card-subtitle>Order #{{ order.orderId?.slice(-8) }}</ion-card-subtitle>
+                <ion-card-title>{{ order.customerName }}</ion-card-title>
+              </div>
+              <ion-badge [color]="getStatusColor(order.status)">
+                {{ order.status | uppercase }}
+              </ion-badge>
+            </div>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div class="order-items">
+              @for (item of order.items; track item.productId) {
+                <div class="order-item">
+                  <span>{{ item.productName }} × {{ item.quantity }}</span>
+                  <span>₱{{ (item.price * item.quantity) | number:'1.2-2' }}</span>
+                </div>
+              }
+            </div>
+
+            <div class="order-footer">
+              <div class="order-date">
+                <ion-icon name="calendar-outline"></ion-icon>
+                {{ formatDate(order.createdAt) }}
+              </div>
+              <div class="order-total">
+                <strong>₱{{ order.totalPrice | number:'1.2-2' }}</strong>
+              </div>
+            </div>
+
+            <!-- Status Update Buttons -->
+            <div class="status-actions">
+              @if (order.status === 'placed') {
+                <ion-button size="small" (click)="updateStatus(order.orderId!, 'confirmed')">
+                  Confirm
+                </ion-button>
+              }
+              @if (order.status === 'confirmed') {
+                <ion-button size="small" (click)="updateStatus(order.orderId!, 'ready_for_pickup')">
+                  Mark as Ready
+                </ion-button>
+              }
+              @if (order.status === 'ready_for_pickup') {
+                <ion-button size="small" color="success" (click)="updateStatus(order.orderId!, 'completed')">
+                  Complete Order
+                </ion-button>
+              }
+              @if (order.status !== 'completed' && order.status !== 'cancelled') {
+                <ion-button size="small" fill="outline" color="danger" (click)="updateStatus(order.orderId!, 'cancelled')">
+                  Cancel
+                </ion-button>
+              }
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+    </ion-list>
+  }
+</ion-content>

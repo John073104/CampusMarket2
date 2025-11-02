@@ -35,3 +35,118 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+/**
+ * Custom Global Styles for Better Readability
+ */
+
+// Welcome header styling for dashboards
+.welcome-header {
+  text-align: center;
+  padding: 20px 0;
+  margin-bottom: 20px;
+  
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937 !important;
+    margin-bottom: 8px;
+  }
+  
+  .subtitle {
+    font-size: 16px;
+    color: #6b7280 !important;
+    margin: 0;
+  }
+}
+
+// Improve text contrast throughout the app
+ion-content {
+  --color: #1f2937;
+}
+
+ion-card-title,
+ion-card-subtitle,
+ion-list-header,
+h1, h2, h3, h4, h5, h6 {
+  color: #1f2937 !important;
+  font-weight: 600;
+}
+
+ion-label,
+ion-text,
+p {
+  color: #374151 !important;
+}
+
+// Toolbar text contrast
+ion-toolbar {
+  ion-title {
+    color: #ffffff !important;
+    font-weight: 600;
+  }
+}
+
+// Better button text
+ion-button {
+  font-weight: 600;
+  
+  &[color="primary"] {
+    --color: #ffffff;
+  }
+  
+  &[color="secondary"] {
+    --color: #ffffff;
+  }
+  
+  &[color="success"] {
+    --color: #ffffff;
+  }
+  
+  &[color="warning"] {
+    --color: #000000;
+  }
+  
+  &[color="danger"] {
+    --color: #ffffff;
+  }
+}
+
+// Card content text
+ion-card {
+  ion-card-content {
+    color: #374151;
+  }
+}
+
+// List items
+ion-item {
+  ion-label {
+    h2, h3 {
+      color: #1f2937 !important;
+      font-weight: 500;
+    }
+    
+    p {
+      color: #6b7280 !important;
+    }
+  }
+}
+
+// Input fields
+ion-input,
+ion-textarea,
+ion-select {
+  color: #1f2937 !important;
+}
+
+// Badges
+ion-badge {
+  font-weight: 600;
+}
+
+// Better shadows
+ion-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+

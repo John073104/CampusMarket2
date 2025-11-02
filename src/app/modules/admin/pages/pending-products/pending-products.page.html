@@ -1,0 +1,75 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Pending Products</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  }
+
+  @if (!loading && products.length === 0) {
+    <div class="empty-state">
+      <ion-icon name="checkmark-done-outline" size="large"></ion-icon>
+      <h2>All Caught Up!</h2>
+      <p>No pending products to review</p>
+    </div>
+  }
+
+  @if (!loading && products.length > 0) {
+    <ion-list>
+      @for (product of products; track product.productId) {
+        <ion-card>
+          <img [src]="product.images[0] || 'assets/placeholder.png'" [alt]="product.title" />
+          
+          <ion-card-header>
+            <ion-card-title>{{ product.title }}</ion-card-title>
+            <ion-card-subtitle>
+              By {{ product.sellerName }} • {{ product.category }}
+            </ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content>
+            <p class="description">{{ product.description }}</p>
+            
+            <div class="product-details">
+              <div class="detail-item">
+                <strong>Price:</strong>
+                <span>₱{{ product.price | number:'1.2-2' }}</span>
+              </div>
+              <div class="detail-item">
+                <strong>Stock:</strong>
+                <span>{{ product.stock }} units</span>
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <ion-button 
+                expand="block" 
+                color="success"
+                (click)="approveProduct(product.productId!)">
+                <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+                Approve
+              </ion-button>
+              
+              <ion-button 
+                expand="block" 
+                color="danger"
+                fill="outline"
+                (click)="deleteProduct(product.productId!)">
+                <ion-icon name="close-circle" slot="start"></ion-icon>
+                Reject
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+    </ion-list>
+  }
+</ion-content>
