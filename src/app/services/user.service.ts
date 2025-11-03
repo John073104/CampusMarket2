@@ -136,6 +136,16 @@ export class UserService {
     return snapshot.docs.map(doc => doc.data() as User);
   }
 
+  // Get admin users
+  async getAdminUsers(): Promise<User[]> {
+    const q = query(
+      collection(this.firestore, 'users'),
+      where('role', '==', 'admin')
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => doc.data() as User);
+  }
+
   // Update user profile
   async updateUserProfile(
     userId: string, 

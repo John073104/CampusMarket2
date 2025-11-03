@@ -13,15 +13,10 @@ import {
   orderBy,
   serverTimestamp 
 } from '@angular/fire/firestore';
-import { 
-  Storage, 
-  ref, 
-  uploadBytes, 
-  getDownloadURL,
-  deleteObject 
-} from '@angular/fire/storage';
 import { Product } from '../models/product.model';
 import { Observable, from } from 'rxjs';
+import { NotificationService } from './notification.service';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +24,8 @@ import { Observable, from } from 'rxjs';
 export class ProductService {
   constructor(
     private firestore: Firestore,
-    private storage: Storage
+    private notificationService: NotificationService,
+    private userService: UserService
   ) {}
 
   // Create new product
@@ -56,24 +52,52 @@ export class ProductService {
       newProduct
     );
     
+    // Notify all admins about new product submission
+    await this.notifyAdminsAboutNewProduct(product.title, product.sellerName);
+    
     return docRef.id;
   }
 
-  // Upload product images to Firebase Storage
+  // Notify all admin users about new product
+  private async notifyAdminsAboutNewProduct(productTitle: string, sellerName: string): Promise<void> {
+    try {
+      const admins = await this.userService.getAdminUsers();
+      const notifyPromises = admins.map(admin =>
+        this.notificationService.createNotification(
+          admin.userId,
+          'New Product Pending Review',
+          `${sellerName} submitted "${productTitle}" for approval`,
+          'product'
+        )
+      );
+      await Promise.all(notifyPromises);
+    } catch (error) {
+      console.error('Error notifying admins:', error);
+    }
+  }
+
+  // Convert images to base64 for Firestore storage (no Firebase Storage needed)
   private async uploadProductImages(
     sellerId: string, 
     files: File[]
   ): Promise<string[]> {
-    const uploadPromises = files.map(async (file) => {
-      const randomId = Math.random().toString(36).substring(7);
-      const filePath = `product-images/${sellerId}/${randomId}_${file.name}`;
-      const storageRef = ref(this.storage, filePath);
-      
-      await uploadBytes(storageRef, file);
-      return await getDownloadURL(storageRef);
+    const base64Promises = files.map(async (file) => {
+      return await this.fileToBase64(file);
     });
 
-    return await Promise.all(uploadPromises);
+    return await Promise.all(base64Promises);
+  }
+
+  // Convert File to base64 string
+  private fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        resolve(reader.result as string);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 
   // Get all products (Admin)
@@ -137,10 +161,22 @@ export class ProductService {
 
   // Approve product (Admin)
   async approveProduct(productId: string): Promise<void> {
+    // Get product details first
+    const product = await this.getProductById(productId);
+    
     await updateDoc(doc(this.firestore, 'products', productId), {
       approved: true,
       updatedAt: serverTimestamp()
     });
+
+    // Notify seller about approval
+    if (product) {
+      await this.notificationService.notifyProductApproved(
+        product.sellerId,
+        productId,
+        product.title
+      );
+    }
   }
 
   // Update product

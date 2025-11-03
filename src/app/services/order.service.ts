@@ -16,12 +16,18 @@ import {
 import { Order, OrderItem, OrderStatus } from '../models/order.model';
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { NotificationService } from './notification.service';
+import { ApiIntegrationService } from './api-integration.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
-  constructor(private firestore: Firestore) {}
+  constructor(
+    private firestore: Firestore,
+    private notificationService: NotificationService,
+    private apiIntegrationService: ApiIntegrationService
+  ) {}
 
   // Create new order
   async createOrder(
@@ -52,6 +58,12 @@ export class OrderService {
       collection(this.firestore, 'orders'), 
       newOrder
     );
+    
+    // Notify seller about new order
+    await this.notificationService.notifyOrderPlaced(sellerId, docRef.id, customerName);
+    
+    // Track order analytics
+    await this.apiIntegrationService.trackOrderPlaced(docRef.id, totalPrice, customerId);
     
     return docRef.id;
   }
@@ -114,10 +126,28 @@ export class OrderService {
     orderId: string, 
     status: OrderStatus
   ): Promise<void> {
+    // Get order details first
+    const order = await this.getOrderById(orderId);
+    
     await updateDoc(doc(this.firestore, 'orders', orderId), {
       status,
       updatedAt: serverTimestamp()
     });
+
+    // Notify customer about status change
+    if (order) {
+      await this.notificationService.notifyOrderStatusChanged(
+        order.customerId,
+        orderId,
+        status
+      );
+
+      // Send SMS for important status changes
+      if (status === 'ready_for_pickup' && order.pickupLocation) {
+        // TODO: Get customer phone number from user service
+        // await this.apiIntegrationService.sendOrderReadySMS(customerPhone, orderId, order.pickupLocation);
+      }
+    }
   }
 
   // Cancel order

@@ -87,8 +87,8 @@ export class AddProductPage implements OnInit {
           let width = img.width;
           let height = img.height;
           
-          // Resize if image is too large (max 1200px width/height)
-          const maxSize = 1200;
+          // Resize to smaller size for Firestore storage (max 800px)
+          const maxSize = 800;
           if (width > maxSize || height > maxSize) {
             if (width > height) {
               height = (height / width) * maxSize;
@@ -105,7 +105,7 @@ export class AddProductPage implements OnInit {
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0, width, height);
           
-          // Convert to blob with compression (0.8 quality)
+          // Convert to blob with higher compression (0.7 quality for smaller file size)
           canvas.toBlob(
             (blob) => {
               if (blob) {
@@ -119,7 +119,7 @@ export class AddProductPage implements OnInit {
               }
             },
             'image/jpeg',
-            0.8
+            0.7
           );
         };
         img.src = e.target.result;
@@ -172,7 +172,7 @@ export class AddProductPage implements OnInit {
 
   async uploadProduct() {
     const loading = await this.loadingController.create({
-      message: 'Compressing and uploading images...',
+      message: 'Preparing images...',
       spinner: 'crescent'
     });
     await loading.present();
@@ -188,9 +188,9 @@ export class AddProductPage implements OnInit {
       }
 
       // Update loading message
-      loading.message = 'Uploading product images...';
+      loading.message = 'Saving product to database...';
       
-      // Create product with image files
+      // Create product with image files (images stored as base64 in Firestore)
       await this.productService.createProduct({
         sellerId: user.userId!,
         sellerName: user.name || user.email,
