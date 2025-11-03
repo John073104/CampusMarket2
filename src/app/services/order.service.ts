@@ -142,11 +142,43 @@ export class OrderService {
         status
       );
 
+      // Decrease stock when order is completed
+      if (status === 'completed') {
+        await this.decreaseProductStock(order.items);
+      }
+
       // Send SMS for important status changes
       if (status === 'ready_for_pickup' && order.pickupLocation) {
         // TODO: Get customer phone number from user service
         // await this.apiIntegrationService.sendOrderReadySMS(customerPhone, orderId, order.pickupLocation);
       }
+    }
+  }
+
+  // Decrease product stock after successful delivery
+  private async decreaseProductStock(items: OrderItem[]): Promise<void> {
+    try {
+      const updatePromises = items.map(async (item) => {
+        const productRef = doc(this.firestore, 'products', item.productId);
+        const productDoc = await getDoc(productRef);
+        
+        if (productDoc.exists()) {
+          const currentStock = productDoc.data()['stock'] || 0;
+          const newStock = Math.max(0, currentStock - item.quantity);
+          
+          await updateDoc(productRef, {
+            stock: newStock,
+            updatedAt: serverTimestamp()
+          });
+          
+          console.log(`Stock updated for ${item.productName}: ${currentStock} -> ${newStock}`);
+        }
+      });
+
+      await Promise.all(updatePromises);
+    } catch (error) {
+      console.error('Error decreasing product stock:', error);
+      // Don't throw error to prevent order status update from failing
     }
   }
 

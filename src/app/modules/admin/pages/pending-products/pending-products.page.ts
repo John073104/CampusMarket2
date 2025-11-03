@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { ProductService } from '../../../../services/product.service';
 import { Product } from '../../../../models/product.model';
 
@@ -19,7 +20,8 @@ export class PendingProductsPage implements OnInit {
   constructor(
     private productService: ProductService,
     private alertController: AlertController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -65,13 +67,21 @@ export class PendingProductsPage implements OnInit {
               await this.productService.approveProduct(productId);
               await this.loadProducts();
               
+              // Navigate back to dashboard to refresh badge count
               const toast = await this.toastController.create({
-                message: 'Product approved successfully!',
+                message: 'Product approved successfully! Now visible to customers.',
                 duration: 2000,
                 color: 'success',
                 position: 'top'
               });
               await toast.present();
+              
+              // Refresh dashboard if no more pending products
+              if (this.products.length === 0) {
+                setTimeout(() => {
+                  this.router.navigate(['/admin/dashboard']);
+                }, 2000);
+              }
             } catch (error) {
               console.error('Error approving product:', error);
               const toast = await this.toastController.create({

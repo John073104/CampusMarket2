@@ -1,13 +1,161 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>edit-product</ion-title>
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/seller/products"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Edit Product</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">edit-product</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading product...</p>
+    </div>
+  }
+
+  @if (!loading && product) {
+    <div class="form-container">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Product Information</ion-card-title>
+          <ion-card-subtitle>Edit your product details</ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content>
+          <form #productForm="ngForm">
+            <!-- Title -->
+            <ion-item>
+              <ion-label position="stacked">Product Title *</ion-label>
+              <ion-input 
+                [(ngModel)]="product.title"
+                name="title"
+                type="text"
+                placeholder="Enter product name"
+                required>
+              </ion-input>
+            </ion-item>
+
+            <!-- Description -->
+            <ion-item>
+              <ion-label position="stacked">Description *</ion-label>
+              <ion-textarea 
+                [(ngModel)]="product.description"
+                name="description"
+                rows="4"
+                placeholder="Describe your product..."
+                required>
+              </ion-textarea>
+            </ion-item>
+
+            <!-- Price -->
+            <ion-item>
+              <ion-label position="stacked">Price (₱) *</ion-label>
+              <ion-input 
+                [(ngModel)]="product.price"
+                name="price"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+                required>
+              </ion-input>
+            </ion-item>
+
+            <!-- Stock -->
+            <ion-item>
+              <ion-label position="stacked">Stock Quantity *</ion-label>
+              <ion-input 
+                [(ngModel)]="product.stock"
+                name="stock"
+                type="number"
+                min="0"
+                placeholder="Available quantity"
+                required>
+              </ion-input>
+            </ion-item>
+
+            <!-- Category -->
+            <ion-item>
+              <ion-label position="stacked">Category *</ion-label>
+              <ion-select 
+                [(ngModel)]="product.category"
+                name="category"
+                placeholder="Select category">
+                @for (cat of categories; track cat) {
+                  <ion-select-option [value]="cat">{{ cat }}</ion-select-option>
+                }
+              </ion-select>
+            </ion-item>
+
+            <!-- Current Images -->
+            @if (imagePreviews.length > 0) {
+              <div class="current-images-section">
+                <ion-label><strong>Current Images</strong></ion-label>
+                <div class="image-preview-container">
+                  @for (preview of imagePreviews; track preview; let i = $index) {
+                    <div class="image-preview">
+                      <img [src]="preview" alt="Product image">
+                      <ion-button 
+                        fill="clear" 
+                        size="small" 
+                        color="danger" 
+                        class="remove-btn"
+                        (click)="removeImage(i)">
+                        <ion-icon name="close-circle"></ion-icon>
+                      </ion-button>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Add More Images -->
+            <ion-item>
+              <ion-label position="stacked">Add More Images (Max 5 total)</ion-label>
+              <input 
+                type="file" 
+                accept="image/*"
+                multiple
+                (change)="onFileSelected($event)"
+                class="file-input"
+                [disabled]="imagePreviews.length >= 5">
+            </ion-item>
+
+            <!-- Status Badge -->
+            <ion-card class="info-card">
+              <ion-card-content>
+                <ion-icon name="information-circle" color="primary"></ion-icon>
+                <p>
+                  Status: 
+                  <ion-badge [color]="product.approved ? 'success' : 'warning'">
+                    {{ product.approved ? 'Approved' : 'Pending Review' }}
+                  </ion-badge>
+                </p>
+                @if (!product.approved) {
+                  <p class="small-text">Your product is awaiting admin approval</p>
+                }
+              </ion-card-content>
+            </ion-card>
+
+            <!-- Update Button -->
+            <ion-button 
+              expand="block" 
+              size="large"
+              (click)="updateProduct()"
+              [disabled]="updating || !productForm.valid || imagePreviews.length === 0">
+              @if (updating) {
+                <ion-spinner name="crescent"></ion-spinner>
+                <span style="margin-left: 10px;">Updating...</span>
+              } @else {
+                <ion-icon name="save" slot="start"></ion-icon>
+                Save Changes
+              }
+            </ion-button>
+          </form>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  }
 </ion-content>
