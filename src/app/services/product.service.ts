@@ -146,17 +146,50 @@ export class ProductService {
 
   // Get pending products (Admin)
   async getPendingProducts(): Promise<Product[]> {
-    const q = query(
-      collection(this.firestore, 'products'),
-      where('approved', '==', false),
-      orderBy('createdAt', 'desc')
-    );
-    
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      productId: doc.id,
-      ...doc.data()
-    } as Product));
+    try {
+      // Try with orderBy first
+      const q = query(
+        collection(this.firestore, 'products'),
+        where('approved', '==', false),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const snapshot = await getDocs(q);
+      console.log('Pending products count:', snapshot.size);
+      const products = snapshot.docs.map(doc => ({
+        productId: doc.id,
+        ...doc.data()
+      } as Product));
+      console.log('Pending products:', products);
+      return products;
+    } catch (error: any) {
+      // If composite index error, try without orderBy
+      if (error.code === 'failed-precondition' || error.message?.includes('index')) {
+        console.warn('Using query without orderBy due to missing index');
+        const q = query(
+          collection(this.firestore, 'products'),
+          where('approved', '==', false)
+        );
+        
+        const snapshot = await getDocs(q);
+        console.log('Pending products count (no orderBy):', snapshot.size);
+        const products = snapshot.docs.map(doc => ({
+          productId: doc.id,
+          ...doc.data()
+        } as Product));
+        
+        // Sort manually by createdAt
+        products.sort((a, b) => {
+          const aTime = a.createdAt?.seconds || 0;
+          const bTime = b.createdAt?.seconds || 0;
+          return bTime - aTime;
+        });
+        
+        console.log('Pending products (sorted):', products);
+        return products;
+      }
+      throw error;
+    }
   }
 
   // Approve product (Admin)

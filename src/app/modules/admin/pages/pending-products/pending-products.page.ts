@@ -29,9 +29,20 @@ export class PendingProductsPage implements OnInit {
   async loadProducts() {
     this.loading = true;
     try {
+      console.log('Loading pending products...');
       this.products = await this.productService.getPendingProducts();
+      console.log('Loaded products:', this.products.length, this.products);
     } catch (error) {
       console.error('Error loading products:', error);
+      
+      // Show error toast
+      const toast = await this.toastController.create({
+        message: 'Failed to load pending products. Please check console for details.',
+        duration: 3000,
+        color: 'danger',
+        position: 'top'
+      });
+      await toast.present();
     } finally {
       this.loading = false;
     }
