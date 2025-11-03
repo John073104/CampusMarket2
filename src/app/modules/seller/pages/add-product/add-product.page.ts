@@ -29,6 +29,7 @@ export class AddProductPage implements OnInit {
   selectedFiles: File[] = [];
   uploading: boolean = false;
   imagePreviews: string[] = [];
+  uploadProgress: number = 0;
 
   constructor(
     private productService: ProductService,
@@ -57,18 +58,74 @@ export class AddProductPage implements OnInit {
         return;
       }
 
-      this.selectedFiles = Array.from(files);
-      
-      // Create image previews
+      this.selectedFiles = [];
       this.imagePreviews = [];
-      for (const file of this.selectedFiles) {
+      
+      // Compress and prepare images
+      for (const file of Array.from(files) as File[]) {
+        const compressedFile = await this.compressImage(file);
+        this.selectedFiles.push(compressedFile);
+        
+        // Create image preview
         const reader = new FileReader();
         reader.onload = (e: any) => {
           this.imagePreviews.push(e.target.result);
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(compressedFile);
       }
     }
+  }
+
+  // Compress image to reduce upload time
+  async compressImage(file: File): Promise<File> {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Resize if image is too large (max 1200px width/height)
+          const maxSize = 1200;
+          if (width > maxSize || height > maxSize) {
+            if (width > height) {
+              height = (height / width) * maxSize;
+              width = maxSize;
+            } else {
+              width = (width / height) * maxSize;
+              height = maxSize;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          // Convert to blob with compression (0.8 quality)
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name, {
+                  type: 'image/jpeg',
+                  lastModified: Date.now()
+                });
+                resolve(compressedFile);
+              } else {
+                resolve(file);
+              }
+            },
+            'image/jpeg',
+            0.8
+          );
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
   }
 
   removeImage(index: number) {
@@ -115,12 +172,14 @@ export class AddProductPage implements OnInit {
 
   async uploadProduct() {
     const loading = await this.loadingController.create({
-      message: 'Uploading product...',
+      message: 'Compressing and uploading images...',
       spinner: 'crescent'
     });
     await loading.present();
 
     this.uploading = true;
+    this.uploadProgress = 0;
+    
     try {
       const user = this.authService.getCurrentUser();
       if (!user) {
@@ -128,6 +187,9 @@ export class AddProductPage implements OnInit {
         return;
       }
 
+      // Update loading message
+      loading.message = 'Uploading product images...';
+      
       // Create product with image files
       await this.productService.createProduct({
         sellerId: user.userId!,
@@ -163,6 +225,7 @@ export class AddProductPage implements OnInit {
       await toast.present();
     } finally {
       this.uploading = false;
+      this.uploadProgress = 0;
     }
   }
 
