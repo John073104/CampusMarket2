@@ -30,8 +30,11 @@
 
         <ion-col size="12" size-md="6">
           <ion-card button (click)="goToCart()">
-            <ion-card-content>
+            <ion-card-content class="card-with-badge">
               <ion-icon name="cart" color="success" class="big-icon"></ion-icon>
+              @if (cartCount > 0) {
+                <ion-badge color="danger" class="notification-badge">{{ cartCount }}</ion-badge>
+              }
               <h2>My Cart</h2>
               <p>View items in your cart</p>
             </ion-card-content>
@@ -40,8 +43,11 @@
 
         <ion-col size="12" size-md="6">
           <ion-card button (click)="goToOrders()">
-            <ion-card-content>
+            <ion-card-content class="card-with-badge">
               <ion-icon name="receipt" color="warning" class="big-icon"></ion-icon>
+              @if (pendingOrdersCount > 0) {
+                <ion-badge color="danger" class="notification-badge">{{ pendingOrdersCount }}</ion-badge>
+              }
               <h2>My Orders</h2>
               <p>Track your purchases</p>
             </ion-card-content>
@@ -50,8 +56,11 @@
 
         <ion-col size="12" size-md="6">
           <ion-card button (click)="goToChats()">
-            <ion-card-content>
+            <ion-card-content class="card-with-badge">
               <ion-icon name="chatbubbles" color="tertiary" class="big-icon"></ion-icon>
+              @if (unreadMessagesCount > 0) {
+                <ion-badge color="danger" class="notification-badge">{{ unreadMessagesCount }}</ion-badge>
+              }
               <h2>Messages</h2>
               <p>Chat with sellers</p>
             </ion-card-content>

@@ -30,8 +30,11 @@
 
         <ion-col size="12" size-md="6">
           <ion-card button (click)="goToSellerApplications()">
-            <ion-card-content>
+            <ion-card-content class="card-with-badge">
               <ion-icon name="document-text" color="warning" class="big-icon"></ion-icon>
+              @if (pendingApplicationsCount > 0) {
+                <ion-badge color="danger" class="notification-badge">{{ pendingApplicationsCount }}</ion-badge>
+              }
               <h2>Seller Applications</h2>
               <p>Review and approve sellers</p>
             </ion-card-content>
@@ -40,8 +43,11 @@
 
         <ion-col size="12" size-md="6">
           <ion-card button (click)="goToPendingProducts()">
-            <ion-card-content>
+            <ion-card-content class="card-with-badge">
               <ion-icon name="cube" color="tertiary" class="big-icon"></ion-icon>
+              @if (pendingProductsCount > 0) {
+                <ion-badge color="danger" class="notification-badge">{{ pendingProductsCount }}</ion-badge>
+              }
               <h2>Pending Products</h2>
               <p>Approve product listings</p>
             </ion-card-content>

@@ -24,9 +24,27 @@
       text-align: center;
       padding: 30px 20px;
 
+      &.card-with-badge {
+        position: relative;
+      }
+
       .big-icon {
         font-size: 48px;
         margin-bottom: 15px;
+      }
+
+      .notification-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 14px;
+        font-weight: bold;
+        min-width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       h2 {

@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
+import { CartService } from '../../../../services/cart.service';
+import { ChatService } from '../../../../services/chat.service';
+import { OrderService } from '../../../../services/order.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,18 +18,46 @@ import { AuthService } from '../../../../services/auth.service';
 export class DashboardPage implements OnInit {
   userName = '';
   userEmail = '';
+  
+  // Notification badges
+  cartCount = 0;
+  unreadMessagesCount = 0;
+  pendingOrdersCount = 0;
 
   constructor(
     private router: Router,
     private authService: AuthService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private cartService: CartService,
+    private chatService: ChatService,
+    private orderService: OrderService
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     const user = this.authService.getCurrentUser();
     if (user) {
       this.userName = user.name || user.email.split('@')[0];
       this.userEmail = user.email;
+      await this.loadNotifications(user.userId!);
+    }
+  }
+
+  async loadNotifications(userId: string) {
+    try {
+      // Load cart count
+      const cartItems = this.cartService.getCartItems();
+      this.cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+      // Load unread messages count
+      this.unreadMessagesCount = await this.chatService.getTotalUnreadCount(userId);
+
+      // Load pending orders count
+      const orders = await this.orderService.getOrdersByCustomer(userId);
+      this.pendingOrdersCount = orders.filter(o => 
+        ['placed', 'confirmed', 'ready_for_pickup'].includes(o.status)
+      ).length;
+    } catch (error) {
+      console.error('Error loading notifications:', error);
     }
   }
 
