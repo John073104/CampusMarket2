@@ -25,15 +25,23 @@ export class UserService {
     userName: string,
     userEmail: string,
     reasonForSelling: string,
-    businessDescription: string
+    businessDescription: string,
+    studentName: string,
+    courseName: string,
+    studentId?: string,
+    yearLevel?: string
   ): Promise<void> {
-    const application: SellerApplication = {
+    const application: Omit<SellerApplication, 'applicationId'> = {
       userId,
       userName,
       userEmail,
       status: 'pending',
       reasonForSelling,
       businessDescription,
+      studentName,
+      courseName,
+      studentId,
+      yearLevel,
       submittedAt: serverTimestamp()
     };
 

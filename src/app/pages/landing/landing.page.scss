@@ -161,7 +161,7 @@
 .cta-section {
   padding: 60px 20px;
   text-align: center;
-  background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
+  background: linear-gradient(135deg, var() 0%, var() 100%);
   color: white;
 
   h2 {
@@ -252,7 +252,7 @@
 .footer {
   padding: 30px 20px;
   text-align: center;
-  background: var(--ion-color-dark);
+  background: var();
   color: white;
 
   p {

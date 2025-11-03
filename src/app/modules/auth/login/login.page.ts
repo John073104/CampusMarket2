@@ -62,6 +62,58 @@ export class LoginPage {
     this.router.navigate(['/auth/signup']);
   }
 
+  async forgotPassword() {
+    const alert = await this.alertController.create({
+      header: 'Reset Password',
+      message: 'Enter your email address to receive a password reset link.',
+      inputs: [
+        {
+          name: 'email',
+          type: 'email',
+          placeholder: 'Email address'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Send Reset Link',
+          handler: async (data) => {
+            if (data.email) {
+              const loading = await this.loadingController.create({
+                message: 'Sending reset link...',
+              });
+              await loading.present();
+
+              try {
+                await this.authService.resetPassword(data.email);
+                await loading.dismiss();
+                
+                const successAlert = await this.alertController.create({
+                  header: 'Success',
+                  message: 'Password reset link has been sent to your email.',
+                  buttons: ['OK']
+                });
+                await successAlert.present();
+              } catch (error: any) {
+                await loading.dismiss();
+                const errorAlert = await this.alertController.create({
+                  header: 'Error',
+                  message: 'Failed to send reset link. Please check your email address.',
+                  buttons: ['OK']
+                });
+                await errorAlert.present();
+              }
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
   goBack() {
     this.router.navigate(['/landing']);
   }

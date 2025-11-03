@@ -47,6 +47,19 @@ export class SignupPage {
         const { name, email, password } = this.signupForm.value;
         await this.authService.signUp(email, password, name);
         await loading.dismiss();
+        
+        // Show success message and redirect to login
+        const alert = await this.alertController.create({
+          header: 'Success!',
+          message: 'Your account has been created successfully. Please log in.',
+          buttons: [{
+            text: 'OK',
+            handler: () => {
+              this.router.navigate(['/auth/login']);
+            }
+          }]
+        });
+        await alert.present();
       } catch (error: any) {
         await loading.dismiss();
         const alert = await this.alertController.create({

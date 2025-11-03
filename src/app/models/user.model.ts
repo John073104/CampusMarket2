@@ -7,6 +7,11 @@ export interface User {
   profileImage?: string;
   dateJoined: any; // Firestore Timestamp
   isActive: boolean;
+  // Student information
+  studentName?: string;
+  courseName?: string;
+  studentId?: string;
+  yearLevel?: string;
 }
 
 export interface SellerApplication {
@@ -20,4 +25,9 @@ export interface SellerApplication {
   submittedAt: any; // Firestore Timestamp
   reviewedAt?: any;
   reviewedBy?: string;
+  // Student information for seller application
+  studentName: string;
+  courseName: string;
+  studentId?: string;
+  yearLevel?: string;
 }

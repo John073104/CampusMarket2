@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  sendPasswordResetEmail,
   User as FirebaseUser
 } from '@angular/fire/auth';
 import { 
@@ -71,8 +72,10 @@ export class AuthService {
       );
 
       console.log('User document created in Firestore');
-      this.currentUserSubject.next(userData);
-      await this.redirectByRole('customer');
+      // Sign out immediately after signup to redirect to login
+      await signOut(this.auth);
+      this.currentUserSubject.next(null);
+      // Don't auto-redirect, let the signup page handle it
     } catch (error: any) {
       console.error('Signup error:', error.code, error.message);
       if (error.code === 'auth/configuration-not-found') {
@@ -141,5 +144,14 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return this.currentUserSubject.value !== null;
+  }
+
+  async resetPassword(email: string): Promise<void> {
+    try {
+      await sendPasswordResetEmail(this.auth, email);
+    } catch (error: any) {
+      console.error('Password reset error:', error.code, error.message);
+      throw error;
+    }
   }
 }

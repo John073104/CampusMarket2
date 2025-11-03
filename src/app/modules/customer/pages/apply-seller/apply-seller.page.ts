@@ -16,7 +16,11 @@ import { UserService } from '../../../../services/user.service';
 export class ApplySellerPage implements OnInit {
   application = {
     reasonForSelling: '',
-    businessDescription: ''
+    businessDescription: '',
+    studentName: '',
+    courseName: '',
+    studentId: '',
+    yearLevel: ''
   };
   submitting: boolean = false;
 
@@ -32,9 +36,9 @@ export class ApplySellerPage implements OnInit {
   }
 
   async submitApplication() {
-    if (!this.application.reasonForSelling) {
+    if (!this.application.reasonForSelling || !this.application.studentName || !this.application.courseName) {
       const toast = await this.toastController.create({
-        message: 'Please provide a reason for selling.',
+        message: 'Please fill in all required fields (Student Name, Course, Reason).',
         duration: 2000,
         color: 'warning',
         position: 'top'
@@ -65,7 +69,11 @@ export class ApplySellerPage implements OnInit {
                 user.name || user.email,
                 user.email,
                 this.application.reasonForSelling,
-                this.application.businessDescription
+                this.application.businessDescription,
+                this.application.studentName,
+                this.application.courseName,
+                this.application.studentId,
+                this.application.yearLevel
               );
 
               const successAlert = await this.alertController.create({

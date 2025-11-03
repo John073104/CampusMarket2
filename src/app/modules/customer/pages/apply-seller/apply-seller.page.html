@@ -22,6 +22,57 @@
         </div>
 
         <form #applicationForm="ngForm">
+          <!-- Student Name -->
+          <ion-item>
+            <ion-label position="stacked">Student Name *</ion-label>
+            <ion-input 
+              [(ngModel)]="application.studentName"
+              name="studentName"
+              type="text"
+              placeholder="Enter your full name"
+              required>
+            </ion-input>
+          </ion-item>
+
+          <!-- Course Name -->
+          <ion-item>
+            <ion-label position="stacked">Course/Program *</ion-label>
+            <ion-input 
+              [(ngModel)]="application.courseName"
+              name="courseName"
+              type="text"
+              placeholder="e.g., BS Computer Science"
+              required>
+            </ion-input>
+          </ion-item>
+
+          <!-- Student ID -->
+          <ion-item>
+            <ion-label position="stacked">Student ID (Optional)</ion-label>
+            <ion-input 
+              [(ngModel)]="application.studentId"
+              name="studentId"
+              type="text"
+              placeholder="Enter your student ID">
+            </ion-input>
+          </ion-item>
+
+          <!-- Year Level -->
+          <ion-item>
+            <ion-label position="stacked">Year Level (Optional)</ion-label>
+            <ion-select 
+              [(ngModel)]="application.yearLevel"
+              name="yearLevel"
+              placeholder="Select year level">
+              <ion-select-option value="1st Year">1st Year</ion-select-option>
+              <ion-select-option value="2nd Year">2nd Year</ion-select-option>
+              <ion-select-option value="3rd Year">3rd Year</ion-select-option>
+              <ion-select-option value="4th Year">4th Year</ion-select-option>
+              <ion-select-option value="5th Year">5th Year</ion-select-option>
+              <ion-select-option value="Graduate">Graduate</ion-select-option>
+            </ion-select>
+          </ion-item>
+
           <!-- Reason for Selling -->
           <ion-item>
             <ion-label position="stacked">Why do you want to sell on Campus Market? *</ion-label>
