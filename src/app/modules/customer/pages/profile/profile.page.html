@@ -19,7 +19,13 @@
     <div class="profile-container">
       <div class="profile-header">
         <ion-avatar class="large-avatar">
-          <img [src]="user.profileImage || 'assets/avatar-placeholder.png'" [alt]="user.name" />
+          @if (user.profileImage) {
+            <img [src]="user.profileImage" [alt]="user.name" (error)="onImageError($event)" />
+          } @else {
+            <div class="avatar-placeholder">
+              <ion-icon name="person" size="large"></ion-icon>
+            </div>
+          }
         </ion-avatar>
         <h2>{{ user.name || 'User' }}</h2>
         <p>{{ user.email }}</p>

@@ -81,6 +81,19 @@
             </ion-select>
           </ion-item>
 
+          <!-- Unit Type -->
+          <ion-item>
+            <ion-label position="stacked">Unit Type *</ion-label>
+            <ion-select 
+              [(ngModel)]="product.unitType"
+              name="unitType"
+              placeholder="Select unit">
+              @for (unit of unitTypes; track unit.value) {
+                <ion-select-option [value]="unit.value">{{ unit.label }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+
           <!-- Image Upload -->
           <ion-item>
             <ion-label position="stacked">Product Images * (Max 5)</ion-label>

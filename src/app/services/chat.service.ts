@@ -108,41 +108,121 @@ export class ChatService {
   // Get messages for a chat (real-time)
   getMessages(chatId: string): Observable<Message[]> {
     return new Observable(observer => {
-      const q = query(
-        collection(this.firestore, 'chats', chatId, 'messages'),
-        orderBy('timestamp', 'asc')
-      );
+      let unsubscribe: (() => void) | undefined;
 
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const messages = snapshot.docs.map(doc => ({
-          messageId: doc.id,
-          ...doc.data()
-        } as Message));
-        observer.next(messages);
-      });
+      try {
+        const q = query(
+          collection(this.firestore, 'chats', chatId, 'messages'),
+          orderBy('timestamp', 'asc')
+        );
 
-      return () => unsubscribe();
+        unsubscribe = onSnapshot(q, 
+          (snapshot) => {
+            const messages = snapshot.docs.map(doc => ({
+              messageId: doc.id,
+              ...doc.data()
+            } as Message));
+            observer.next(messages);
+          },
+          (error) => {
+            console.warn('Messages orderBy failed, using fallback...', error);
+            // Fallback without orderBy
+            const fallbackQuery = collection(this.firestore, 'chats', chatId, 'messages');
+            
+            unsubscribe = onSnapshot(fallbackQuery, (snapshot) => {
+              const messages = snapshot.docs.map(doc => ({
+                messageId: doc.id,
+                ...doc.data()
+              } as Message));
+              
+              // Sort manually by timestamp
+              messages.sort((a, b) => {
+                const aTime = a.timestamp?.seconds || 0;
+                const bTime = b.timestamp?.seconds || 0;
+                return aTime - bTime; // Ascending order
+              });
+              
+              observer.next(messages);
+            });
+          }
+        );
+      } catch (error) {
+        console.error('Error setting up messages listener:', error);
+        observer.error(error);
+      }
+
+      return () => {
+        if (unsubscribe) {
+          unsubscribe();
+        }
+      };
     });
   }
 
-  // Get user chats (real-time)
+  // Get user chats (real-time) - OPTIMIZED with fast fallback
   getUserChats(userId: string): Observable<Chat[]> {
     return new Observable(observer => {
-      const q = query(
-        collection(this.firestore, 'chats'),
-        where('participantIds', 'array-contains', userId),
-        orderBy('lastMessageTime', 'desc')
-      );
+      let unsubscribe: (() => void) | undefined;
+      let hasEmitted = false;
 
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const chats = snapshot.docs.map(doc => ({
-          chatId: doc.id,
-          ...doc.data()
-        } as Chat));
-        observer.next(chats);
-      });
+      try {
+        console.log('Setting up chat listener for user:', userId);
+        
+        // Use simple query without orderBy for faster initial load
+        const q = query(
+          collection(this.firestore, 'chats'),
+          where('participantIds', 'array-contains', userId)
+        );
 
-      return () => unsubscribe();
+        unsubscribe = onSnapshot(q, 
+          (snapshot) => {
+            hasEmitted = true;
+            const chats = snapshot.docs.map(doc => ({
+              chatId: doc.id,
+              ...doc.data()
+            } as Chat));
+            
+            // Sort manually by lastMessageTime
+            chats.sort((a, b) => {
+              const aTime = a.lastMessageTime?.seconds || 0;
+              const bTime = b.lastMessageTime?.seconds || 0;
+              return bTime - aTime;
+            });
+            
+            console.log('Chats loaded:', chats.length);
+            observer.next(chats);
+          },
+          (error) => {
+            console.error('Chat snapshot error:', error);
+            if (!hasEmitted) {
+              // Emit empty array on first error to prevent infinite loading
+              observer.next([]);
+              hasEmitted = true;
+            }
+            observer.error(error);
+          }
+        );
+        
+        // Emit empty array immediately if no data after 3 seconds
+        setTimeout(() => {
+          if (!hasEmitted) {
+            console.log('No chats loaded after 3s, emitting empty array');
+            observer.next([]);
+            hasEmitted = true;
+          }
+        }, 3000);
+        
+      } catch (error) {
+        console.error('Error setting up chat listener:', error);
+        observer.next([]); // Emit empty array instead of error
+        observer.error(error);
+      }
+
+      return () => {
+        if (unsubscribe) {
+          unsubscribe();
+        }
+      };
     });
   }
 

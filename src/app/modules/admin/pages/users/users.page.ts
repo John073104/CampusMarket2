@@ -101,5 +101,17 @@ export class UsersPage implements OnInit {
     };
     return colors[role] || 'medium';
   }
+
+  onImageError(event: any) {
+    // Replace broken image with fallback
+    event.target.style.display = 'none';
+    const placeholder = event.target.parentElement.querySelector('.avatar-placeholder');
+    if (!placeholder) {
+      const div = document.createElement('div');
+      div.className = 'avatar-placeholder';
+      div.innerHTML = '<ion-icon name="person" size="large"></ion-icon>';
+      event.target.parentElement.appendChild(div);
+    }
+  }
 }
 

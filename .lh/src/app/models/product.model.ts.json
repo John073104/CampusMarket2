@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/models/product.model.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763387577746,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763387577746,
+            "name": "Commit-0",
+            "content": "export interface Product {\r\n  productId?: string;\r\n  sellerId: string;\r\n  sellerName: string;\r\n  sellerCourseName?: string; // Student's course name\r\n  title: string;\r\n  description: string;\r\n  price: number;\r\n  category: ProductCategory;\r\n  unitType?: 'piece' | 'kg' | 'liter' | 'box' | 'pack' | 'dozen';\r\n  images: string[];\r\n  approved: boolean;\r\n  stock: number;\r\n  createdAt: any; // Firestore Timestamp\r\n  updatedAt: any;\r\n}\r\n\r\nexport type ProductCategory = \r\n  | 'Food' \r\n  | 'Accessories' \r\n  | 'Books' \r\n  | 'Snacks' \r\n  | 'Electronics' \r\n  | 'Clothing' \r\n  | 'Other';"
+        }
+    ]
+}

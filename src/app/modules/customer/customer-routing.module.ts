@@ -1,16 +1,21 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CustomerTabsPage } from './customer-tabs.page';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full'
-  },
-  {
-    path: 'dashboard',
-    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)
-  },
+    component: CustomerTabsPage,
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)
+      },
   {
     path: 'products',
     loadChildren: () => import('./pages/products/products.module').then(m => m.ProductsPageModule)
@@ -43,9 +48,27 @@ const routes: Routes = [
     path: 'profile',
     loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule)
   },
+      {
+        path: 'apply-seller',
+        loadChildren: () => import('./pages/apply-seller/apply-seller.module').then(m => m.ApplySellerPageModule)
+      }
+    ]
+  },
   {
-    path: 'apply-seller',
-    loadChildren: () => import('./pages/apply-seller/apply-seller.module').then(m => m.ApplySellerPageModule)
+    path: 'cart',
+    loadChildren: () => import('./pages/cart/cart.module').then(m => m.CartPageModule)
+  },
+  {
+    path: 'product-detail/:id',
+    loadChildren: () => import('./pages/product-detail/product-detail.module').then(m => m.ProductDetailPageModule)
+  },
+  {
+    path: 'order-detail/:id',
+    loadChildren: () => import('./pages/order-detail/order-detail.module').then(m => m.OrderDetailPageModule)
+  },
+  {
+    path: 'chat/:id',
+    loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatPageModule)
   }
 ];
 

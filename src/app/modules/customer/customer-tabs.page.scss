@@ -1,0 +1,18 @@
+ion-tab-bar {
+  --background: var(--ion-color-light);
+  border-top: 1px solid var(--ion-color-light-shade);
+}
+
+ion-tab-button {
+  --color: var(--ion-color-medium);
+  --color-selected: var(--ion-color-warning);
+}
+
+ion-badge {
+  position: absolute;
+  top: 4px;
+  right: 20%;
+  font-size: 10px;
+  min-width: 18px;
+  height: 18px;
+}

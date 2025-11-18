@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/admin/admin-tabs.page.html",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763389963679,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763389963679,
+            "name": "Commit-0",
+            "content": "<ion-tabs>\r\n  <ion-tab-bar slot=\"bottom\">\r\n    <ion-tab-button tab=\"dashboard\">\r\n      <ion-icon name=\"home\"></ion-icon>\r\n      <ion-label>Dashboard</ion-label>\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button tab=\"users\">\r\n      <ion-icon name=\"people\"></ion-icon>\r\n      <ion-label>Users</ion-label>\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button tab=\"pending-products\">\r\n      <ion-icon name=\"cube\"></ion-icon>\r\n      <ion-label>Products</ion-label>\r\n      @if (pendingProducts > 0) {\r\n        <ion-badge color=\"danger\">{{ pendingProducts }}</ion-badge>\r\n      }\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button tab=\"seller-applications\">\r\n      <ion-icon name=\"briefcase\"></ion-icon>\r\n      <ion-label>Sellers</ion-label>\r\n      @if (pendingApplications > 0) {\r\n        <ion-badge color=\"danger\">{{ pendingApplications }}</ion-badge>\r\n      }\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button tab=\"reports\">\r\n      <ion-icon name=\"bar-chart\"></ion-icon>\r\n      <ion-label>Reports</ion-label>\r\n    </ion-tab-button>\r\n  </ion-tab-bar>\r\n</ion-tabs>\r\n"
+        }
+    ]
+}

@@ -29,6 +29,10 @@ export class LoginPage {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+    
+    // Diagnostic: Check Firebase connection
+    console.log('Login page loaded');
+    console.log('Auth service available:', !!this.authService);
   }
 
   togglePasswordVisibility() {
@@ -44,13 +48,17 @@ export class LoginPage {
 
       try {
         const { email, password } = this.loginForm.value;
+        console.log('Login form submitted:', email);
         await this.authService.signIn(email, password);
         await loading.dismiss();
+        console.log('Login successful, redirecting...');
       } catch (error: any) {
         await loading.dismiss();
+        console.error('Login failed in component:', error);
+        
         const alert = await this.alertController.create({
           header: 'Login Failed',
-          message: (error?.code ? error.code + ': ' : '') + (error?.message || 'Invalid credentials. Please try again.'),
+          message: error?.message || 'Invalid credentials. Please try again.',
           buttons: ['OK']
         });
         await alert.present();

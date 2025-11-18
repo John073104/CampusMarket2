@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/environments/environment.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763385225716,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763385225716,
+            "name": "Commit-0",
+            "content": "// This file can be replaced during build by using the `fileReplacements` array.\n// `ng build` replaces `environment.ts` with `environment.prod.ts`.\n// The list of file replacements can be found in `angular.json`.\n\n/**\n * FIREBASE AUTHENTICATION TROUBLESHOOTING:\n * \n * If you get \"auth/configuration-not-found\" or login fails:\n * \n * 1. Go to Firebase Console: https://console.firebase.google.com/\n * 2. Select project: surveyform-6c48b\n * 3. Go to Authentication → Sign-in method\n * 4. Enable \"Email/Password\" provider\n * 5. Click \"Save\"\n * \n * If you still have issues:\n * - Check if project ID matches: surveyform-6c48b\n * - Verify authDomain is correct: surveyform-6c48b.firebaseapp.com\n * - Check browser console for detailed error messages\n * - Clear browser cache and try again\n * - Ensure internet connection is stable\n */\n\nexport const environment = {\n  production: false,\n  firebaseConfig: {\n    apiKey: \"AIzaSyC0LEbqs7CtdWwa9rF7yv0IiyKm27Q_WTk\",\n    authDomain: \"surveyform-6c48b.firebaseapp.com\",\n    projectId: \"surveyform-6c48b\",\n    storageBucket: \"surveyform-6c48b.firebasestorage.app\",\n    messagingSenderId: \"314477273372\",\n    appId: \"1:314477273372:web:96d17464a79ee1a650dad9\",\n    measurementId: \"G-6PDVVW11BF\"\n  }\n};\n/*\n * For easier debugging in development mode, you can import the following file\n * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.\n *\n * This import should be commented out in production mode because it will have a negative impact\n * on performance if an error is thrown.\n */\n// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.\n"
+        }
+    ]
+}

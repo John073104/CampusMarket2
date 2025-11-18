@@ -1,0 +1,22 @@
+{
+    "sourceFile": "src/app/modules/admin/admin-routing.module.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1763388132033,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763389997117,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,18 +1,23 @@\n import { NgModule } from '@angular/core';\r\n import { RouterModule, Routes } from '@angular/router';\r\n+import { AdminTabsPage } from './admin-tabs.page';\r\n \r\n const routes: Routes = [\r\n   {\r\n     path: '',\r\n-    redirectTo: 'dashboard',\r\n-    pathMatch: 'full'\r\n-  },\r\n+    component: AdminTabsPage,\r\n+    children: [\r\n+      {\r\n+        path: '',\r\n+        redirectTo: 'dashboard',\r\n+        pathMatch: 'full'\r\n+      },\r\n+      {\r\n+        path: 'dashboard',\r\n+        loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)\r\n+      },\r\n   {\r\n-    path: 'dashboard',\r\n-    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)\r\n-  },\r\n-  {\r\n     path: 'seller-applications',\r\n     loadChildren: () => import('./pages/seller-applications/seller-applications.module').then(m => m.SellerApplicationsPageModule)\r\n   },\r\n   {\r\n@@ -30,11 +35,17 @@\n   {\r\n     path: 'analytics',\r\n     loadChildren: () => import('./pages/analytics/analytics.module').then(m => m.AnalyticsPageModule)\r\n   },\r\n-  {\r\n-    path: 'reports',\r\n-    loadChildren: () => import('./pages/reports/reports.module').then(m => m.ReportsPageModule)\r\n+      {\r\n+        path: 'reports',\r\n+        loadChildren: () => import('./pages/reports/reports.module').then(m => m.ReportsPageModule)\r\n+      },\r\n+      {\r\n+        path: 'analytics',\r\n+        loadChildren: () => import('./pages/analytics/analytics.module').then(m => m.AnalyticsPageModule)\r\n+      }\r\n+    ]\r\n   }\r\n ];\r\n \r\n @NgModule({\r\n"
+                }
+            ],
+            "date": 1763388132033,
+            "name": "Commit-0",
+            "content": "import { NgModule } from '@angular/core';\r\nimport { RouterModule, Routes } from '@angular/router';\r\n\r\nconst routes: Routes = [\r\n  {\r\n    path: '',\r\n    redirectTo: 'dashboard',\r\n    pathMatch: 'full'\r\n  },\r\n  {\r\n    path: 'dashboard',\r\n    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)\r\n  },\r\n  {\r\n    path: 'seller-applications',\r\n    loadChildren: () => import('./pages/seller-applications/seller-applications.module').then(m => m.SellerApplicationsPageModule)\r\n  },\r\n  {\r\n    path: 'pending-products',\r\n    loadChildren: () => import('./pages/pending-products/pending-products.module').then(m => m.PendingProductsPageModule)\r\n  },\r\n  {\r\n    path: 'users',\r\n    loadChildren: () => import('./pages/users/users.module').then(m => m.UsersPageModule)\r\n  },\r\n  {\r\n    path: 'orders',\r\n    loadChildren: () => import('./pages/orders/orders.module').then(m => m.OrdersPageModule)\r\n  },\r\n  {\r\n    path: 'analytics',\r\n    loadChildren: () => import('./pages/analytics/analytics.module').then(m => m.AnalyticsPageModule)\r\n  },\r\n  {\r\n    path: 'reports',\r\n    loadChildren: () => import('./pages/reports/reports.module').then(m => m.ReportsPageModule)\r\n  }\r\n];\r\n\r\n@NgModule({\r\n  imports: [RouterModule.forChild(routes)],\r\n  exports: [RouterModule]\r\n})\r\nexport class AdminRoutingModule { }\r\n"
+        }
+    ]
+}

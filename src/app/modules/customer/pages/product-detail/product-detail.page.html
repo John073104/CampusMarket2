@@ -50,13 +50,16 @@
             <ion-card-subtitle>
               <ion-icon name="person-circle"></ion-icon>
               {{ product.sellerName }}
+              @if (product.sellerCourseName) {
+                <span> - {{ product.sellerCourseName }}</span>
+              }
             </ion-card-subtitle>
           </ion-card-header>
 
           <ion-card-content>
             <!-- Price and Category -->
             <div class="price-category">
-              <h2 class="price">₱{{ product.price | number:'1.2-2' }}</h2>
+              <h2 class="price">₱{{ product.price | number:'1.2-2' }}@if (product.unitType) { <span class="unit-text"> / {{ product.unitType }}</span> }</h2>
               <ion-badge [color]="product.category === 'Electronics' ? 'primary' : 'secondary'">
                 {{ product.category }}
               </ion-badge>
@@ -92,16 +95,28 @@
               </div>
             }
 
-            <!-- Add to Cart Button -->
-            <ion-button 
-              expand="block" 
-              size="large"
-              (click)="addToCart()"
-              [disabled]="product.stock === 0"
-              class="add-to-cart-btn">
-              <ion-icon name="cart" slot="start"></ion-icon>
-              {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
-            </ion-button>
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+              <ion-button 
+                expand="block" 
+                size="large"
+                (click)="addToCart()"
+                [disabled]="product.stock === 0"
+                class="add-to-cart-btn">
+                <ion-icon name="cart" slot="start"></ion-icon>
+                {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+              </ion-button>
+
+              <ion-button 
+                expand="block" 
+                size="large"
+                fill="outline"
+                (click)="messageSeller()"
+                class="message-seller-btn">
+                <ion-icon name="chatbubbles" slot="start"></ion-icon>
+                Message Seller
+              </ion-button>
+            </div>
           </ion-card-content>
         </ion-card>
       </div>

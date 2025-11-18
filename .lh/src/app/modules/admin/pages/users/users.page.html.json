@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/admin/pages/users/users.page.html",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763384538019,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763384538019,
+            "name": "Commit-0",
+            "content": "<ion-header [translucent]=\"true\">\r\n  <ion-toolbar color=\"danger\">\r\n    <ion-buttons slot=\"start\">\r\n      <ion-back-button defaultHref=\"/admin/dashboard\"></ion-back-button>\r\n    </ion-buttons>\r\n    <ion-title>Users Management</ion-title>\r\n  </ion-toolbar>\r\n\r\n  <ion-toolbar>\r\n    <ion-searchbar \r\n      [(ngModel)]=\"searchTerm\" \r\n      (ionInput)=\"filterUsers()\"\r\n      placeholder=\"Search users...\">\r\n    </ion-searchbar>\r\n  </ion-toolbar>\r\n\r\n  <ion-toolbar>\r\n    <ion-segment [(ngModel)]=\"selectedRole\" (ionChange)=\"filterUsers()\">\r\n      <ion-segment-button value=\"all\">\r\n        <ion-label>All</ion-label>\r\n      </ion-segment-button>\r\n      <ion-segment-button value=\"customer\">\r\n        <ion-label>Customers</ion-label>\r\n      </ion-segment-button>\r\n      <ion-segment-button value=\"seller\">\r\n        <ion-label>Sellers</ion-label>\r\n      </ion-segment-button>\r\n      <ion-segment-button value=\"admin\">\r\n        <ion-label>Admins</ion-label>\r\n      </ion-segment-button>\r\n    </ion-segment>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content [fullscreen]=\"true\">\r\n  @if (loading) {\r\n    <div class=\"loading-container\">\r\n      <ion-spinner name=\"crescent\"></ion-spinner>\r\n    </div>\r\n  }\r\n\r\n  @if (!loading && filteredUsers.length > 0) {\r\n    <ion-list>\r\n      @for (user of filteredUsers; track user.userId) {\r\n        <ion-item>\r\n          <ion-avatar slot=\"start\">\r\n            @if (user.profileImage) {\r\n              <img [src]=\"user.profileImage\" [alt]=\"user.name\" (error)=\"onImageError($event)\" />\r\n            } @else {\r\n              <div class=\"avatar-placeholder\">\r\n                <ion-icon name=\"person\" size=\"large\"></ion-icon>\r\n              </div>\r\n            }\r\n          </ion-avatar>\r\n\r\n          <ion-label>\r\n            <h2>{{ user.name || user.email }}</h2>\r\n            <p>{{ user.email }}</p>\r\n            <ion-badge [color]=\"getRoleColor(user.role)\">{{ user.role | uppercase }}</ion-badge>\r\n          </ion-label>\r\n\r\n          <ion-toggle \r\n            slot=\"end\"\r\n            [checked]=\"user.isActive\"\r\n            (ionChange)=\"toggleUserStatus(user)\">\r\n          </ion-toggle>\r\n        </ion-item>\r\n      }\r\n    </ion-list>\r\n  }\r\n\r\n  @if (!loading && filteredUsers.length === 0) {\r\n    <div class=\"empty-state\">\r\n      <ion-icon name=\"people-outline\" size=\"large\"></ion-icon>\r\n      <h2>No Users Found</h2>\r\n      <p>Try adjusting your filters</p>\r\n    </div>\r\n  }\r\n</ion-content>\r\n"
+        }
+    ]
+}

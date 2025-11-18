@@ -37,6 +37,12 @@ export class OrderService {
     sellerName: string,
     items: OrderItem[],
     totalPrice: number,
+    deliveryInfo?: {
+      name: string;
+      phone: string;
+      address: string;
+      paymentMethod: string;
+    },
     pickupLocation?: string,
     notes?: string
   ): Promise<string> {
@@ -48,39 +54,70 @@ export class OrderService {
       items,
       totalPrice,
       status: 'placed',
-      pickupLocation,
+      pickupLocation: deliveryInfo?.address || pickupLocation,
       notes,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     };
 
+    console.log('Creating order document...', newOrder);
     const docRef = await addDoc(
       collection(this.firestore, 'orders'), 
       newOrder
     );
+    console.log('Order document created:', docRef.id);
     
-    // Notify seller about new order
-    await this.notificationService.notifyOrderPlaced(sellerId, docRef.id, customerName);
+    // Run notifications and analytics in background (non-blocking)
+    Promise.all([
+      this.notificationService.notifyOrderPlaced(sellerId, docRef.id, customerName)
+        .catch(err => console.error('Notification error:', err)),
+      this.apiIntegrationService.trackOrderPlaced(docRef.id, totalPrice, customerId)
+        .catch(err => console.error('Analytics error:', err))
+    ]);
     
-    // Track order analytics
-    await this.apiIntegrationService.trackOrderPlaced(docRef.id, totalPrice, customerId);
-    
+    console.log('Order created successfully:', docRef.id);
     return docRef.id;
   }
 
   // Get orders by customer
   async getOrdersByCustomer(customerId: string): Promise<Order[]> {
-    const q = query(
-      collection(this.firestore, 'orders'),
-      where('customerId', '==', customerId),
-      orderBy('createdAt', 'desc')
-    );
-    
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      orderId: doc.id,
-      ...doc.data()
-    } as Order));
+    try {
+      const q = query(
+        collection(this.firestore, 'orders'),
+        where('customerId', '==', customerId),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const snapshot = await getDocs(q);
+      console.log('Customer orders found:', snapshot.size);
+      return snapshot.docs.map(doc => ({
+        orderId: doc.id,
+        ...doc.data()
+      } as Order));
+    } catch (error: any) {
+      console.warn('Composite index not available for customer orders, using fallback...', error);
+      // Fallback: Query without orderBy
+      const fallbackQuery = query(
+        collection(this.firestore, 'orders'),
+        where('customerId', '==', customerId)
+      );
+      
+      const snapshot = await getDocs(fallbackQuery);
+      const orders = snapshot.docs.map(doc => ({
+        orderId: doc.id,
+        ...doc.data()
+      } as Order));
+      
+      // Sort manually by createdAt
+      orders.sort((a, b) => {
+        const aTime = a.createdAt?.seconds || 0;
+        const bTime = b.createdAt?.seconds || 0;
+        return bTime - aTime;
+      });
+      
+      console.log('Customer orders (fallback):', orders.length);
+      return orders;
+    }
   }
 
   // Get orders by seller

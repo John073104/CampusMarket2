@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/admin/pages/reports/reports.module.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763388132036,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763388132036,
+            "name": "Commit-0",
+            "content": "import { NgModule } from '@angular/core';\r\nimport { ReportsPageRoutingModule } from './reports-routing.module';\r\n\r\n@NgModule({\r\n  imports: [ReportsPageRoutingModule]\r\n})\r\nexport class ReportsPageModule {}\r\n"
+        }
+    ]
+}

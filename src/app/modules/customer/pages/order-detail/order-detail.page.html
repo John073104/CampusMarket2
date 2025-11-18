@@ -1,13 +1,128 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>order-detail</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/customer/orders"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Order Details</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">order-detail</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  }
+
+  @if (!loading && order) {
+    <div class="order-detail-container">
+      <!-- Order Info -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Order #{{ order.orderId?.substring(0, 8) }}</ion-card-title>
+          <ion-card-subtitle>
+            <ion-badge [color]="getStatusColor(order.status)">{{ order.status | uppercase }}</ion-badge>
+          </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item>
+              <ion-icon name="storefront" slot="start"></ion-icon>
+              <ion-label>
+                <h3>Seller</h3>
+                <p>{{ order.sellerName }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-icon name="calendar" slot="start"></ion-icon>
+              <ion-label>
+                <h3>Order Date</h3>
+                <p>{{ order.createdAt?.toDate() | date:'medium' }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-icon name="cash" slot="start"></ion-icon>
+              <ion-label>
+                <h3>Total Amount</h3>
+                <p>₱{{ order.totalPrice | number:'1.2-2' }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Delivery Information -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Delivery Information</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item>
+              <ion-icon name="location" slot="start"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>Delivery Address</h3>
+                <p>{{ order.pickupLocation || 'No address provided' }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Your Notes -->
+      @if (order.notes) {
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="document-text"></ion-icon>
+              Your Notes
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p class="notes-text">{{ order.notes }}</p>
+          </ion-card-content>
+        </ion-card>
+      }
+
+      <!-- Order Items -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Order Items</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          @for (item of order.items; track item.productId) {
+            <ion-item>
+              <ion-thumbnail slot="start">
+                <img [src]="item.productImage || 'assets/placeholder.png'" [alt]="item.productName" />
+              </ion-thumbnail>
+              <ion-label>
+                <h3>{{ item.productName }}</h3>
+                <p>Quantity: {{ item.quantity }}</p>
+                <p>₱{{ item.price | number:'1.2-2' }} each</p>
+              </ion-label>
+              <ion-note slot="end">
+                ₱{{ (item.price * item.quantity) | number:'1.2-2' }}
+              </ion-note>
+            </ion-item>
+          }
+          <ion-item lines="none">
+            <ion-label>
+              <h2><strong>Total</strong></h2>
+            </ion-label>
+            <ion-note slot="end" color="primary">
+              <h2><strong>₱{{ order.totalPrice | number:'1.2-2' }}</strong></h2>
+            </ion-note>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Actions -->
+      <div class="action-buttons">
+        <ion-button expand="block" fill="outline" (click)="messageSeller()">
+          <ion-icon name="chatbubbles" slot="start"></ion-icon>
+          Message Seller
+        </ion-button>
+      </div>
+    </div>
+  }
 </ion-content>

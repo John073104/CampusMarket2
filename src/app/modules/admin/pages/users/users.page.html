@@ -44,7 +44,13 @@
       @for (user of filteredUsers; track user.userId) {
         <ion-item>
           <ion-avatar slot="start">
-            <img [src]="user.profileImage || 'assets/avatar-placeholder.png'" [alt]="user.name" />
+            @if (user.profileImage) {
+              <img [src]="user.profileImage" [alt]="user.name" (error)="onImageError($event)" />
+            } @else {
+              <div class="avatar-placeholder">
+                <ion-icon name="person" size="large"></ion-icon>
+              </div>
+            }
           </ion-avatar>
 
           <ion-label>

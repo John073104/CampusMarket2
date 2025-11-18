@@ -38,11 +38,31 @@ export class ProductsPage implements OnInit {
     this.loading = true;
     try {
       const user = this.authService.getCurrentUser();
+      console.log('Current seller user:', user?.userId, user?.email);
+      
       if (user) {
         this.products = await this.productService.getProductsBySeller(user.userId!);
+        console.log('Loaded products for seller:', this.products.length, 'products');
+        console.log('Products:', this.products);
+      } else {
+        console.warn('No user found when loading seller products');
+        const toast = await this.toastController.create({
+          message: 'Please log in to view your products',
+          duration: 2000,
+          color: 'warning',
+          position: 'top'
+        });
+        await toast.present();
       }
     } catch (error) {
       console.error('Error loading products:', error);
+      const toast = await this.toastController.create({
+        message: 'Failed to load products. Please try again.',
+        duration: 3000,
+        color: 'danger',
+        position: 'top'
+      });
+      await toast.present();
     } finally {
       this.loading = false;
     }

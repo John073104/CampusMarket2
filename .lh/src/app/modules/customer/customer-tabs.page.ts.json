@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/customer/customer-tabs.page.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763389651854,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763389651854,
+            "name": "Commit-0",
+            "content": "import { Component, OnInit } from '@angular/core';\r\nimport { CommonModule } from '@angular/common';\r\nimport { IonicModule } from '@ionic/angular';\r\nimport { Router } from '@angular/router';\r\nimport { AuthService } from 'src/app/services/auth.service';\r\n\r\n@Component({\r\n  selector: 'app-customer-tabs',\r\n  templateUrl: './customer-tabs.page.html',\r\n  styleUrls: ['./customer-tabs.page.scss'],\r\n  standalone: true,\r\n  imports: [CommonModule, IonicModule]\r\n})\r\nexport class CustomerTabsPage implements OnInit {\r\n  unreadMessages = 0;\r\n\r\n  constructor(\r\n    private router: Router,\r\n    private authService: AuthService\r\n  ) {}\r\n\r\n  ngOnInit() {\r\n    // TODO: Get unread message count\r\n  }\r\n}\r\n"
+        }
+    ]
+}

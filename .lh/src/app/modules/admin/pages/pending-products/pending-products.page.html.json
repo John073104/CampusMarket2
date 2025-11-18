@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/admin/pages/pending-products/pending-products.page.html",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763388132035,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763388132035,
+            "name": "Commit-0",
+            "content": "<ion-header [translucent]=\"true\">\r\n  <ion-toolbar color=\"danger\">\r\n    <ion-buttons slot=\"start\">\r\n      <ion-back-button defaultHref=\"/admin/dashboard\"></ion-back-button>\r\n    </ion-buttons>\r\n    <ion-title>Pending Products</ion-title>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content [fullscreen]=\"true\">\r\n  @if (loading) {\r\n    <div class=\"loading-container\">\r\n      <ion-spinner name=\"crescent\"></ion-spinner>\r\n    </div>\r\n  }\r\n\r\n  @if (!loading && products.length === 0) {\r\n    <div class=\"empty-state\">\r\n      <ion-icon name=\"checkmark-done-outline\" size=\"large\"></ion-icon>\r\n      <h2>All Caught Up!</h2>\r\n      <p>No pending products to review</p>\r\n    </div>\r\n  }\r\n\r\n  @if (!loading && products.length > 0) {\r\n    <ion-list>\r\n      @for (product of products; track product.productId) {\r\n        <ion-card>\r\n          <img [src]=\"product.images[0] || 'assets/placeholder.png'\" [alt]=\"product.title\" />\r\n          \r\n          <ion-card-header>\r\n            <ion-card-title>{{ product.title }}</ion-card-title>\r\n            <ion-card-subtitle>\r\n              By {{ product.sellerName }} • {{ product.category }}\r\n            </ion-card-subtitle>\r\n          </ion-card-header>\r\n\r\n          <ion-card-content>\r\n            <p class=\"description\">{{ product.description }}</p>\r\n            \r\n            <div class=\"product-details\">\r\n              <div class=\"detail-item\">\r\n                <strong>Price:</strong>\r\n                <span>₱{{ product.price | number:'1.2-2' }}@if (product.unitType) { / {{ product.unitType }}}</span>\r\n              </div>\r\n              <div class=\"detail-item\">\r\n                <strong>Stock:</strong>\r\n                <span>{{ product.stock }} units</span>\r\n              </div>\r\n            </div>\r\n\r\n            <div class=\"action-buttons\">\r\n              <ion-button \r\n                expand=\"block\" \r\n                color=\"success\"\r\n                (click)=\"approveProduct(product.productId!)\">\r\n                <ion-icon name=\"checkmark-circle\" slot=\"start\"></ion-icon>\r\n                Approve\r\n              </ion-button>\r\n              \r\n              <ion-button \r\n                expand=\"block\" \r\n                color=\"danger\"\r\n                fill=\"outline\"\r\n                (click)=\"deleteProduct(product.productId!)\">\r\n                <ion-icon name=\"close-circle\" slot=\"start\"></ion-icon>\r\n                Reject\r\n              </ion-button>\r\n            </div>\r\n          </ion-card-content>\r\n        </ion-card>\r\n      }\r\n    </ion-list>\r\n  }\r\n</ion-content>\r\n"
+        }
+    ]
+}

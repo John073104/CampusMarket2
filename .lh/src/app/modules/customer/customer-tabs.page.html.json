@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/customer/customer-tabs.page.html",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763389782571,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763389782571,
+            "name": "Commit-0",
+            "content": "<ion-tabs>\r\n  <ion-tab-bar slot=\"bottom\">\r\n    <ion-tab-button tab=\"dashboard\">\r\n      <ion-icon name=\"home\"></ion-icon>\r\n      <ion-label>Home</ion-label>\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button tab=\"products\">\r\n      <ion-icon name=\"grid\"></ion-icon>\r\n      <ion-label>Products</ion-label>\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button tab=\"orders\">\r\n      <ion-icon name=\"receipt\"></ion-icon>\r\n      <ion-label>Orders</ion-label>\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button tab=\"chats\">\r\n      <ion-icon name=\"chatbubbles\"></ion-icon>\r\n      <ion-label>Messages</ion-label>\r\n      @if (unreadMessages > 0) {\r\n        <ion-badge color=\"danger\">{{ unreadMessages }}</ion-badge>\r\n      }\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button tab=\"profile\">\r\n      <ion-icon name=\"person\"></ion-icon>\r\n      <ion-label>Profile</ion-label>\r\n    </ion-tab-button>\r\n  </ion-tab-bar>\r\n</ion-tabs>\r\n"
+        }
+    ]
+}

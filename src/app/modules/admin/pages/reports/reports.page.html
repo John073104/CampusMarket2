@@ -1,0 +1,198 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Reports & Analytics</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshReports()">
+        <ion-icon name="refresh"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="report-container" #reportContent>
+    @if (loading) {
+      <div class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Loading reports...</p>
+      </div>
+    } @else {
+      <!-- Date Range Filter -->
+      <ion-card>
+        <ion-card-content>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="12" sizeMd="5">
+                <ion-item>
+                  <ion-label position="stacked">From</ion-label>
+                  <ion-input 
+                    type="date" 
+                    [(ngModel)]="dateRange.start"
+                    (ionChange)="refreshReports()">
+                  </ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" sizeMd="5">
+                <ion-item>
+                  <ion-label position="stacked">To</ion-label>
+                  <ion-input 
+                    type="date" 
+                    [(ngModel)]="dateRange.end"
+                    (ionChange)="refreshReports()">
+                  </ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" sizeMd="2" class="ion-text-center">
+                <ion-button expand="block" (click)="exportPDF()">
+                  <ion-icon name="download" slot="start"></ion-icon>
+                  PDF
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Stats Cards -->
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6" sizeMd="3">
+            <ion-card class="stat-card">
+              <ion-card-content>
+                <ion-icon name="cash" color="success"></ion-icon>
+                <h2>₱{{ stats.totalSales.toFixed(2) }}</h2>
+                <p>Total Sales</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="6" sizeMd="3">
+            <ion-card class="stat-card">
+              <ion-card-content>
+                <ion-icon name="receipt" color="primary"></ion-icon>
+                <h2>{{ stats.totalOrders }}</h2>
+                <p>Total Orders</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="6" sizeMd="3">
+            <ion-card class="stat-card">
+              <ion-card-content>
+                <ion-icon name="cube" color="warning"></ion-icon>
+                <h2>{{ stats.totalProducts }}</h2>
+                <p>Products</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="6" sizeMd="3">
+            <ion-card class="stat-card">
+              <ion-card-content>
+                <ion-icon name="people" color="secondary"></ion-icon>
+                <h2>{{ stats.totalUsers }}</h2>
+                <p>Users</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- Charts -->
+      <ion-grid>
+        <ion-row>
+          <!-- Sales Chart -->
+          <ion-col size="12" sizeMd="6">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Sales Over Time</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="chart-container">
+                  <canvas #salesChart></canvas>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <!-- Category Chart -->
+          <ion-col size="12" sizeMd="6">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Products by Category</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="chart-container">
+                  <canvas #categoryChart></canvas>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <!-- Top Sellers Chart -->
+          <ion-col size="12" sizeMd="6">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Top 10 Sellers</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="chart-container">
+                  <canvas #topSellersChart></canvas>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <!-- Status Chart -->
+          <ion-col size="12" sizeMd="6">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Order Status Breakdown</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="chart-container">
+                  <canvas #statusChart></canvas>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- Order Status Details -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Order Status Summary</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item>
+              <ion-icon name="time" color="warning" slot="start"></ion-icon>
+              <ion-label>
+                <h3>Placed Orders</h3>
+                <p>Orders awaiting confirmation</p>
+              </ion-label>
+              <ion-badge color="warning" slot="end">{{ stats.pendingOrders }}</ion-badge>
+            </ion-item>
+            <ion-item>
+              <ion-icon name="checkmark-circle" color="success" slot="start"></ion-icon>
+              <ion-label>
+                <h3>Completed Orders</h3>
+                <p>Successfully delivered</p>
+              </ion-label>
+              <ion-badge color="success" slot="end">{{ stats.completedOrders }}</ion-badge>
+            </ion-item>
+            <ion-item>
+              <ion-icon name="close-circle" color="danger" slot="start"></ion-icon>
+              <ion-label>
+                <h3>Cancelled Orders</h3>
+                <p>Cancelled by customer or seller</p>
+              </ion-label>
+              <ion-badge color="danger" slot="end">{{ stats.cancelledOrders }}</ion-badge>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    }
+  </div>
+</ion-content>

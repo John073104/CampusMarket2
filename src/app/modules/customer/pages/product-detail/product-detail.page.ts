@@ -5,6 +5,8 @@ import { IonicModule } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../../../services/product.service';
 import { CartService } from '../../../../services/cart.service';
+import { ChatService } from '../../../../services/chat.service';
+import { AuthService } from '../../../../services/auth.service';
 import { Product } from '../../../../models/product.model';
 
 @Component({
@@ -24,7 +26,9 @@ export class ProductDetailPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private productService: ProductService,
-    private cartService: CartService
+    private cartService: CartService,
+    private chatService: ChatService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -81,8 +85,31 @@ export class ProductDetailPage implements OnInit {
     }
   }
 
+  async messageSeller() {
+    if (!this.product) return;
+    
+    const user = this.authService.getCurrentUser();
+    if (!user) {
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+
+    try {
+      const chatId = await this.chatService.getOrCreateChat(
+        user.userId!,
+        user.name || user.email,
+        this.product.sellerId,
+        this.product.sellerName
+      );
+      this.router.navigate([`/customer/chat/${chatId}`]);
+    } catch (error) {
+      console.error('Error creating chat:', error);
+    }
+  }
+
   goBack() {
     this.router.navigate(['/customer/products']);
   }
 }
+
 

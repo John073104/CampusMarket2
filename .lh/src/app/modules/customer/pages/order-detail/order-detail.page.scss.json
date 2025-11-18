@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/customer/pages/order-detail/order-detail.page.scss",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763390335142,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763390335142,
+            "name": "Commit-0",
+            "content": ".loading-container {\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  height: 50vh;\r\n}\r\n\r\n.order-detail-container {\r\n  padding: 16px;\r\n}\r\n\r\nion-card {\r\n  margin-bottom: 16px;\r\n}\r\n\r\n.notes-text {\r\n  background: var(--ion-color-light);\r\n  padding: 12px;\r\n  border-radius: 8px;\r\n  border-left: 4px solid var(--ion-color-primary);\r\n  white-space: pre-wrap;\r\n}\r\n\r\n.action-buttons {\r\n  padding: 16px;\r\n\r\n  ion-button {\r\n    margin-bottom: 12px;\r\n  }\r\n}\r\n\r\nion-thumbnail {\r\n  --size: 60px;\r\n  --border-radius: 8px;\r\n}\r\n"
+        }
+    ]
+}

@@ -60,6 +60,9 @@
             <ion-card-subtitle>
               <ion-icon name="person-circle"></ion-icon>
               {{ product.sellerName }}
+              @if (product.sellerCourseName) {
+                <span> - {{ product.sellerCourseName }}</span>
+              }
             </ion-card-subtitle>
           </ion-card-header>
 
@@ -68,7 +71,7 @@
             
             <div class="product-footer">
               <div class="price-section">
-                <span class="price">₱{{ product.price | number:'1.2-2' }}</span>
+                <span class="price">₱{{ product.price | number:'1.2-2' }}@if (product.unitType) { <span class="unit"> / {{ product.unitType }}</span> }</span>
                 <ion-badge [color]="product.category === 'Electronics' ? 'primary' : product.category === 'Books' ? 'secondary' : 'tertiary'">
                   {{ product.category }}
                 </ion-badge>

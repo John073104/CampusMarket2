@@ -1,16 +1,21 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AdminTabsPage } from './admin-tabs.page';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full'
-  },
-  {
-    path: 'dashboard',
-    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)
-  },
+    component: AdminTabsPage,
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)
+      },
   {
     path: 'seller-applications',
     loadChildren: () => import('./pages/seller-applications/seller-applications.module').then(m => m.SellerApplicationsPageModule)
@@ -30,6 +35,16 @@ const routes: Routes = [
   {
     path: 'analytics',
     loadChildren: () => import('./pages/analytics/analytics.module').then(m => m.AnalyticsPageModule)
+  },
+      {
+        path: 'reports',
+        loadChildren: () => import('./pages/reports/reports.module').then(m => m.ReportsPageModule)
+      },
+      {
+        path: 'analytics',
+        loadChildren: () => import('./pages/analytics/analytics.module').then(m => m.AnalyticsPageModule)
+      }
+    ]
   }
 ];
 

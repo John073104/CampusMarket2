@@ -28,34 +28,42 @@ export class ProductService {
     private userService: UserService
   ) {}
 
-  // Create new product
+  // Create new product - OPTIMIZED for speed
   async createProduct(
     product: Omit<Product, 'productId' | 'createdAt' | 'updatedAt'>,
     imageFiles: File[]
   ): Promise<string> {
-    // Upload images first
-    const imageUrls = await this.uploadProductImages(
-      product.sellerId, 
-      imageFiles
-    );
+    try {
+      console.log('Starting fast product creation...', product.title);
+      
+      // Process images in parallel for speed
+      const imageUrls = await this.uploadProductImages(product.sellerId, imageFiles);
 
-    const newProduct: any = {
-      ...product,
-      images: imageUrls,
-      approved: false, // Requires admin approval
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    };
+      const newProduct: any = {
+        ...product,
+        images: imageUrls,
+        approved: false,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
 
-    const docRef = await addDoc(
-      collection(this.firestore, 'products'), 
-      newProduct
-    );
-    
-    // Notify all admins about new product submission
-    await this.notifyAdminsAboutNewProduct(product.title, product.sellerName);
-    
-    return docRef.id;
+      // Save to Firestore immediately (don't wait for notifications)
+      const docRef = await addDoc(
+        collection(this.firestore, 'products'), 
+        newProduct
+      );
+      
+      console.log('Product saved with ID:', docRef.id);
+      
+      // Notify admins in background (don't wait)
+      this.notifyAdminsAboutNewProduct(product.title, product.sellerName)
+        .catch(err => console.error('Notification failed (non-blocking):', err));
+      
+      return docRef.id;
+    } catch (error: any) {
+      console.error('Error in createProduct:', error);
+      throw new Error(error.message || 'Failed to create product');
+    }
   }
 
   // Notify all admin users about new product
@@ -76,26 +84,30 @@ export class ProductService {
     }
   }
 
-  // Convert images to base64 for Firestore storage (no Firebase Storage needed)
+  // Convert images to base64 - OPTIMIZED for speed
   private async uploadProductImages(
     sellerId: string, 
     files: File[]
   ): Promise<string[]> {
-    const base64Promises = files.map(async (file) => {
-      return await this.fileToBase64(file);
-    });
-
-    return await Promise.all(base64Promises);
+    console.log(`Fast converting ${files.length} images...`);
+    const startTime = Date.now();
+    
+    // Process all images in parallel for maximum speed
+    const results = await Promise.all(
+      files.map(file => this.fileToBase64(file))
+    );
+    
+    const duration = Date.now() - startTime;
+    console.log(`Images converted in ${duration}ms (${(duration / files.length).toFixed(0)}ms per image)`);
+    return results;
   }
 
-  // Convert File to base64 string
+  // Convert File to base64 string - OPTIMIZED
   private fileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => {
-        resolve(reader.result as string);
-      };
-      reader.onerror = reject;
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(new Error('Failed to read: ' + file.name));
       reader.readAsDataURL(file);
     });
   }
@@ -116,32 +128,89 @@ export class ProductService {
 
   // Get approved products (for customers)
   async getApprovedProducts(): Promise<Product[]> {
-    const q = query(
-      collection(this.firestore, 'products'),
-      where('approved', '==', true),
-      orderBy('createdAt', 'desc')
-    );
-    
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      productId: doc.id,
-      ...doc.data()
-    } as Product));
+    try {
+      console.log('Fetching approved products with composite index...');
+      const q = query(
+        collection(this.firestore, 'products'),
+        where('approved', '==', true),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const snapshot = await getDocs(q);
+      console.log('Found approved products:', snapshot.docs.length);
+      return snapshot.docs.map(doc => ({
+        productId: doc.id,
+        ...doc.data()
+      } as Product));
+    } catch (error: any) {
+      console.warn('Composite index not available, using fallback query...', error);
+      
+      // Fallback: Query without orderBy if index doesn't exist
+      const fallbackQuery = query(
+        collection(this.firestore, 'products'),
+        where('approved', '==', true)
+      );
+      
+      const snapshot = await getDocs(fallbackQuery);
+      const products = snapshot.docs.map(doc => ({
+        productId: doc.id,
+        ...doc.data()
+      } as Product));
+      
+      // Sort manually by createdAt
+      products.sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateB - dateA; // Descending order (newest first)
+      });
+      
+      console.log('Fallback query found products:', products.length);
+      return products;
+    }
   }
 
   // Get products by seller
   async getProductsBySeller(sellerId: string): Promise<Product[]> {
-    const q = query(
-      collection(this.firestore, 'products'),
-      where('sellerId', '==', sellerId),
-      orderBy('createdAt', 'desc')
-    );
-    
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      productId: doc.id,
-      ...doc.data()
-    } as Product));
+    try {
+      const q = query(
+        collection(this.firestore, 'products'),
+        where('sellerId', '==', sellerId),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const snapshot = await getDocs(q);
+      console.log(`Seller products count for ${sellerId}:`, snapshot.size);
+      return snapshot.docs.map(doc => ({
+        productId: doc.id,
+        ...doc.data()
+      } as Product));
+    } catch (error: any) {
+      // Fallback: Query without orderBy if composite index doesn't exist
+      console.warn('Composite index not available for seller products, using fallback...', error);
+      
+      const fallbackQuery = query(
+        collection(this.firestore, 'products'),
+        where('sellerId', '==', sellerId)
+      );
+      
+      const snapshot = await getDocs(fallbackQuery);
+      console.log(`Fallback query - Seller products count for ${sellerId}:`, snapshot.size);
+      
+      const products = snapshot.docs.map(doc => ({
+        productId: doc.id,
+        ...doc.data()
+      } as Product));
+      
+      // Sort manually by createdAt
+      products.sort((a, b) => {
+        const aTime = a.createdAt?.seconds || 0;
+        const bTime = b.createdAt?.seconds || 0;
+        return bTime - aTime; // Descending order (newest first)
+      });
+      
+      console.log('Seller products (sorted):', products);
+      return products;
+    }
   }
 
   // Get pending products (Admin)

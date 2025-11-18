@@ -35,6 +35,10 @@ import { IonicStorageModule } from '@ionic/storage-angular';
     provideAuth(() => {
       const auth = getAuth();
       console.log('Firebase Auth initialized:', auth.app.name);
+      // Set auth persistence to LOCAL (keeps user logged in)
+      auth.setPersistence({
+        type: 'LOCAL'
+      }).catch(err => console.error('Auth persistence error:', err));
       return auth;
     }),
     provideFirestore(() => {

@@ -21,9 +21,19 @@ export class AddProductPage implements OnInit {
     description: '',
     price: 0,
     category: 'Other' as ProductCategory,
+    unitType: 'piece' as 'piece' | 'kg' | 'liter' | 'box' | 'pack' | 'dozen',
     stock: 0,
     images: [] as string[]
   };
+  
+  unitTypes = [
+    { value: 'piece', label: 'Per Piece' },
+    { value: 'kg', label: 'Per Kilogram (kg)' },
+    { value: 'liter', label: 'Per Liter (L)' },
+    { value: 'box', label: 'Per Box' },
+    { value: 'pack', label: 'Per Pack' },
+    { value: 'dozen', label: 'Per Dozen' }
+  ];
   
   categories: ProductCategory[] = ['Food', 'Accessories', 'Books', 'Snacks', 'Electronics', 'Clothing', 'Other'];
   selectedFiles: File[] = [];
@@ -44,13 +54,18 @@ export class AddProductPage implements OnInit {
   ngOnInit() {
   }
 
+  ionViewWillEnter() {
+    // Reset form when entering the page to allow adding multiple products
+    this.resetForm();
+  }
+
   async onFileSelected(event: any) {
     const files = event.target.files;
     if (files && files.length > 0) {
-      // Limit to 5 images
-      if (files.length > 5) {
+      // Limit to 3 images for faster upload (changed from 5)
+      if (files.length > 3) {
         const toast = await this.toastController.create({
-          message: 'Maximum 5 images allowed',
+          message: 'Maximum 3 images allowed for fast upload',
           duration: 2000,
           color: 'warning'
         });
@@ -61,22 +76,37 @@ export class AddProductPage implements OnInit {
       this.selectedFiles = [];
       this.imagePreviews = [];
       
-      // Compress and prepare images
-      for (const file of Array.from(files) as File[]) {
+      // Show progress toast
+      const loadingToast = await this.toastController.create({
+        message: 'Compressing images...',
+        duration: 1500,
+        position: 'bottom'
+      });
+      await loadingToast.present();
+      
+      // Compress and prepare images in parallel
+      const fileArray = Array.from(files) as File[];
+      const compressionPromises = fileArray.map(async (file) => {
         const compressedFile = await this.compressImage(file);
         this.selectedFiles.push(compressedFile);
         
         // Create image preview
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          this.imagePreviews.push(e.target.result);
-        };
-        reader.readAsDataURL(compressedFile);
-      }
+        return new Promise<void>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e: any) => {
+            this.imagePreviews.push(e.target.result);
+            resolve();
+          };
+          reader.readAsDataURL(compressedFile);
+        });
+      });
+      
+      await Promise.all(compressionPromises);
+      console.log('Images compressed and ready');
     }
   }
 
-  // Compress image to reduce upload time
+  // Compress image to reduce upload time - OPTIMIZED for speed
   async compressImage(file: File): Promise<File> {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -87,8 +117,8 @@ export class AddProductPage implements OnInit {
           let width = img.width;
           let height = img.height;
           
-          // Resize to smaller size for Firestore storage (max 800px)
-          const maxSize = 800;
+          // Smaller size = faster upload (max 600px instead of 800px)
+          const maxSize = 600;
           if (width > maxSize || height > maxSize) {
             if (width > height) {
               height = (height / width) * maxSize;
@@ -105,7 +135,7 @@ export class AddProductPage implements OnInit {
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0, width, height);
           
-          // Convert to blob with higher compression (0.7 quality for smaller file size)
+          // Lower quality = faster processing (0.5 instead of 0.7)
           canvas.toBlob(
             (blob) => {
               if (blob) {
@@ -119,7 +149,7 @@ export class AddProductPage implements OnInit {
               }
             },
             'image/jpeg',
-            0.7
+            0.5
           );
         };
         img.src = e.target.result;
@@ -184,49 +214,86 @@ export class AddProductPage implements OnInit {
       const user = this.authService.getCurrentUser();
       if (!user) {
         await loading.dismiss();
+        const toast = await this.toastController.create({
+          message: 'User not authenticated. Please log in again.',
+          duration: 2000,
+          color: 'danger'
+        });
+        await toast.present();
         return;
       }
+
+      console.log('Creating product for user:', user.userId, user.email);
+      console.log('Product data:', this.product);
+      console.log('Image files:', this.selectedFiles.length);
 
       // Update loading message
       loading.message = 'Saving product to database...';
       
       // Create product with image files (images stored as base64 in Firestore)
-      await this.productService.createProduct({
+      const productId = await this.productService.createProduct({
         sellerId: user.userId!,
         sellerName: user.name || user.email,
+        sellerCourseName: user.courseName || 'N/A',
         title: this.product.title,
         description: this.product.description,
         price: this.product.price,
         category: this.product.category,
+        unitType: this.product.unitType,
         images: [],
         approved: false,
         stock: this.product.stock
       }, this.selectedFiles);
 
+      console.log('Product created successfully with ID:', productId);
+      
       await loading.dismiss();
 
       const toast = await this.toastController.create({
         message: 'Product submitted successfully! Waiting for admin approval.',
         duration: 3000,
-        color: 'success'
+        color: 'success',
+        position: 'top'
       });
       await toast.present();
 
+      // Reset form to allow adding more products
+      this.resetForm();
+      
+      // Navigate to products page
       this.router.navigate(['/seller/products']);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating product:', error);
+      console.error('Error details:', error.message, error.code);
       await loading.dismiss();
 
       const toast = await this.toastController.create({
-        message: 'Failed to upload product. Please try again.',
-        duration: 2000,
-        color: 'danger'
+        message: `Failed to upload product: ${error.message || 'Please try again later.'}`,
+        duration: 3000,
+        color: 'danger',
+        position: 'top'
       });
       await toast.present();
     } finally {
       this.uploading = false;
       this.uploadProgress = 0;
     }
+  }
+
+  // Reset form after successful submission
+  resetForm() {
+    this.product = {
+      title: '',
+      description: '',
+      price: 0,
+      category: 'Other' as ProductCategory,
+      unitType: 'piece' as 'piece' | 'kg' | 'liter' | 'box' | 'pack' | 'dozen',
+      stock: 0,
+      images: []
+    };
+    this.selectedFiles = [];
+    this.imagePreviews = [];
+    this.uploadProgress = 0;
   }
 
   goBack() {

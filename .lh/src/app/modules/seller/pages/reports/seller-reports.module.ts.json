@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/seller/pages/reports/seller-reports.module.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763388132037,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763388132037,
+            "name": "Commit-0",
+            "content": "import { NgModule } from '@angular/core';\r\nimport { SellerReportsPageRoutingModule } from './seller-reports-routing.module';\r\n\r\n@NgModule({\r\n  imports: [SellerReportsPageRoutingModule]\r\n})\r\nexport class SellerReportsPageModule {}\r\n"
+        }
+    ]
+}

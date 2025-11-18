@@ -43,7 +43,7 @@
 
             <ion-label>
               <h2>{{ product.title }}</h2>
-              <p>₱{{ product.price | number:'1.2-2' }} • Stock: {{ product.stock }}</p>
+              <p>₱{{ product.price | number:'1.2-2' }}@if (product.unitType) {/{{ product.unitType }}} • Stock: {{ product.stock }}</p>
               <ion-badge [color]="getStatusColor(product.approved)">
                 {{ getStatusText(product.approved) }}
               </ion-badge>

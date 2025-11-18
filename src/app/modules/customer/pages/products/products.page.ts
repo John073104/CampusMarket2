@@ -17,7 +17,7 @@ import { Product } from '../../../../models/product.model';
 export class ProductsPage implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
-  categories: string[] = ['All', 'Electronics', 'Books', 'Clothing', 'Food', 'Furniture', 'Other'];
+  categories: string[] = ['All', 'Food', 'Snacks', 'Accessories', 'Books', 'Electronics', 'Clothing', 'Other'];
   selectedCategory: string = 'All';
   searchTerm: string = '';
   loading: boolean = false;
@@ -32,10 +32,16 @@ export class ProductsPage implements OnInit {
     this.loadProducts();
   }
 
+  ionViewWillEnter() {
+    this.loadProducts();
+  }
+
   async loadProducts() {
     this.loading = true;
     try {
+      console.log('Loading approved products for customers...');
       this.products = await this.productService.getApprovedProducts();
+      console.log('Loaded products:', this.products.length, this.products);
       this.filteredProducts = [...this.products];
     } catch (error) {
       console.error('Error loading products:', error);

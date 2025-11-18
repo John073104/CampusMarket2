@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/customer/customer-routing.module.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763389782571,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763389782571,
+            "name": "Commit-0",
+            "content": "import { NgModule } from '@angular/core';\r\nimport { RouterModule, Routes } from '@angular/router';\r\nimport { CustomerTabsPage } from './customer-tabs.page';\r\n\r\nconst routes: Routes = [\r\n  {\r\n    path: '',\r\n    component: CustomerTabsPage,\r\n    children: [\r\n      {\r\n        path: '',\r\n        redirectTo: 'dashboard',\r\n        pathMatch: 'full'\r\n      },\r\n      {\r\n        path: 'dashboard',\r\n        loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)\r\n      },\r\n  {\r\n    path: 'products',\r\n    loadChildren: () => import('./pages/products/products.module').then(m => m.ProductsPageModule)\r\n  },\r\n  {\r\n    path: 'product-detail/:id',\r\n    loadChildren: () => import('./pages/product-detail/product-detail.module').then(m => m.ProductDetailPageModule)\r\n  },\r\n  {\r\n    path: 'cart',\r\n    loadChildren: () => import('./pages/cart/cart.module').then(m => m.CartPageModule)\r\n  },\r\n  {\r\n    path: 'orders',\r\n    loadChildren: () => import('./pages/orders/orders.module').then(m => m.OrdersPageModule)\r\n  },\r\n  {\r\n    path: 'order-detail/:id',\r\n    loadChildren: () => import('./pages/order-detail/order-detail.module').then(m => m.OrderDetailPageModule)\r\n  },\r\n  {\r\n    path: 'chats',\r\n    loadChildren: () => import('./pages/chats/chats.module').then(m => m.ChatsPageModule)\r\n  },\r\n  {\r\n    path: 'chat/:id',\r\n    loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatPageModule)\r\n  },\r\n  {\r\n    path: 'profile',\r\n    loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule)\r\n  },\r\n      {\r\n        path: 'apply-seller',\r\n        loadChildren: () => import('./pages/apply-seller/apply-seller.module').then(m => m.ApplySellerPageModule)\r\n      }\r\n    ]\r\n  },\r\n  {\r\n    path: 'cart',\r\n    loadChildren: () => import('./pages/cart/cart.module').then(m => m.CartPageModule)\r\n  },\r\n  {\r\n    path: 'product-detail/:id',\r\n    loadChildren: () => import('./pages/product-detail/product-detail.module').then(m => m.ProductDetailPageModule)\r\n  },\r\n  {\r\n    path: 'order-detail/:id',\r\n    loadChildren: () => import('./pages/order-detail/order-detail.module').then(m => m.OrderDetailPageModule)\r\n  },\r\n  {\r\n    path: 'chat/:id',\r\n    loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatPageModule)\r\n  }\r\n];\r\n\r\n@NgModule({\r\n  imports: [RouterModule.forChild(routes)],\r\n  exports: [RouterModule]\r\n})\r\nexport class CustomerRoutingModule { }\r\n"
+        }
+    ]
+}

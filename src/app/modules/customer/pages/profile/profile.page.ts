@@ -89,5 +89,10 @@ export class ProfilePage implements OnInit {
 
     await alert.present();
   }
+
+  onImageError(event: any) {
+    // Replace broken image with placeholder
+    event.target.style.display = 'none';
+  }
 }
 

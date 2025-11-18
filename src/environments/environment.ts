@@ -2,6 +2,25 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+/**
+ * FIREBASE AUTHENTICATION TROUBLESHOOTING:
+ * 
+ * If you get "auth/configuration-not-found" or login fails:
+ * 
+ * 1. Go to Firebase Console: https://console.firebase.google.com/
+ * 2. Select project: surveyform-6c48b
+ * 3. Go to Authentication → Sign-in method
+ * 4. Enable "Email/Password" provider
+ * 5. Click "Save"
+ * 
+ * If you still have issues:
+ * - Check if project ID matches: surveyform-6c48b
+ * - Verify authDomain is correct: surveyform-6c48b.firebaseapp.com
+ * - Check browser console for detailed error messages
+ * - Clear browser cache and try again
+ * - Ensure internet connection is stable
+ */
+
 export const environment = {
   production: false,
   firebaseConfig: {

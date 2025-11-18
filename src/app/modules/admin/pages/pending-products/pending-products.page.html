@@ -41,7 +41,7 @@
             <div class="product-details">
               <div class="detail-item">
                 <strong>Price:</strong>
-                <span>₱{{ product.price | number:'1.2-2' }}</span>
+                <span>₱{{ product.price | number:'1.2-2' }}@if (product.unitType) { / {{ product.unitType }}}</span>
               </div>
               <div class="detail-item">
                 <strong>Stock:</strong>

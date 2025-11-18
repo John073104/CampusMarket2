@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/admin/admin-tabs.page.scss",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763389963710,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763389963710,
+            "name": "Commit-0",
+            "content": "ion-tab-bar {\r\n  --background: var(--ion-color-light);\r\n  border-top: 1px solid var(--ion-color-light-shade);\r\n}\r\n\r\nion-tab-button {\r\n  --color: var(--ion-color-medium);\r\n  --color-selected: var(--ion-color-warning);\r\n}\r\n\r\nion-badge {\r\n  position: absolute;\r\n  top: 4px;\r\n  right: 15%;\r\n  font-size: 10px;\r\n  min-width: 18px;\r\n  height: 18px;\r\n}\r\n"
+        }
+    ]
+}

@@ -1,0 +1,35 @@
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+}
+
+.order-detail-container {
+  padding: 16px;
+}
+
+ion-card {
+  margin-bottom: 16px;
+}
+
+.notes-text {
+  background: var(--ion-color-light);
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 4px solid var(--ion-color-warning);
+  white-space: pre-wrap;
+}
+
+.action-buttons {
+  padding: 16px;
+
+  ion-button {
+    margin-bottom: 12px;
+  }
+}
+
+ion-thumbnail {
+  --size: 60px;
+  --border-radius: 8px;
+}

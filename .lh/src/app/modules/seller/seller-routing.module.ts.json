@@ -1,0 +1,26 @@
+{
+    "sourceFile": "src/app/modules/seller/seller-routing.module.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1763388132035,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763389847104,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,18 +1,23 @@\n import { NgModule } from '@angular/core';\r\n import { RouterModule, Routes } from '@angular/router';\r\n+import { SellerTabsPage } from './seller-tabs.page';\r\n \r\n const routes: Routes = [\r\n   {\r\n     path: '',\r\n-    redirectTo: 'dashboard',\r\n-    pathMatch: 'full'\r\n-  },\r\n+    component: SellerTabsPage,\r\n+    children: [\r\n+      {\r\n+        path: '',\r\n+        redirectTo: 'dashboard',\r\n+        pathMatch: 'full'\r\n+      },\r\n+      {\r\n+        path: 'dashboard',\r\n+        loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)\r\n+      },\r\n   {\r\n-    path: 'dashboard',\r\n-    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)\r\n-  },\r\n-  {\r\n     path: 'products',\r\n     loadChildren: () => import('./pages/products/products.module').then(m => m.ProductsPageModule)\r\n   },\r\n   {\r\n"
+                },
+                {
+                    "date": 1763389922569,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -51,11 +51,33 @@\n   {\r\n     path: 'analytics',\r\n     loadChildren: () => import('./pages/analytics/analytics.module').then(m => m.AnalyticsPageModule)\r\n   },\r\n+      {\r\n+        path: 'reports',\r\n+        loadChildren: () => import('./pages/reports/seller-reports.module').then(m => m.SellerReportsPageModule)\r\n+      },\r\n+      {\r\n+        path: 'analytics',\r\n+        loadChildren: () => import('./pages/analytics/analytics.module').then(m => m.AnalyticsPageModule)\r\n+      }\r\n+    ]\r\n+  },\r\n   {\r\n-    path: 'reports',\r\n-    loadChildren: () => import('./pages/reports/seller-reports.module').then(m => m.SellerReportsPageModule)\r\n+    path: 'add-product',\r\n+    loadChildren: () => import('./pages/add-product/add-product.module').then(m => m.AddProductPageModule)\r\n+  },\r\n+  {\r\n+    path: 'edit-product/:id',\r\n+    loadChildren: () => import('./pages/edit-product/edit-product.module').then(m => m.EditProductPageModule)\r\n+  },\r\n+  {\r\n+    path: 'order-detail/:id',\r\n+    loadChildren: () => import('./pages/order-detail/order-detail.module').then(m => m.OrderDetailPageModule)\r\n+  },\r\n+  {\r\n+    path: 'chat/:id',\r\n+    loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatPageModule)\r\n   }\r\n ];\r\n \r\n @NgModule({\r\n"
+                }
+            ],
+            "date": 1763388132035,
+            "name": "Commit-0",
+            "content": "import { NgModule } from '@angular/core';\r\nimport { RouterModule, Routes } from '@angular/router';\r\n\r\nconst routes: Routes = [\r\n  {\r\n    path: '',\r\n    redirectTo: 'dashboard',\r\n    pathMatch: 'full'\r\n  },\r\n  {\r\n    path: 'dashboard',\r\n    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)\r\n  },\r\n  {\r\n    path: 'products',\r\n    loadChildren: () => import('./pages/products/products.module').then(m => m.ProductsPageModule)\r\n  },\r\n  {\r\n    path: 'add-product',\r\n    loadChildren: () => import('./pages/add-product/add-product.module').then(m => m.AddProductPageModule)\r\n  },\r\n  {\r\n    path: 'edit-product/:id',\r\n    loadChildren: () => import('./pages/edit-product/edit-product.module').then(m => m.EditProductPageModule)\r\n  },\r\n  {\r\n    path: 'orders',\r\n    loadChildren: () => import('./pages/orders/orders.module').then(m => m.OrdersPageModule)\r\n  },\r\n  {\r\n    path: 'order-detail/:id',\r\n    loadChildren: () => import('./pages/order-detail/order-detail.module').then(m => m.OrderDetailPageModule)\r\n  },\r\n  {\r\n    path: 'chats',\r\n    loadChildren: () => import('./pages/chats/chats.module').then(m => m.ChatsPageModule)\r\n  },\r\n  {\r\n    path: 'chat/:id',\r\n    loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatPageModule)\r\n  },\r\n  {\r\n    path: 'profile',\r\n    loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule)\r\n  },\r\n  {\r\n    path: 'analytics',\r\n    loadChildren: () => import('./pages/analytics/analytics.module').then(m => m.AnalyticsPageModule)\r\n  },\r\n  {\r\n    path: 'reports',\r\n    loadChildren: () => import('./pages/reports/seller-reports.module').then(m => m.SellerReportsPageModule)\r\n  }\r\n];\r\n\r\n@NgModule({\r\n  imports: [RouterModule.forChild(routes)],\r\n  exports: [RouterModule]\r\n})\r\nexport class SellerRoutingModule { }\r\n"
+        }
+    ]
+}

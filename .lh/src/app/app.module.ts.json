@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/app.module.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763385225716,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763385225716,
+            "name": "Commit-0",
+            "content": "import { NgModule } from '@angular/core';\nimport { BrowserModule } from '@angular/platform-browser';\nimport { RouteReuseStrategy } from '@angular/router';\nimport { IonicModule, IonicRouteStrategy } from '@ionic/angular';\nimport { AppComponent } from './app.component';\nimport { AppRoutingModule } from './app-routing.module';\nimport { HttpClientModule } from '@angular/common/http';\n\n// Firebase imports\nimport { provideFirebaseApp, initializeApp } from '@angular/fire/app';\nimport { provideAuth, getAuth } from '@angular/fire/auth';\nimport { provideFirestore, getFirestore } from '@angular/fire/firestore';\nimport { provideStorage, getStorage } from '@angular/fire/storage';\nimport { environment } from '../environments/environment';\n\n// Ionic Storage\nimport { IonicStorageModule } from '@ionic/storage-angular';\n\n@NgModule({\n  declarations: [AppComponent],\n  imports: [\n    BrowserModule,\n    HttpClientModule,\n    IonicModule.forRoot(),\n    AppRoutingModule,\n    IonicStorageModule.forRoot()\n  ],\n  providers: [\n    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },\n    provideFirebaseApp(() => {\n      const app = initializeApp(environment.firebaseConfig);\n      console.log('Firebase initialized:', app.name, app.options.projectId);\n      return app;\n    }),\n    provideAuth(() => {\n      const auth = getAuth();\n      console.log('Firebase Auth initialized:', auth.app.name);\n      // Set auth persistence to LOCAL (keeps user logged in)\n      auth.setPersistence({\n        type: 'LOCAL'\n      }).catch(err => console.error('Auth persistence error:', err));\n      return auth;\n    }),\n    provideFirestore(() => {\n      const firestore = getFirestore();\n      console.log('Firestore initialized:', firestore.app.name);\n      return firestore;\n    }),\n    provideStorage(() => getStorage())\n  ],\n  bootstrap: [AppComponent],\n})\nexport class AppModule {}"
+        }
+    ]
+}

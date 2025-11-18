@@ -19,9 +19,15 @@
     <div class="profile-container">
       <!-- Profile Header -->
       <div class="profile-header">
-        <div class="avatar">
-          <ion-icon name="person" color="primary"></ion-icon>
-        </div>
+        <ion-avatar class="large-avatar">
+          @if (user.profileImage) {
+            <img [src]="user.profileImage" [alt]="user.name" (error)="onImageError($event)" />
+          } @else {
+            <div class="avatar-placeholder">
+              <ion-icon name="person" size="large"></ion-icon>
+            </div>
+          }
+        </ion-avatar>
         <h2>{{ user.name || 'Seller' }}</h2>
         <p class="role-badge">
           <ion-badge color="success">Seller</ion-badge>

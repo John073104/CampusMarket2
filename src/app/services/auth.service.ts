@@ -48,6 +48,8 @@ export class AuthService {
   async signUp(email: string, password: string, name: string): Promise<void> {
     try {
       console.log('Attempting signup for:', email);
+      console.log('Firebase Auth available:', !!this.auth);
+      
       const userCredential = await createUserWithEmailAndPassword(
         this.auth, 
         email, 
@@ -71,43 +73,90 @@ export class AuthService {
         userData
       );
 
-      console.log('User document created in Firestore');
+      console.log('User document created in Firestore successfully');
+      
       // Sign out immediately after signup to redirect to login
       await signOut(this.auth);
       this.currentUserSubject.next(null);
       // Don't auto-redirect, let the signup page handle it
     } catch (error: any) {
-      console.error('Signup error:', error.code, error.message);
-      if (error.code === 'auth/configuration-not-found') {
-        throw new Error('Firebase Authentication is not properly configured. Please enable Email/Password sign-in method in Firebase Console.');
+      console.error('Signup error details:', {
+        code: error.code,
+        message: error.message,
+        stack: error.stack
+      });
+      
+      // Provide user-friendly error messages
+      switch (error.code) {
+        case 'auth/configuration-not-found':
+          throw new Error('Firebase Authentication is not enabled. Please enable Email/Password sign-in in Firebase Console.');
+        case 'auth/network-request-failed':
+          throw new Error('Network error. Please check your internet connection and try again.');
+        case 'auth/email-already-in-use':
+          throw new Error('This email is already registered. Please login instead.');
+        case 'auth/invalid-email':
+          throw new Error('Invalid email format.');
+        case 'auth/weak-password':
+          throw new Error('Password is too weak. Use at least 6 characters.');
+        case 'auth/operation-not-allowed':
+          throw new Error('Email/Password sign-in is not enabled. Please contact administrator.');
+        default:
+          throw new Error(error.message || 'Signup failed. Please try again.');
       }
-      throw error;
     }
   }
 
   async signIn(email: string, password: string): Promise<void> {
     try {
       console.log('Attempting login for:', email);
+      console.log('Firebase Auth state:', this.auth.currentUser ? 'Active' : 'Not initialized');
+      
       const userCredential = await signInWithEmailAndPassword(
         this.auth, 
         email, 
         password
       );
       
-      console.log('User signed in:', userCredential.user.uid);
+      console.log('User signed in successfully:', userCredential.user.uid);
       const userData = await this.getUserData(userCredential.user.uid);
       console.log('User data retrieved:', userData);
+      
+      if (!userData) {
+        console.error('User data not found in Firestore for:', userCredential.user.uid);
+        throw new Error('User profile not found. Please contact support.');
+      }
+      
       this.currentUserSubject.next(userData);
       
-      if (userData) {
-        await this.redirectByRole(userData.role);
-      }
+      await this.redirectByRole(userData.role);
     } catch (error: any) {
-      console.error('Login error:', error.code, error.message);
-      if (error.code === 'auth/configuration-not-found') {
-        throw new Error('Firebase Authentication is not properly configured. Please enable Email/Password sign-in method in Firebase Console.');
+      console.error('Login error details:', {
+        code: error.code,
+        message: error.message,
+        stack: error.stack
+      });
+      
+      // Provide user-friendly error messages
+      switch (error.code) {
+        case 'auth/configuration-not-found':
+          throw new Error('Firebase Authentication is not enabled. Please enable Email/Password sign-in in Firebase Console.');
+        case 'auth/network-request-failed':
+          throw new Error('Network error. Please check your internet connection and try again.');
+        case 'auth/too-many-requests':
+          throw new Error('Too many failed attempts. Please try again later.');
+        case 'auth/user-not-found':
+          throw new Error('No account found with this email.');
+        case 'auth/wrong-password':
+          throw new Error('Incorrect password. Please try again.');
+        case 'auth/invalid-email':
+          throw new Error('Invalid email format.');
+        case 'auth/user-disabled':
+          throw new Error('This account has been disabled.');
+        case 'auth/invalid-credential':
+          throw new Error('Invalid email or password.');
+        default:
+          throw new Error(error.message || 'Login failed. Please try again.');
       }
-      throw error;
     }
   }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -12,7 +12,7 @@ import { Chat, Message } from '../../../../models/chat.model';
   templateUrl: './chats.page.html',
   styleUrls: ['./chats.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule]
+  imports: [CommonModule, FormsModule, IonicModule, DatePipe]
 })
 export class ChatsPage implements OnInit {
   @ViewChild('chatContent', { read: ElementRef }) chatContent?: ElementRef;
@@ -45,14 +45,29 @@ export class ChatsPage implements OnInit {
   }
 
   loadChats() {
+    console.log('Loading chats for user:', this.currentUserId);
+    
+    // Set timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      if (this.loading) {
+        console.warn('Chat loading timeout - setting empty state');
+        this.loading = false;
+        this.chats = [];
+      }
+    }, 5000); // 5 second timeout
+    
     this.chatService.getUserChats(this.currentUserId).subscribe({
       next: (chats) => {
+        clearTimeout(timeout);
         this.chats = chats;
         this.loading = false;
+        console.log('Loaded chats:', chats.length);
       },
       error: (error) => {
+        clearTimeout(timeout);
         console.error('Error loading chats:', error);
         this.loading = false;
+        this.chats = [];
       }
     });
   }
