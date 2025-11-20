@@ -16,13 +16,14 @@ import {
   arrayUnion
 } from '@angular/fire/firestore';
 import { Chat, Message } from '../models/chat.model';
+import { NotificationService } from './notification.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore, private notificationService: NotificationService) {}
 
   // Create or get existing chat between two users
   async getOrCreateChat(
@@ -103,6 +104,12 @@ export class ChatService {
       lastMessageTime: serverTimestamp(),
       [`unreadCount.${otherParticipantId}`]: increment(1)
     });
+
+    // Send in-app notification to other participant (non-blocking)
+    if (otherParticipantId) {
+      this.notificationService.notifyNewMessage(otherParticipantId, senderName, chatId)
+        .catch(err => console.error('Failed to send chat notification:', err));
+    }
   }
 
   // Get messages for a chat (real-time)

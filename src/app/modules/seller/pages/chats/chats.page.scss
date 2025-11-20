@@ -32,6 +32,11 @@
   
   p {
     color: var(--ion-color-medium);
+    margin-bottom: 20px;
+  }
+
+  ion-button {
+    max-width: 300px;
   }
 }
 

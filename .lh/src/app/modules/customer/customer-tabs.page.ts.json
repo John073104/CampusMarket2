@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1763389651854,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763606933002,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,8 +2,10 @@\n import { CommonModule } from '@angular/common';\r\n import { IonicModule } from '@ionic/angular';\r\n import { Router } from '@angular/router';\r\n import { AuthService } from 'src/app/services/auth.service';\r\n+import { NotificationService } from 'src/app/services/notification.service';\r\n+import { interval, Subscription } from 'rxjs';\r\n \r\n @Component({\r\n   selector: 'app-customer-tabs',\r\n   templateUrl: './customer-tabs.page.html',\r\n@@ -13,13 +15,36 @@\n })\r\n export class CustomerTabsPage implements OnInit {\r\n   unreadMessages = 0;\r\n \r\n+  private _unreadSub?: Subscription;\r\n+\r\n   constructor(\r\n     private router: Router,\r\n-    private authService: AuthService\r\n+    private authService: AuthService,\r\n+    private notificationService: NotificationService\r\n   ) {}\r\n \r\n   ngOnInit() {\r\n-    // TODO: Get unread message count\r\n+    const user = this.authService.getCurrentUser();\r\n+    if (user) {\r\n+      this.updateUnread(user.userId);\r\n+      // poll every 10 seconds\r\n+      const sub = interval(10000).subscribe(() => this.updateUnread(user.userId));\r\n+      // keep subscription in case we add cleanup later\r\n+      (this as any)._unreadSub = sub as Subscription;\r\n+    }\r\n   }\r\n+\r\n+  private async updateUnread(userId: string) {\r\n+    try {\r\n+      const count = await this.notificationService.getUnreadCount(userId);\r\n+      this.unreadMessages = count;\r\n+    } catch (err) {\r\n+      console.error('Failed to fetch unread count:', err);\r\n+    }\r\n+  }\r\n+\r\n+  ngOnDestroy(): void {\r\n+    if (this._unreadSub) this._unreadSub.unsubscribe();\r\n+  }\r\n }\r\n"
                 }
             ],
             "date": 1763389651854,

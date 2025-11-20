@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1763384538026,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763434788535,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,9 +20,14 @@\n   saving: boolean = false;\r\n \r\n   profileData = {\r\n     name: '',\r\n-    phone: ''\r\n+    phone: '',\r\n+    gcashNumber: '',\r\n+    gcashName: '',\r\n+    bankAccount: '',\r\n+    bankName: '',\r\n+    bankAccountName: ''\r\n   };\r\n \r\n   constructor(\r\n     private authService: AuthService,\r\n@@ -40,9 +45,14 @@\n     this.user = this.authService.getCurrentUser();\r\n     if (this.user) {\r\n       this.profileData = {\r\n         name: this.user.name || '',\r\n-        phone: this.user.phone || ''\r\n+        phone: this.user.phone || '',\r\n+        gcashNumber: this.user.gcashNumber || '',\r\n+        gcashName: this.user.gcashName || '',\r\n+        bankAccount: this.user.bankAccount || '',\r\n+        bankName: this.user.bankName || '',\r\n+        bankAccountName: this.user.bankAccountName || ''\r\n       };\r\n     }\r\n   }\r\n \r\n@@ -59,9 +69,14 @@\n     this.saving = true;\r\n     try {\r\n       await this.userService.updateUserProfile(this.user.userId!, {\r\n         name: this.profileData.name,\r\n-        phone: this.profileData.phone\r\n+        phone: this.profileData.phone,\r\n+        gcashNumber: this.profileData.gcashNumber,\r\n+        gcashName: this.profileData.gcashName,\r\n+        bankAccount: this.profileData.bankAccount,\r\n+        bankName: this.profileData.bankName,\r\n+        bankAccountName: this.profileData.bankAccountName\r\n       });\r\n       \r\n       this.editMode = false;\r\n       this.loadProfile();\r\n"
                 }
             ],
             "date": 1763384538026,

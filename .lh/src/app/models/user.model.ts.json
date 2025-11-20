@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/models/user.model.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763434788473,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763434788473,
+            "name": "Commit-0",
+            "content": "export interface User {\r\n  userId: string;\r\n  email: string;\r\n  role: 'customer' | 'seller' | 'admin';\r\n  name: string;\r\n  phone?: string;\r\n  profileImage?: string;\r\n  dateJoined: any; // Firestore Timestamp\r\n  isActive: boolean;\r\n  // Student information\r\n  studentName?: string;\r\n  courseName?: string;\r\n  studentId?: string;\r\n  yearLevel?: string;\r\n  // Seller payment details\r\n  gcashNumber?: string;\r\n  gcashName?: string;\r\n  bankAccount?: string;\r\n  bankName?: string;\r\n  bankAccountName?: string;\r\n}\r\n\r\nexport interface SellerApplication {\r\n  applicationId?: string;\r\n  userId: string;\r\n  userName: string;\r\n  userEmail: string;\r\n  status: 'pending' | 'approved' | 'rejected';\r\n  reasonForSelling: string;\r\n  businessDescription?: string;\r\n  submittedAt: any; // Firestore Timestamp\r\n  reviewedAt?: any;\r\n  reviewedBy?: string;\r\n  // Student information for seller application\r\n  studentName: string;\r\n  courseName: string;\r\n  studentId?: string;\r\n  yearLevel?: string;\r\n}"
+        }
+    ]
+}

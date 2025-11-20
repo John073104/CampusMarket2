@@ -69,6 +69,79 @@
         </ion-card-content>
       </ion-card>
 
+      <!-- Payment Information -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="card"></ion-icon>
+            Payment Information
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item>
+              <ion-icon name="wallet" slot="start"></ion-icon>
+              <ion-label>
+                <h3>Payment Method</h3>
+                <p>{{ getPaymentMethodLabel(order.paymentMethod) }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-icon name="shield-checkmark" slot="start"></ion-icon>
+              <ion-label>
+                <h3>Payment Status</h3>
+                <ion-badge [color]="getPaymentStatusColor(order.paymentStatus)">
+                  {{ order.paymentStatus || 'Pending' | uppercase }}
+                </ion-badge>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+
+          <!-- Payment Proof Section -->
+          @if (order.paymentProofImage) {
+            <div class="payment-proof-section">
+              <h3>Payment Proof</h3>
+              <div class="proof-image-container">
+                <img [src]="order.paymentProofImage" alt="Payment proof" (click)="viewPaymentProof(order.paymentProofImage)" />
+              </div>
+              
+              @if (order.paymentStatus === 'pending') {
+                <div class="verification-actions">
+                  <ion-button 
+                    expand="block" 
+                    color="success"
+                    (click)="verifyPayment()">
+                    <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+                    Verify Payment
+                  </ion-button>
+                  <ion-button 
+                    expand="block" 
+                    color="danger"
+                    fill="outline"
+                    (click)="rejectPayment()">
+                    <ion-icon name="close-circle" slot="start"></ion-icon>
+                    Reject Payment
+                  </ion-button>
+                </div>
+              }
+
+              @if (order.paymentStatus === 'verified') {
+                <ion-note color="success" class="verification-note">
+                  <ion-icon name="checkmark-circle"></ion-icon>
+                  Payment verified on {{ order.paymentVerifiedAt?.toDate() | date:'short' }}
+                </ion-note>
+              }
+            </div>
+          }
+
+          @if (!order.paymentProofImage && (order.paymentMethod === 'cod' || order.paymentMethod === 'meet_and_pay')) {
+            <ion-note color="medium" class="payment-note">
+              Customer will pay upon {{ order.paymentMethod === 'cod' ? 'delivery' : 'meetup' }}
+            </ion-note>
+          }
+        </ion-card-content>
+      </ion-card>
+
       <!-- Notes/Messages -->
       @if (order.notes) {
         <ion-card>

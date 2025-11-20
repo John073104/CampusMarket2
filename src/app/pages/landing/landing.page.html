@@ -1,6 +1,44 @@
-<ion-content class="landing-content">
+<!-- Top Navigation Bar -->
+<ion-header class="landing-header" [translucent]="true">
+  <ion-toolbar color="primary">
+    <div class="nav-container">
+      <div class="logo" (click)="scrollToSection('hero')">
+        <ion-icon name="storefront"></ion-icon>
+        <span>Campus Market</span>
+      </div>
+      
+      <nav class="nav-menu">
+        <ion-button fill="clear" (click)="scrollToSection('hero')">
+          <ion-icon name="home" slot="start"></ion-icon>
+          Home
+        </ion-button>
+        <ion-button fill="clear" (click)="scrollToSection('about')">
+          <ion-icon name="information-circle" slot="start"></ion-icon>
+          About
+        </ion-button>
+        <ion-button fill="clear" (click)="scrollToSection('contact')">
+          <ion-icon name="mail" slot="start"></ion-icon>
+          Contact
+        </ion-button>
+      </nav>
+
+      <div class="auth-buttons">
+        <ion-button fill="outline" color="light" (click)="goToLogin()">
+          <ion-icon name="log-in" slot="start"></ion-icon>
+          Login
+        </ion-button>
+        <ion-button color="warning" (click)="goToSignup()">
+          <ion-icon name="person-add" slot="start"></ion-icon>
+          Register
+        </ion-button>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="landing-content" [fullscreen]="true">
   <!-- Hero Section -->
-  <div class="hero-section">
+  <div class="hero-section" id="hero">
     <div class="hero-content">
       <ion-icon name="storefront" class="hero-icon"></ion-icon>
       <h1>Campus Market</h1>
@@ -44,6 +82,42 @@
         <p>Find affordable deals on campus essentials</p>
       </div>
     </div>
+  </div>
+
+  <!-- About Section -->
+  <div class="about-section" id="about">
+    <h2 class="section-title">About Campus Market</h2>
+    <ion-card>
+      <ion-card-content>
+        <p class="about-text">
+          Campus Market is a student-to-student marketplace designed specifically for university communities. 
+          We connect buyers and sellers within your campus, making it easy to trade textbooks, electronics, 
+          furniture, and everything else you need for student life.
+        </p>
+        <p class="about-text">
+          Our platform ensures safe transactions between verified students, with built-in messaging, 
+          payment tracking, and order management. Whether you're looking to save money on textbooks 
+          or make some cash selling items you no longer need, Campus Market is your trusted marketplace.
+        </p>
+        <div class="stats-row">
+          <div class="stat-item">
+            <ion-icon name="people" color="primary"></ion-icon>
+            <h3>1000+</h3>
+            <p>Active Users</p>
+          </div>
+          <div class="stat-item">
+            <ion-icon name="cart" color="success"></ion-icon>
+            <h3>5000+</h3>
+            <p>Products Sold</p>
+          </div>
+          <div class="stat-item">
+            <ion-icon name="star" color="warning"></ion-icon>
+            <h3>4.8/5</h3>
+            <p>User Rating</p>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
   </div>
 
   <!-- Benefits Section -->
@@ -150,6 +224,94 @@
         </ion-card-content>
       </ion-card>
     </div>
+  </div>
+
+  <!-- Contact Section -->
+  <div class="contact-section" id="contact">
+    <h2 class="section-title">Get In Touch</h2>
+    <ion-card>
+      <ion-card-content>
+        <div class="contact-grid">
+          <div class="contact-item">
+            <ion-icon name="mail" color="primary"></ion-icon>
+            <h3>Email Us</h3>
+            <p>support@campusmarket.com</p>
+            <ion-button fill="outline" size="small" href="mailto:support@campusmarket.com">
+              Send Email
+            </ion-button>
+          </div>
+
+          <div class="contact-item">
+            <ion-icon name="call" color="success"></ion-icon>
+            <h3>Call Us</h3>
+            <p>+63 123 456 7890</p>
+            <ion-button fill="outline" size="small" href="tel:+631234567890">
+              Call Now
+            </ion-button>
+          </div>
+
+          <div class="contact-item">
+            <ion-icon name="location" color="danger"></ion-icon>
+            <h3>Visit Us</h3>
+            <p>University Campus<br>Main Building, 2nd Floor</p>
+            <ion-button fill="outline" size="small">
+              Get Directions
+            </ion-button>
+          </div>
+
+          <div class="contact-item">
+            <ion-icon name="chatbubbles" color="tertiary"></ion-icon>
+            <h3>Social Media</h3>
+            <div class="social-links">
+              <ion-button fill="clear" size="small">
+                <ion-icon name="logo-facebook"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" size="small">
+                <ion-icon name="logo-instagram"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" size="small">
+                <ion-icon name="logo-twitter"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-section">
+          <h3>Frequently Asked Questions</h3>
+          <ion-accordion-group>
+            <ion-accordion value="first">
+              <ion-item slot="header" color="light">
+                <ion-label>How do I register as a seller?</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content">
+                Sign up, complete your profile, then apply to become a seller from your dashboard. 
+                Admin will review and approve your application within 24 hours.
+              </div>
+            </ion-accordion>
+
+            <ion-accordion value="second">
+              <ion-item slot="header" color="light">
+                <ion-label>Is payment secure?</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content">
+                Yes! We support multiple payment methods including Cash on Delivery, GCash, and Bank Transfer. 
+                All payments are verified before orders are processed.
+              </div>
+            </ion-accordion>
+
+            <ion-accordion value="third">
+              <ion-item slot="header" color="light">
+                <ion-label>How do I track my order?</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content">
+                Go to "My Orders" in your dashboard to see real-time status updates. 
+                You'll also receive notifications for every status change.
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
+        </div>
+      </ion-card-content>
+    </ion-card>
   </div>
 
   <!-- Footer -->

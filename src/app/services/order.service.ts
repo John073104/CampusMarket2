@@ -43,9 +43,17 @@ export class OrderService {
       address: string;
       paymentMethod: string;
     },
-    pickupLocation?: string,
+    paymentMethod?: 'cod' | 'gcash' | 'bank_transfer' | 'meet_and_pay',
+    paymentProofImage?: string,
     notes?: string
   ): Promise<string> {
+    // Determine payment status based on method
+    const paymentStatus = (paymentMethod === 'gcash' || paymentMethod === 'bank_transfer') && paymentProofImage 
+      ? 'pending' 
+      : paymentMethod === 'cod' || paymentMethod === 'meet_and_pay' 
+      ? 'verified' 
+      : 'pending';
+
     const newOrder: Omit<Order, 'orderId'> = {
       customerId,
       customerName,
@@ -54,7 +62,10 @@ export class OrderService {
       items,
       totalPrice,
       status: 'placed',
-      pickupLocation: deliveryInfo?.address || pickupLocation,
+      pickupLocation: deliveryInfo?.address,
+      paymentMethod: paymentMethod || 'cod',
+      paymentProofImage,
+      paymentStatus,
       notes,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
@@ -271,5 +282,44 @@ export class OrderService {
         .filter(o => o.status === 'completed')
         .reduce((sum, o) => sum + o.totalPrice, 0)
     };
+  }
+
+  // Verify payment proof
+  async verifyPayment(orderId: string): Promise<void> {
+    await updateDoc(doc(this.firestore, 'orders', orderId), {
+      paymentStatus: 'verified',
+      paymentVerifiedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+
+    // Get order details to notify customer
+    const order = await this.getOrderById(orderId);
+    if (order) {
+      await this.notificationService.createNotification(
+        order.customerId,
+        'Payment Verified',
+        `Your payment for order #${orderId.substring(0, 8)} has been verified. Your order will be processed soon.`,
+        'order'
+      );
+    }
+  }
+
+  // Reject payment proof
+  async rejectPayment(orderId: string, reason: string): Promise<void> {
+    await updateDoc(doc(this.firestore, 'orders', orderId), {
+      paymentStatus: 'rejected',
+      updatedAt: serverTimestamp()
+    });
+
+    // Get order details to notify customer
+    const order = await this.getOrderById(orderId);
+    if (order) {
+      await this.notificationService.createNotification(
+        order.customerId,
+        'Payment Verification Failed',
+        `Payment proof for order #${orderId.substring(0, 8)} was rejected. Reason: ${reason}. Please upload a valid payment proof.`,
+        'order'
+      );
+    }
   }
 }

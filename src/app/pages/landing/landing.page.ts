@@ -14,6 +14,13 @@ import { Router } from '@angular/router';
 export class LandingPage {
   constructor(private router: Router) {}
 
+  scrollToSection(sectionId: string) {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
   goToLogin() {
     this.router.navigate(['/auth/login']);
   }

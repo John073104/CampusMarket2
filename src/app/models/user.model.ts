@@ -12,6 +12,12 @@ export interface User {
   courseName?: string;
   studentId?: string;
   yearLevel?: string;
+  // Seller payment details
+  gcashNumber?: string;
+  gcashName?: string;
+  bankAccount?: string;
+  bankName?: string;
+  bankAccountName?: string;
 }
 
 export interface SellerApplication {

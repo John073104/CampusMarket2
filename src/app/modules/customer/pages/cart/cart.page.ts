@@ -7,6 +7,7 @@ import { CartService, CartItem } from '../../../../services/cart.service';
 import { OrderService } from '../../../../services/order.service';
 import { AuthService } from '../../../../services/auth.service';
 import { ProductService } from '../../../../services/product.service';
+import { UserService } from '../../../../services/user.service';
 
 @Component({
   selector: 'app-cart',
@@ -24,14 +25,20 @@ export class CartPage implements OnInit {
     name: '',
     phone: '',
     address: '',
-    paymentMethod: 'cash_on_delivery'
+    paymentMethod: 'cod' as 'cod' | 'gcash' | 'bank_transfer' | 'meet_and_pay',
+    paymentProofImage: ''
   };
+
+  showPaymentProofUpload: boolean = false;
+  uploadingProof: boolean = false;
+  sellerPaymentDetails: any = null;
 
   constructor(
     private cartService: CartService,
     private orderService: OrderService,
     private authService: AuthService,
     private productService: ProductService,
+    private userService: UserService,
     private router: Router,
     private alertController: AlertController,
     private toastController: ToastController
@@ -226,7 +233,8 @@ export class CartPage implements OnInit {
           orderItems,
           total,
           this.checkoutData,
-          undefined,
+          this.checkoutData.paymentMethod,
+          this.checkoutData.paymentProofImage,
           `Payment: ${this.checkoutData.paymentMethod}`
         );
         
@@ -271,6 +279,89 @@ export class CartPage implements OnInit {
 
   continueShopping() {
     this.router.navigate(['/customer/products']);
+  }
+
+  async onPaymentMethodChange() {
+    this.showPaymentProofUpload = this.checkoutData.paymentMethod === 'gcash' || this.checkoutData.paymentMethod === 'bank_transfer';
+    
+    if (this.showPaymentProofUpload && this.cartItems.length > 0) {
+      // Get seller payment details
+      const sellerId = this.cartItems[0].sellerId;
+      const seller = await this.userService.getUserById(sellerId);
+      if (seller) {
+        this.sellerPaymentDetails = {
+          gcashNumber: seller.gcashNumber,
+          gcashName: seller.gcashName,
+          bankAccount: seller.bankAccount,
+          bankName: seller.bankName,
+          bankAccountName: seller.bankAccountName
+        };
+      }
+    }
+  }
+
+  async onPaymentProofSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      const toast = await this.toastController.create({
+        message: 'Please select an image file',
+        duration: 2000,
+        color: 'warning'
+      });
+      await toast.present();
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      const toast = await this.toastController.create({
+        message: 'Image size must be less than 5MB',
+        duration: 2000,
+        color: 'warning'
+      });
+      await toast.present();
+      return;
+    }
+
+    this.uploadingProof = true;
+    try {
+      // Convert to base64
+      const base64 = await this.fileToBase64(file);
+      this.checkoutData.paymentProofImage = base64;
+      
+      const toast = await this.toastController.create({
+        message: 'Payment proof uploaded successfully',
+        duration: 2000,
+        color: 'success'
+      });
+      await toast.present();
+    } catch (error) {
+      console.error('Error uploading payment proof:', error);
+      const toast = await this.toastController.create({
+        message: 'Failed to upload image. Please try again.',
+        duration: 2000,
+        color: 'danger'
+      });
+      await toast.present();
+    } finally {
+      this.uploadingProof = false;
+    }
+  }
+
+  private fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  removePaymentProof() {
+    this.checkoutData.paymentProofImage = '';
   }
 }
 

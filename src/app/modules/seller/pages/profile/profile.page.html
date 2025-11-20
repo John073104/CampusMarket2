@@ -66,6 +66,54 @@
                 <p class="value">{{ user.phone || 'Not set' }}</p>
               </div>
             </div>
+
+            <ion-item-divider>
+              <ion-label>Payment Details</ion-label>
+            </ion-item-divider>
+
+            <div class="info-item">
+              <ion-icon name="logo-google" color="primary"></ion-icon>
+              <div>
+                <p class="label">GCash Number</p>
+                <p class="value">{{ user.gcashNumber || 'Not set' }}</p>
+              </div>
+            </div>
+
+            @if (user.gcashNumber) {
+              <div class="info-item">
+                <ion-icon name="person" color="primary"></ion-icon>
+                <div>
+                  <p class="label">GCash Account Name</p>
+                  <p class="value">{{ user.gcashName || 'Not set' }}</p>
+                </div>
+              </div>
+            }
+
+            <div class="info-item">
+              <ion-icon name="card" color="primary"></ion-icon>
+              <div>
+                <p class="label">Bank Account</p>
+                <p class="value">{{ user.bankAccount || 'Not set' }}</p>
+              </div>
+            </div>
+
+            @if (user.bankAccount) {
+              <div class="info-item">
+                <ion-icon name="business" color="primary"></ion-icon>
+                <div>
+                  <p class="label">Bank Name</p>
+                  <p class="value">{{ user.bankName || 'Not set' }}</p>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <ion-icon name="person" color="primary"></ion-icon>
+                <div>
+                  <p class="label">Bank Account Name</p>
+                  <p class="value">{{ user.bankAccountName || 'Not set' }}</p>
+                </div>
+              </div>
+            }
           } @else {
             <!-- Edit Mode -->
             <form #profileForm="ngForm">
@@ -88,6 +136,60 @@
                   type="tel"
                   placeholder="Enter phone number"
                   required>
+                </ion-input>
+              </ion-item>
+
+              <ion-item-divider>
+                <ion-label>Payment Details (Optional)</ion-label>
+              </ion-item-divider>
+
+              <ion-item>
+                <ion-label position="stacked">GCash Number</ion-label>
+                <ion-input 
+                  [(ngModel)]="profileData.gcashNumber"
+                  name="gcashNumber"
+                  type="tel"
+                  placeholder="09XX XXX XXXX">
+                </ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">GCash Account Name</ion-label>
+                <ion-input 
+                  [(ngModel)]="profileData.gcashName"
+                  name="gcashName"
+                  type="text"
+                  placeholder="Name registered on GCash">
+                </ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Bank Account Number</ion-label>
+                <ion-input 
+                  [(ngModel)]="profileData.bankAccount"
+                  name="bankAccount"
+                  type="text"
+                  placeholder="Account number">
+                </ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Bank Name</ion-label>
+                <ion-input 
+                  [(ngModel)]="profileData.bankName"
+                  name="bankName"
+                  type="text"
+                  placeholder="e.g., BPI, BDO, Metrobank">
+                </ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Bank Account Name</ion-label>
+                <ion-input 
+                  [(ngModel)]="profileData.bankAccountName"
+                  name="bankAccountName"
+                  type="text"
+                  placeholder="Name registered on bank">
                 </ion-input>
               </ion-item>
 

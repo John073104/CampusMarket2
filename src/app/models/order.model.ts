@@ -9,6 +9,10 @@ export interface Order {
   status: OrderStatus;
   pickupLocation?: string;
   notes?: string;
+  paymentMethod?: 'cod' | 'gcash' | 'bank_transfer' | 'meet_and_pay';
+  paymentProofImage?: string;
+  paymentStatus?: 'pending' | 'verified' | 'rejected';
+  paymentVerifiedAt?: any;
   createdAt: any; // Firestore Timestamp
   updatedAt: any;
 }

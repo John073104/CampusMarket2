@@ -146,6 +146,28 @@ export class UserService {
     return snapshot.docs.map(doc => doc.data() as User);
   }
 
+  // Get all sellers
+  async getSellerUsers(): Promise<User[]> {
+    const q = query(
+      collection(this.firestore, 'users'),
+      where('role', '==', 'seller'),
+      where('isActive', '==', true)
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => doc.data() as User);
+  }
+
+  // Get all customers
+  async getCustomerUsers(): Promise<User[]> {
+    const q = query(
+      collection(this.firestore, 'users'),
+      where('role', '==', 'customer'),
+      where('isActive', '==', true)
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => doc.data() as User);
+  }
+
   // Update user profile
   async updateUserProfile(
     userId: string, 

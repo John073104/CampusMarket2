@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/pages/landing/landing.page.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763460442679,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763460442679,
+            "name": "Commit-0",
+            "content": "import { Component } from '@angular/core';\r\nimport { CommonModule } from '@angular/common';\r\nimport { FormsModule } from '@angular/forms';\r\nimport { IonicModule } from '@ionic/angular';\r\nimport { Router } from '@angular/router';\r\n\r\n@Component({\r\n  selector: 'app-landing',\r\n  templateUrl: './landing.page.html',\r\n  styleUrls: ['./landing.page.scss'],\r\n  standalone: true,\r\n  imports: [CommonModule, FormsModule, IonicModule]\r\n})\r\nexport class LandingPage {\r\n  constructor(private router: Router) {}\r\n\r\n  scrollToSection(sectionId: string) {\r\n    const element = document.getElementById(sectionId);\r\n    if (element) {\r\n      element.scrollIntoView({ behavior: 'smooth', block: 'start' });\r\n    }\r\n  }\r\n\r\n  goToLogin() {\r\n    this.router.navigate(['/auth/login']);\r\n  }\r\n\r\n  goToSignup() {\r\n    this.router.navigate(['/auth/signup']);\r\n  }\r\n\r\n  goToInitDemo() {\r\n    this.router.navigate(['/init-demo']);\r\n  }\r\n}"
+        }
+    ]
+}

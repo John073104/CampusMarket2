@@ -55,6 +55,130 @@
         }
       </ion-list>
 
+      <!-- Payment Method Selection -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Payment Method</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-radio-group [(ngModel)]="checkoutData.paymentMethod" (ionChange)="onPaymentMethodChange()">
+              <ion-item>
+                <ion-radio slot="start" value="cod"></ion-radio>
+                <ion-label>
+                  <h3>Cash on Delivery (COD)</h3>
+                  <p>Pay when you receive the item</p>
+                </ion-label>
+              </ion-item>
+
+              <ion-item>
+                <ion-radio slot="start" value="gcash"></ion-radio>
+                <ion-label>
+                  <h3>GCash</h3>
+                  <p>Pay via GCash and upload proof</p>
+                </ion-label>
+              </ion-item>
+
+              <ion-item>
+                <ion-radio slot="start" value="bank_transfer"></ion-radio>
+                <ion-label>
+                  <h3>Bank Transfer</h3>
+                  <p>Transfer to seller's bank and upload proof</p>
+                </ion-label>
+              </ion-item>
+
+              <ion-item>
+                <ion-radio slot="start" value="meet_and_pay"></ion-radio>
+                <ion-label>
+                  <h3>Meet & Pay</h3>
+                  <p>Arrange meetup and pay in person</p>
+                </ion-label>
+              </ion-item>
+            </ion-radio-group>
+          </ion-list>
+
+          <!-- Seller Payment Details -->
+          @if (showPaymentProofUpload && sellerPaymentDetails) {
+            <ion-card color="light" class="payment-details-card">
+              <ion-card-header>
+                <ion-card-subtitle>Seller's Payment Details</ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                @if (checkoutData.paymentMethod === 'gcash' && sellerPaymentDetails.gcashNumber) {
+                  <div class="payment-info">
+                    <ion-icon name="logo-google" color="primary"></ion-icon>
+                    <div>
+                      <p><strong>GCash Number:</strong> {{ sellerPaymentDetails.gcashNumber }}</p>
+                      <p><strong>Account Name:</strong> {{ sellerPaymentDetails.gcashName }}</p>
+                    </div>
+                  </div>
+                }
+                
+                @if (checkoutData.paymentMethod === 'bank_transfer' && sellerPaymentDetails.bankAccount) {
+                  <div class="payment-info">
+                    <ion-icon name="card" color="primary"></ion-icon>
+                    <div>
+                      <p><strong>Bank:</strong> {{ sellerPaymentDetails.bankName }}</p>
+                      <p><strong>Account Number:</strong> {{ sellerPaymentDetails.bankAccount }}</p>
+                      <p><strong>Account Name:</strong> {{ sellerPaymentDetails.bankAccountName }}</p>
+                    </div>
+                  </div>
+                }
+
+                @if (checkoutData.paymentMethod === 'gcash' && !sellerPaymentDetails.gcashNumber) {
+                  <ion-note color="warning">Seller hasn't set up GCash yet. Please choose another method.</ion-note>
+                }
+
+                @if (checkoutData.paymentMethod === 'bank_transfer' && !sellerPaymentDetails.bankAccount) {
+                  <ion-note color="warning">Seller hasn't set up bank account yet. Please choose another method.</ion-note>
+                }
+              </ion-card-content>
+            </ion-card>
+
+            <!-- Payment Proof Upload -->
+            @if ((checkoutData.paymentMethod === 'gcash' && sellerPaymentDetails.gcashNumber) || 
+                 (checkoutData.paymentMethod === 'bank_transfer' && sellerPaymentDetails.bankAccount)) {
+              <div class="payment-proof-section">
+                <h3>Upload Payment Proof</h3>
+                <p class="hint">Screenshot or photo of your payment receipt</p>
+                
+                @if (!checkoutData.paymentProofImage) {
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    (change)="onPaymentProofSelected($event)"
+                    #fileInput
+                    style="display: none;">
+                  
+                  <ion-button 
+                    expand="block" 
+                    fill="outline"
+                    (click)="fileInput.click()"
+                    [disabled]="uploadingProof">
+                    @if (uploadingProof) {
+                      <ion-spinner name="crescent"></ion-spinner>
+                    } @else {
+                      <ion-icon name="cloud-upload" slot="start"></ion-icon>
+                      Upload Screenshot
+                    }
+                  </ion-button>
+                } @else {
+                  <div class="payment-proof-preview">
+                    <img [src]="checkoutData.paymentProofImage" alt="Payment proof" />
+                    <ion-button 
+                      fill="clear" 
+                      color="danger"
+                      (click)="removePaymentProof()">
+                      <ion-icon name="trash" slot="icon-only"></ion-icon>
+                    </ion-button>
+                  </div>
+                }
+              </div>
+            }
+          }
+        </ion-card-content>
+      </ion-card>
+
       <!-- Cart Summary -->
       <ion-card class="cart-summary">
         <ion-card-header>
@@ -74,7 +198,7 @@
             expand="block" 
             size="large"
             (click)="checkout()"
-            [disabled]="loading">
+            [disabled]="loading || (showPaymentProofUpload && !checkoutData.paymentProofImage && ((checkoutData.paymentMethod === 'gcash' && sellerPaymentDetails?.gcashNumber) || (checkoutData.paymentMethod === 'bank_transfer' && sellerPaymentDetails?.bankAccount)))">
             @if (loading) {
               <ion-spinner name="crescent"></ion-spinner>
             } @else {
@@ -82,6 +206,12 @@
               Proceed to Checkout
             }
           </ion-button>
+
+          @if (showPaymentProofUpload && !checkoutData.paymentProofImage) {
+            <ion-note color="warning" class="upload-reminder">
+              Please upload payment proof before checkout
+            </ion-note>
+          }
         </ion-card-content>
       </ion-card>
     </div>

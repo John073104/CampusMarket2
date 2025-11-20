@@ -21,7 +21,12 @@ export class ProfilePage implements OnInit {
 
   profileData = {
     name: '',
-    phone: ''
+    phone: '',
+    gcashNumber: '',
+    gcashName: '',
+    bankAccount: '',
+    bankName: '',
+    bankAccountName: ''
   };
 
   constructor(
@@ -41,7 +46,12 @@ export class ProfilePage implements OnInit {
     if (this.user) {
       this.profileData = {
         name: this.user.name || '',
-        phone: this.user.phone || ''
+        phone: this.user.phone || '',
+        gcashNumber: this.user.gcashNumber || '',
+        gcashName: this.user.gcashName || '',
+        bankAccount: this.user.bankAccount || '',
+        bankName: this.user.bankName || '',
+        bankAccountName: this.user.bankAccountName || ''
       };
     }
   }
@@ -60,7 +70,12 @@ export class ProfilePage implements OnInit {
     try {
       await this.userService.updateUserProfile(this.user.userId!, {
         name: this.profileData.name,
-        phone: this.profileData.phone
+        phone: this.profileData.phone,
+        gcashNumber: this.profileData.gcashNumber,
+        gcashName: this.profileData.gcashName,
+        bankAccount: this.profileData.bankAccount,
+        bankName: this.profileData.bankName,
+        bankAccountName: this.profileData.bankAccountName
       });
       
       this.editMode = false;

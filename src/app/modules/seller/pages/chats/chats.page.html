@@ -4,6 +4,13 @@
       <ion-back-button (click)="goBack()" [defaultHref]="selectedChat ? '' : '/seller/dashboard'"></ion-back-button>
     </ion-buttons>
     <ion-title>{{ selectedChat ? getOtherParticipantName(selectedChat) : 'Messages' }}</ion-title>
+    @if (!selectedChat) {
+      <ion-buttons slot="end">
+        <ion-button (click)="openNewChatModal()">
+          <ion-icon name="create" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    }
   </ion-toolbar>
 </ion-header>
 
@@ -19,7 +26,11 @@
       <div class="empty-state">
         <ion-icon name="chatbubbles-outline"></ion-icon>
         <h2>No Messages Yet</h2>
-        <p>Customers will message you about your products!</p>
+        <p>Start a conversation with customers or admin</p>
+        <ion-button expand="block" (click)="openNewChatModal()">
+          <ion-icon name="add" slot="start"></ion-icon>
+          Start New Chat
+        </ion-button>
       </div>
     } @else {
       <ion-list>

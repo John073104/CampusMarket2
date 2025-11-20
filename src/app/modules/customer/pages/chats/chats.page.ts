@@ -1,11 +1,13 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { ChatService } from '../../../../services/chat.service';
 import { AuthService } from '../../../../services/auth.service';
+import { UserService } from '../../../../services/user.service';
 import { Chat, Message } from '../../../../models/chat.model';
+import { User } from '../../../../models/user.model';
 
 @Component({
   selector: 'app-chats',
@@ -28,7 +30,9 @@ export class ChatsPage implements OnInit {
   constructor(
     private chatService: ChatService,
     private authService: AuthService,
-    private router: Router
+    private userService: UserService,
+    private router: Router,
+    private alertController: AlertController
   ) { }
 
   async ngOnInit() {
@@ -132,6 +136,142 @@ export class ChatsPage implements OnInit {
       this.messages = [];
     } else {
       this.router.navigate(['/customer/dashboard']);
+    }
+  }
+
+  async openNewChatModal() {
+    const alert = await this.alertController.create({
+      header: 'Start New Chat',
+      message: 'Who would you like to chat with?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Contact Admin',
+          handler: () => this.selectAdminToChat()
+        },
+        {
+          text: 'Chat with Seller',
+          handler: () => this.selectSellerToChat()
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async selectAdminToChat() {
+    try {
+      const admins = await this.userService.getAdminUsers();
+      if (admins.length === 0) {
+        const alert = await this.alertController.create({
+          header: 'No Admins Available',
+          message: 'No administrators are currently available.',
+          buttons: ['OK']
+        });
+        await alert.present();
+        return;
+      }
+
+      const inputs = admins.map(admin => ({
+        type: 'radio' as const,
+        label: admin.name || admin.email,
+        value: admin.userId
+      }));
+
+      const alert = await this.alertController.create({
+        header: 'Select Admin',
+        inputs: inputs,
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'Start Chat',
+            handler: async (adminId) => {
+              if (adminId) {
+                const admin = admins.find(a => a.userId === adminId);
+                if (admin) {
+                  await this.startNewChat(admin.userId!, admin.name || admin.email);
+                }
+              }
+            }
+          }
+        ]
+      });
+      await alert.present();
+    } catch (error) {
+      console.error('Error loading admins:', error);
+    }
+  }
+
+  async selectSellerToChat() {
+    try {
+      const sellers = await this.userService.getSellerUsers();
+      if (sellers.length === 0) {
+        const alert = await this.alertController.create({
+          header: 'No Sellers Available',
+          message: 'No sellers are currently available. Browse products to chat with sellers!',
+          buttons: ['OK']
+        });
+        await alert.present();
+        return;
+      }
+
+      const inputs = sellers.map(seller => ({
+        type: 'radio' as const,
+        label: `${seller.name || seller.email}${seller.courseName ? ' - ' + seller.courseName : ''}`,
+        value: seller.userId
+      }));
+
+      const alert = await this.alertController.create({
+        header: 'Select Seller',
+        inputs: inputs,
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'Start Chat',
+            handler: async (sellerId) => {
+              if (sellerId) {
+                const seller = sellers.find(s => s.userId === sellerId);
+                if (seller) {
+                  await this.startNewChat(seller.userId!, seller.name || seller.email);
+                }
+              }
+            }
+          }
+        ]
+      });
+      await alert.present();
+    } catch (error) {
+      console.error('Error loading sellers:', error);
+    }
+  }
+
+  async startNewChat(otherUserId: string, otherUserName: string) {
+    try {
+      const chatId = await this.chatService.getOrCreateChat(
+        this.currentUserId,
+        this.currentUserName,
+        otherUserId,
+        otherUserName
+      );
+      
+      // Navigate to the chat
+      this.router.navigate(['/customer/chat', chatId]);
+    } catch (error) {
+      console.error('Error starting chat:', error);
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'Failed to start chat. Please try again.',
+        buttons: ['OK']
+      });
+      await alert.present();
     }
   }
 }
