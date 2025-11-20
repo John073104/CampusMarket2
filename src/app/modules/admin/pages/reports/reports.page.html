@@ -45,8 +45,14 @@
                   </ion-input>
                 </ion-item>
               </ion-col>
-              <ion-col size="12" sizeMd="2" class="ion-text-center">
-                <ion-button expand="block" (click)="exportPDF()">
+              <ion-col size="6" sizeMd="2" class="ion-text-center">
+                <ion-button expand="block" (click)="printReport()" [disabled]="loading">
+                  <ion-icon name="print" slot="start"></ion-icon>
+                  Print
+                </ion-button>
+              </ion-col>
+              <ion-col size="6" sizeMd="2" class="ion-text-center">
+                <ion-button expand="block" (click)="exportPDF()" [disabled]="loading">
                   <ion-icon name="download" slot="start"></ion-icon>
                   PDF
                 </ion-button>

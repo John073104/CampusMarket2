@@ -149,6 +149,38 @@ ion-item {
   }
 }
 
+.meetup-location-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+
+  h3 {
+    margin-bottom: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ion-color-primary);
+  }
+
+  ion-item {
+    --background: white;
+    margin-bottom: 10px;
+    border-radius: 8px;
+  }
+
+  ion-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    padding: 8px;
+
+    ion-icon {
+      font-size: 18px;
+    }
+  }
+}
+
 .payment-proof-section {
   margin-top: 20px;
   padding-top: 20px;

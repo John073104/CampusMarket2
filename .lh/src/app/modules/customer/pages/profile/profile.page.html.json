@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1763384538025,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763642147106,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -94,8 +94,55 @@\n           }\r\n         </ion-card-content>\r\n       </ion-card>\r\n \r\n+      <!-- Location Card -->\r\n+      <ion-card>\r\n+        <ion-card-header>\r\n+          <ion-card-title>My Location</ion-card-title>\r\n+          <ion-card-subtitle>Set your location for better delivery experience</ion-card-subtitle>\r\n+        </ion-card-header>\r\n+\r\n+        <ion-card-content>\r\n+          @if (user.location) {\r\n+            <div class=\"location-info\">\r\n+              <ion-icon name=\"location\" color=\"primary\"></ion-icon>\r\n+              <div>\r\n+                <p><strong>Coordinates:</strong> {{ user.location.latitude | number:'1.4-4' }}, {{ user.location.longitude | number:'1.4-4' }}</p>\r\n+                @if (user.location.address) {\r\n+                  <p class=\"address\">{{ user.location.address }}</p>\r\n+                }\r\n+              </div>\r\n+            </div>\r\n+          } @else {\r\n+            <p class=\"no-location\">\r\n+              <ion-icon name=\"location-outline\"></ion-icon>\r\n+              No location set yet\r\n+            </p>\r\n+          }\r\n+\r\n+          <ion-button \r\n+            expand=\"block\" \r\n+            fill=\"outline\" \r\n+            (click)=\"toggleLocationPicker()\">\r\n+            <ion-icon [name]=\"showLocationPicker ? 'close' : 'map'\" slot=\"start\"></ion-icon>\r\n+            {{ showLocationPicker ? 'Hide Map' : (user.location ? 'Update Location' : 'Set Location') }}\r\n+          </ion-button>\r\n+\r\n+          @if (showLocationPicker) {\r\n+            <div class=\"map-wrapper\">\r\n+              <app-location-map\r\n+                [latitude]=\"user.location?.latitude || 14.5995\"\r\n+                [longitude]=\"user.location?.longitude || 120.9842\"\r\n+                [editable]=\"true\"\r\n+                [height]=\"'350px'\"\r\n+                (locationSelected)=\"onLocationSelected($event)\">\r\n+              </app-location-map>\r\n+            </div>\r\n+          }\r\n+        </ion-card-content>\r\n+      </ion-card>\r\n+\r\n       <ion-button expand=\"block\" color=\"danger\" (click)=\"logout()\">\r\n         <ion-icon name=\"log-out\" slot=\"start\"></ion-icon>\r\n         Logout\r\n       </ion-button>\r\n"
                 }
             ],
             "date": 1763384538025,

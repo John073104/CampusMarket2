@@ -1,0 +1,48 @@
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  gap: 20px;
+
+  p {
+    color: var(--ion-color-medium);
+  }
+}
+
+.filter-card {
+  margin: 16px;
+  margin-bottom: 0;
+
+  ion-segment {
+    margin-bottom: 10px;
+  }
+
+  .user-count {
+    text-align: center;
+    color: var(--ion-color-medium);
+    font-size: 0.9rem;
+    margin: 10px 0 0 0;
+  }
+}
+
+.main-map {
+  height: calc(100vh - 200px);
+  width: 100%;
+  z-index: 0;
+}
+
+:host ::ng-deep {
+  .leaflet-popup-content-wrapper {
+    border-radius: 8px;
+  }
+
+  .leaflet-popup-content {
+    margin: 12px;
+    
+    h3 {
+      color: var(--ion-color-primary);
+    }
+  }
+}

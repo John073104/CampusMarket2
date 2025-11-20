@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1763434788472,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763640119205,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -148,8 +148,40 @@\n     }\r\n   }\r\n }\r\n \r\n+.meetup-location-section {\r\n+  margin-top: 20px;\r\n+  padding: 15px;\r\n+  background: var(--ion-color-light);\r\n+  border-radius: 8px;\r\n+\r\n+  h3 {\r\n+    margin-bottom: 10px;\r\n+    font-size: 1rem;\r\n+    font-weight: 600;\r\n+    color: var(--ion-color-primary);\r\n+  }\r\n+\r\n+  ion-item {\r\n+    --background: white;\r\n+    margin-bottom: 10px;\r\n+    border-radius: 8px;\r\n+  }\r\n+\r\n+  ion-note {\r\n+    display: flex;\r\n+    align-items: center;\r\n+    gap: 8px;\r\n+    font-size: 0.85rem;\r\n+    padding: 8px;\r\n+\r\n+    ion-icon {\r\n+      font-size: 18px;\r\n+    }\r\n+  }\r\n+}\r\n+\r\n .payment-proof-section {\r\n   margin-top: 20px;\r\n   padding-top: 20px;\r\n   border-top: 1px solid var(--ion-color-light);\r\n"
                 }
             ],
             "date": 1763434788471,

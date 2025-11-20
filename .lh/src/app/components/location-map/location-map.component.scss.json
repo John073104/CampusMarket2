@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/components/location-map/location-map.component.scss",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763640468912,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763640468912,
+            "name": "Commit-0",
+            "content": ".map-container {\r\n  width: 100%;\r\n  position: relative;\r\n\r\n  .map-controls {\r\n    margin-bottom: 15px;\r\n\r\n    ion-button {\r\n      margin: 10px 0;\r\n    }\r\n\r\n    .hint {\r\n      text-align: center;\r\n      color: var(--ion-color-medium);\r\n      font-size: 0.9rem;\r\n      margin: 10px 0;\r\n    }\r\n  }\r\n\r\n  #map {\r\n    width: 100%;\r\n    border-radius: 8px;\r\n    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);\r\n    z-index: 0;\r\n  }\r\n}\r\n\r\n/* Leaflet popup styling */\r\n:host ::ng-deep {\r\n  .leaflet-container {\r\n    font-family: inherit;\r\n  }\r\n\r\n  .leaflet-popup-content-wrapper {\r\n    border-radius: 8px;\r\n  }\r\n\r\n  .leaflet-popup-content {\r\n    margin: 10px;\r\n    font-size: 14px;\r\n  }\r\n}\r\n"
+        }
+    ]
+}

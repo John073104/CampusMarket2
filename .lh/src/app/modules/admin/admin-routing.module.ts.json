@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 1,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1763388132033,
@@ -12,6 +12,10 @@
                 {
                     "date": 1763389997117,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,18 +1,23 @@\n import { NgModule } from '@angular/core';\r\n import { RouterModule, Routes } from '@angular/router';\r\n+import { AdminTabsPage } from './admin-tabs.page';\r\n \r\n const routes: Routes = [\r\n   {\r\n     path: '',\r\n-    redirectTo: 'dashboard',\r\n-    pathMatch: 'full'\r\n-  },\r\n+    component: AdminTabsPage,\r\n+    children: [\r\n+      {\r\n+        path: '',\r\n+        redirectTo: 'dashboard',\r\n+        pathMatch: 'full'\r\n+      },\r\n+      {\r\n+        path: 'dashboard',\r\n+        loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)\r\n+      },\r\n   {\r\n-    path: 'dashboard',\r\n-    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)\r\n-  },\r\n-  {\r\n     path: 'seller-applications',\r\n     loadChildren: () => import('./pages/seller-applications/seller-applications.module').then(m => m.SellerApplicationsPageModule)\r\n   },\r\n   {\r\n@@ -30,11 +35,17 @@\n   {\r\n     path: 'analytics',\r\n     loadChildren: () => import('./pages/analytics/analytics.module').then(m => m.AnalyticsPageModule)\r\n   },\r\n-  {\r\n-    path: 'reports',\r\n-    loadChildren: () => import('./pages/reports/reports.module').then(m => m.ReportsPageModule)\r\n+      {\r\n+        path: 'reports',\r\n+        loadChildren: () => import('./pages/reports/reports.module').then(m => m.ReportsPageModule)\r\n+      },\r\n+      {\r\n+        path: 'analytics',\r\n+        loadChildren: () => import('./pages/analytics/analytics.module').then(m => m.AnalyticsPageModule)\r\n+      }\r\n+    ]\r\n   }\r\n ];\r\n \r\n @NgModule({\r\n"
+                },
+                {
+                    "date": 1763641213115,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -42,8 +42,12 @@\n       },\r\n       {\r\n         path: 'analytics',\r\n         loadChildren: () => import('./pages/analytics/analytics.module').then(m => m.AnalyticsPageModule)\r\n+      },\r\n+      {\r\n+        path: 'users-map',\r\n+        loadChildren: () => import('./pages/users-map/users-map.module').then(m => m.UsersMapPageModule)\r\n       }\r\n     ]\r\n   }\r\n ];\r\n"
                 }
             ],
             "date": 1763388132033,

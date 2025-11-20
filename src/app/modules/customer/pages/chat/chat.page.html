@@ -1,13 +1,53 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>chat</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="'/customer/chats'"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ otherUserName }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">chat</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading chat...</p>
+    </div>
+  } @else {
+    <div #chatContent class="chat-messages">
+      @if (messages.length === 0) {
+        <div class="empty-chat">
+          <ion-icon name="chatbubbles-outline"></ion-icon>
+          <p>No messages yet. Start the conversation!</p>
+        </div>
+      } @else {
+        @for (message of messages; track message.messageId) {
+          <div [class]="message.senderId === currentUserId ? 'message message-sent' : 'message message-received'">
+            <div class="message-content">
+              @if (message.senderId !== currentUserId) {
+                <p class="message-sender">{{ message.senderName }}</p>
+              }
+              <p class="message-text">{{ message.text }}</p>
+              <p class="message-time">{{ message.timestamp?.toDate?.() | date:'short' }}</p>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  }
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-item lines="none">
+      <ion-input 
+        [(ngModel)]="newMessage" 
+        placeholder="Type a message..."
+        (keyup.enter)="sendMessage()"
+      ></ion-input>
+      <ion-button slot="end" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+        <ion-icon name="send" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

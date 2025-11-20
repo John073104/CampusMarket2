@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/seller/pages/orders/orders.page.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763638999725,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763638999725,
+            "name": "Commit-0",
+            "content": "import { Component, OnInit } from '@angular/core';\r\nimport { CommonModule } from '@angular/common';\r\nimport { FormsModule } from '@angular/forms';\r\nimport { IonicModule } from '@ionic/angular';\r\nimport { Router } from '@angular/router';\r\nimport { OrderService } from '../../../../services/order.service';\r\nimport { AuthService } from '../../../../services/auth.service';\r\nimport { Order, OrderStatus } from '../../../../models/order.model';\r\n\r\n@Component({\r\n  selector: 'app-orders',\r\n  templateUrl: './orders.page.html',\r\n  styleUrls: ['./orders.page.scss'],\r\n  standalone: true,\r\n  imports: [CommonModule, FormsModule, IonicModule]\r\n})\r\nexport class OrdersPage implements OnInit {\r\n  orders: Order[] = [];\r\n  loading: boolean = false;\r\n\r\n  constructor(\r\n    private orderService: OrderService,\r\n    private authService: AuthService,\r\n    private router: Router\r\n  ) { }\r\n\r\n  ngOnInit() {\r\n    this.loadOrders();\r\n  }\r\n\r\n  ionViewWillEnter() {\r\n    this.loadOrders();\r\n  }\r\n\r\n  async loadOrders() {\r\n    this.loading = true;\r\n    try {\r\n      const user = this.authService.getCurrentUser();\r\n      if (user && user.userId) {\r\n        console.log('Loading orders for seller:', user.userId);\r\n        this.orders = await this.orderService.getOrdersBySeller(user.userId);\r\n        console.log('Loaded orders:', this.orders.length);\r\n      } else {\r\n        console.error('No user found');\r\n        this.orders = [];\r\n      }\r\n    } catch (error) {\r\n      console.error('Error loading orders:', error);\r\n      this.orders = [];\r\n    } finally {\r\n      this.loading = false;\r\n    }\r\n  }\r\n\r\n  async updateStatus(orderId: string, status: OrderStatus) {\r\n    try {\r\n      await this.orderService.updateOrderStatus(orderId, status);\r\n      this.loadOrders();\r\n    } catch (error) {\r\n      console.error('Error updating status:', error);\r\n    }\r\n  }\r\n\r\n  viewOrderDetail(orderId: string) {\r\n    this.router.navigate(['/seller/order-detail', orderId]);\r\n  }\r\n\r\n  getStatusColor(status: string): string {\r\n    const colors: any = {\r\n      'placed': 'primary',\r\n      'confirmed': 'secondary',\r\n      'preparing': 'warning',\r\n      'ready': 'success',\r\n      'completed': 'success',\r\n      'cancelled': 'danger'\r\n    };\r\n    return colors[status] || 'medium';\r\n  }\r\n\r\n  formatDate(timestamp: any): string {\r\n    if (timestamp?.toDate) {\r\n      return timestamp.toDate().toLocaleDateString();\r\n    }\r\n    return 'N/A';\r\n  }\r\n}\r\n\r\n"
+        }
+    ]
+}

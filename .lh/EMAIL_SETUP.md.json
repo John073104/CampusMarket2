@@ -1,0 +1,18 @@
+{
+    "sourceFile": "EMAIL_SETUP.md",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763642327173,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763642327173,
+            "name": "Commit-0",
+            "content": "# Email Configuration Guide (EmailJS)\r\n\r\nThis application uses **EmailJS** to send order receipt emails to customers. Follow these steps to configure it:\r\n\r\n## 1. Create EmailJS Account\r\n\r\n1. Go to [https://www.emailjs.com/](https://www.emailjs.com/)\r\n2. Sign up for a **FREE** account (up to 200 emails/month)\r\n3. Verify your email address\r\n\r\n## 2. Create Email Service\r\n\r\n1. Go to **Email Services** in your EmailJS dashboard\r\n2. Click **Add New Service**\r\n3. Choose your email provider (Gmail, Outlook, Yahoo, etc.)\r\n4. Follow the connection instructions\r\n5. Copy your **Service ID** (e.g., `service_abc1234`)\r\n\r\n## 3. Create Email Template\r\n\r\n1. Go to **Email Templates**\r\n2. Click **Create New Template**\r\n3. Use this template:\r\n\r\n**Subject:** Order Confirmation - {{order_id}}\r\n\r\n**Content:**\r\n```\r\nHello {{to_name}},\r\n\r\nThank you for your order on CampusMarket!\r\n\r\nOrder ID: {{order_id}}\r\nOrder Date: {{order_date}}\r\n\r\nItems:\r\n{{items_list}}\r\n\r\nTotal Amount: {{total_amount}}\r\nPayment Method: {{payment_method}}\r\nDelivery Address: {{delivery_address}}\r\n\r\nWe'll notify you when your order status changes.\r\n\r\nBest regards,\r\nCampusMarket Team\r\n```\r\n\r\n4. Save and copy your **Template ID** (e.g., `template_xyz5678`)\r\n\r\n## 4. Get Public Key\r\n\r\n1. Go to **Account** → **General**\r\n2. Find your **Public Key** (e.g., `abcdef123456`)\r\n\r\n## 5. Update Configuration\r\n\r\nEdit `src/app/services/email.service.ts` and update these values:\r\n\r\n```typescript\r\nprivate serviceId = 'service_abc1234'; // Your Service ID\r\nprivate templateId = 'template_xyz5678'; // Your Template ID\r\nprivate publicKey = 'abcdef123456'; // Your Public Key\r\n```\r\n\r\n## 6. Test Email\r\n\r\nYou can test the email functionality by:\r\n1. Placing a test order\r\n2. Check your email inbox\r\n3. If emails don't arrive, check EmailJS dashboard logs\r\n\r\n## Features\r\n\r\n- ✅ Order confirmation emails sent automatically\r\n- ✅ Includes order details and items\r\n- ✅ FREE up to 200 emails/month\r\n- ✅ No credit card required for free tier\r\n- ✅ Works with any email provider\r\n\r\n## Troubleshooting\r\n\r\n- **Emails not sending?** Check EmailJS dashboard logs\r\n- **Wrong email format?** Verify template variables match\r\n- **Rate limit exceeded?** Upgrade EmailJS plan or reduce email sends\r\n\r\n## Free Tier Limits\r\n\r\n- 200 emails per month\r\n- 1 email service\r\n- 2 email templates\r\n- Basic support\r\n\r\nPerfect for small campus marketplace!\r\n"
+        }
+    ]
+}

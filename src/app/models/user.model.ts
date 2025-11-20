@@ -18,6 +18,12 @@ export interface User {
   bankAccount?: string;
   bankName?: string;
   bankAccountName?: string;
+  // Location information
+  location?: {
+    latitude: number;
+    longitude: number;
+    address?: string;
+  };
 }
 
 export interface SellerApplication {

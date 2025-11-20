@@ -40,6 +40,13 @@ export class DashboardPage implements OnInit {
     }
   }
 
+  ionViewWillEnter() {
+    const user = this.authService.getCurrentUser();
+    if (user && user.userId) {
+      this.loadNotifications(user.userId);
+    }
+  }
+
   async loadNotifications(userId: string) {
     try {
       // Load new orders count (placed/confirmed status)

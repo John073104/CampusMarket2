@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 2,
+            "activePatchIndex": 3,
             "patches": [
                 {
                     "date": 1763390046038,
@@ -16,6 +16,10 @@
                 {
                     "date": 1763390112210,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -96,18 +96,11 @@\n \r\n     try {\r\n       const chatId = await this.chatService.getOrCreateChat(\r\n         user.userId!,\r\n+        user.name || user.email,\r\n         this.product.sellerId,\r\n-        {\r\n-          name: user.name || user.email,\r\n-          role: user.role,\r\n-          profileImage: user.profileImage\r\n-        },\r\n-        {\r\n-          name: this.product.sellerName,\r\n-          role: 'seller'\r\n-        }\r\n+        this.product.sellerName\r\n       );\r\n       this.router.navigate([`/customer/chat/${chatId}`]);\r\n     } catch (error) {\r\n       console.error('Error creating chat:', error);\r\n"
+                },
+                {
+                    "date": 1763640119198,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -78,11 +78,31 @@\n         sellerId: this.product.sellerId,\r\n         sellerName: this.product.sellerName\r\n       };\r\n       await this.cartService.addToCart(cartItem);\r\n-      this.router.navigate(['/customer/cart']);\r\n+      \r\n+      // Show success toast\r\n+      const toast = document.createElement('ion-toast');\r\n+      toast.message = `✅ ${this.product.title} added to cart!`;\r\n+      toast.duration = 2000;\r\n+      toast.color = 'success';\r\n+      toast.position = 'top';\r\n+      document.body.appendChild(toast);\r\n+      await toast.present();\r\n+      \r\n+      // Navigate after a brief delay\r\n+      setTimeout(() => {\r\n+        this.router.navigate(['/customer/cart']);\r\n+      }, 500);\r\n     } catch (error) {\r\n       console.error('Error adding to cart:', error);\r\n+      const toast = document.createElement('ion-toast');\r\n+      toast.message = 'Failed to add to cart';\r\n+      toast.duration = 2000;\r\n+      toast.color = 'danger';\r\n+      toast.position = 'top';\r\n+      document.body.appendChild(toast);\r\n+      await toast.present();\r\n     }\r\n   }\r\n \r\n   async messageSeller() {\r\n"
                 }
             ],
             "date": 1763390046038,

@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1763434788474,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763640119200,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -96,8 +96,28 @@\n               </ion-item>\r\n             </ion-radio-group>\r\n           </ion-list>\r\n \r\n+          <!-- Meetup Location Input -->\r\n+          @if (checkoutData.paymentMethod === 'meet_and_pay') {\r\n+            <div class=\"meetup-location-section\">\r\n+              <h3>Meetup Location</h3>\r\n+              <ion-item>\r\n+                <ion-label position=\"stacked\">Where would you like to meet?</ion-label>\r\n+                <ion-textarea\r\n+                  [(ngModel)]=\"checkoutData.meetupLocation\"\r\n+                  placeholder=\"e.g., Campus Library, Main Gate, Cafeteria\"\r\n+                  rows=\"3\"\r\n+                  required\r\n+                ></ion-textarea>\r\n+              </ion-item>\r\n+              <ion-note color=\"primary\">\r\n+                <ion-icon name=\"information-circle\"></ion-icon>\r\n+                Specify a convenient and safe meeting location on campus\r\n+              </ion-note>\r\n+            </div>\r\n+          }\r\n+\r\n           <!-- Seller Payment Details -->\r\n           @if (showPaymentProofUpload && sellerPaymentDetails) {\r\n             <ion-card color=\"light\" class=\"payment-details-card\">\r\n               <ion-card-header>\r\n"
                 }
             ],
             "date": 1763434788474,

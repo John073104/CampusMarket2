@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1763384538025,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763642147105,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,20 +5,22 @@\n import { Router } from '@angular/router';\r\n import { AuthService } from '../../../../services/auth.service';\r\n import { UserService } from '../../../../services/user.service';\r\n import { User } from '../../../../models/user.model';\r\n+import { LocationMapComponent } from '../../../../components/location-map/location-map.component';\r\n \r\n @Component({\r\n   selector: 'app-profile',\r\n   templateUrl: './profile.page.html',\r\n   styleUrls: ['./profile.page.scss'],\r\n   standalone: true,\r\n-  imports: [CommonModule, FormsModule, IonicModule]\r\n+  imports: [CommonModule, FormsModule, IonicModule, LocationMapComponent]\r\n })\r\n export class ProfilePage implements OnInit {\r\n   user: User | null = null;\r\n   loading: boolean = false;\r\n   editing: boolean = false;\r\n+  showLocationPicker: boolean = false;\r\n \r\n   constructor(\r\n     private authService: AuthService,\r\n     private userService: UserService,\r\n@@ -41,9 +43,10 @@\n     this.loading = true;\r\n     try {\r\n       await this.userService.updateUserProfile(this.user.userId!, {\r\n         name: this.user.name,\r\n-        phone: this.user.phone\r\n+        phone: this.user.phone,\r\n+        location: this.user.location\r\n       });\r\n       this.editing = false;\r\n       \r\n       const toast = await this.toastController.create({\r\n@@ -66,8 +69,22 @@\n       this.loading = false;\r\n     }\r\n   }\r\n \r\n+  toggleLocationPicker() {\r\n+    this.showLocationPicker = !this.showLocationPicker;\r\n+  }\r\n+\r\n+  onLocationSelected(locationData: { latitude: number; longitude: number; address?: string }) {\r\n+    if (this.user) {\r\n+      this.user.location = {\r\n+        latitude: locationData.latitude,\r\n+        longitude: locationData.longitude,\r\n+        address: locationData.address\r\n+      };\r\n+    }\r\n+  }\r\n+\r\n   async logout() {\r\n     const alert = await this.alertController.create({\r\n       header: 'Sign Out',\r\n       message: 'Are you sure you want to sign out?',\r\n"
                 }
             ],
             "date": 1763384538025,

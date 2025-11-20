@@ -97,6 +97,26 @@
             </ion-radio-group>
           </ion-list>
 
+          <!-- Meetup Location Input -->
+          @if (checkoutData.paymentMethod === 'meet_and_pay') {
+            <div class="meetup-location-section">
+              <h3>Meetup Location</h3>
+              <ion-item>
+                <ion-label position="stacked">Where would you like to meet?</ion-label>
+                <ion-textarea
+                  [(ngModel)]="checkoutData.meetupLocation"
+                  placeholder="e.g., Campus Library, Main Gate, Cafeteria"
+                  rows="3"
+                  required
+                ></ion-textarea>
+              </ion-item>
+              <ion-note color="primary">
+                <ion-icon name="information-circle"></ion-icon>
+                Specify a convenient and safe meeting location on campus
+              </ion-note>
+            </div>
+          }
+
           <!-- Seller Payment Details -->
           @if (showPaymentProofUpload && sellerPaymentDetails) {
             <ion-card color="light" class="payment-details-card">

@@ -95,6 +95,53 @@
         </ion-card-content>
       </ion-card>
 
+      <!-- Location Card -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>My Location</ion-card-title>
+          <ion-card-subtitle>Set your location for better delivery experience</ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content>
+          @if (user.location) {
+            <div class="location-info">
+              <ion-icon name="location" color="primary"></ion-icon>
+              <div>
+                <p><strong>Coordinates:</strong> {{ user.location.latitude | number:'1.4-4' }}, {{ user.location.longitude | number:'1.4-4' }}</p>
+                @if (user.location.address) {
+                  <p class="address">{{ user.location.address }}</p>
+                }
+              </div>
+            </div>
+          } @else {
+            <p class="no-location">
+              <ion-icon name="location-outline"></ion-icon>
+              No location set yet
+            </p>
+          }
+
+          <ion-button 
+            expand="block" 
+            fill="outline" 
+            (click)="toggleLocationPicker()">
+            <ion-icon [name]="showLocationPicker ? 'close' : 'map'" slot="start"></ion-icon>
+            {{ showLocationPicker ? 'Hide Map' : (user.location ? 'Update Location' : 'Set Location') }}
+          </ion-button>
+
+          @if (showLocationPicker) {
+            <div class="map-wrapper">
+              <app-location-map
+                [latitude]="user.location?.latitude || 14.5995"
+                [longitude]="user.location?.longitude || 120.9842"
+                [editable]="true"
+                [height]="'350px'"
+                (locationSelected)="onLocationSelected($event)">
+              </app-location-map>
+            </div>
+          }
+        </ion-card-content>
+      </ion-card>
+
       <ion-button expand="block" color="danger" (click)="logout()">
         <ion-icon name="log-out" slot="start"></ion-icon>
         Logout

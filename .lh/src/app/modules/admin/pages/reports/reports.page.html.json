@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 1,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1763388132036,
@@ -12,6 +12,10 @@
                 {
                     "date": 1763389082880,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -168,9 +168,9 @@\n           <ion-list>\r\n             <ion-item>\r\n               <ion-icon name=\"time\" color=\"warning\" slot=\"start\"></ion-icon>\r\n               <ion-label>\r\n-                <h3>Pending Orders</h3>\r\n+                <h3>Placed Orders</h3>\r\n                 <p>Orders awaiting confirmation</p>\r\n               </ion-label>\r\n               <ion-badge color=\"warning\" slot=\"end\">{{ stats.pendingOrders }}</ion-badge>\r\n             </ion-item>\r\n"
+                },
+                {
+                    "date": 1763638999744,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -44,10 +44,16 @@\n                     (ionChange)=\"refreshReports()\">\r\n                   </ion-input>\r\n                 </ion-item>\r\n               </ion-col>\r\n-              <ion-col size=\"12\" sizeMd=\"2\" class=\"ion-text-center\">\r\n-                <ion-button expand=\"block\" (click)=\"exportPDF()\">\r\n+              <ion-col size=\"6\" sizeMd=\"2\" class=\"ion-text-center\">\r\n+                <ion-button expand=\"block\" (click)=\"printReport()\" [disabled]=\"loading\">\r\n+                  <ion-icon name=\"print\" slot=\"start\"></ion-icon>\r\n+                  Print\r\n+                </ion-button>\r\n+              </ion-col>\r\n+              <ion-col size=\"6\" sizeMd=\"2\" class=\"ion-text-center\">\r\n+                <ion-button expand=\"block\" (click)=\"exportPDF()\" [disabled]=\"loading\">\r\n                   <ion-icon name=\"download\" slot=\"start\"></ion-icon>\r\n                   PDF\r\n                 </ion-button>\r\n               </ion-col>\r\n"
                 }
             ],
             "date": 1763388132036,

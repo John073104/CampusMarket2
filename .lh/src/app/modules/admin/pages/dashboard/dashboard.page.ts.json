@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/admin/pages/dashboard/dashboard.page.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763642147081,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763642147081,
+            "name": "Commit-0",
+            "content": "import { Component, OnInit } from '@angular/core';\r\nimport { CommonModule } from '@angular/common';\r\nimport { FormsModule } from '@angular/forms';\r\nimport { IonicModule, AlertController } from '@ionic/angular';\r\nimport { Router, RouterModule } from '@angular/router';\r\nimport { AuthService } from '../../../../services/auth.service';\r\nimport { UserService } from '../../../../services/user.service';\r\nimport { ProductService } from '../../../../services/product.service';\r\n\r\n@Component({\r\n  selector: 'app-dashboard',\r\n  templateUrl: './dashboard.page.html',\r\n  styleUrls: ['./dashboard.page.scss'],\r\n  standalone: true,\r\n  imports: [CommonModule, FormsModule, IonicModule, RouterModule]\r\n})\r\nexport class DashboardPage implements OnInit {\r\n  userName = '';\r\n  userEmail = '';\r\n  pendingApplicationsCount = 0;\r\n  pendingProductsCount = 0;\r\n\r\n  constructor(\r\n    private router: Router,\r\n    private authService: AuthService,\r\n    private alertController: AlertController,\r\n    private userService: UserService,\r\n    private productService: ProductService\r\n  ) { }\r\n\r\n  async ngOnInit() {\r\n    const user = this.authService.getCurrentUser();\r\n    if (user) {\r\n      this.userName = user.name || user.email.split('@')[0];\r\n      this.userEmail = user.email;\r\n      await this.loadNotifications();\r\n    }\r\n  }\r\n\r\n  async loadNotifications() {\r\n    try {\r\n      // Load pending seller applications count\r\n      const applications = await this.userService.getPendingApplications();\r\n      this.pendingApplicationsCount = applications.length;\r\n\r\n      // Load pending products count\r\n      const products = await this.productService.getPendingProducts();\r\n      this.pendingProductsCount = products.length;\r\n    } catch (error) {\r\n      console.error('Error loading notifications:', error);\r\n    }\r\n  }\r\n\r\n  goToUsers() {\r\n    this.router.navigate(['/admin/users']);\r\n  }\r\n\r\n  goToSellerApplications() {\r\n    this.router.navigate(['/admin/seller-applications']);\r\n  }\r\n\r\n  goToPendingProducts() {\r\n    this.router.navigate(['/admin/pending-products']);\r\n  }\r\n\r\n  goToOrders() {\r\n    this.router.navigate(['/admin/orders']);\r\n  }\r\n\r\n  goToAnalytics() {\r\n    this.router.navigate(['/admin/analytics']);\r\n  }\r\n\r\n  goToUsersMap() {\r\n    this.router.navigate(['/admin/users-map']);\r\n  }\r\n\r\n  async logout() {\r\n    const alert = await this.alertController.create({\r\n      header: 'Sign Out',\r\n      message: 'Are you sure you want to sign out?',\r\n      buttons: [\r\n        {\r\n          text: 'Cancel',\r\n          role: 'cancel'\r\n        },\r\n        {\r\n          text: 'Sign Out',\r\n          role: 'confirm',\r\n          handler: async () => {\r\n            await this.authService.signOut();\r\n            this.router.navigate(['/landing']);\r\n          }\r\n        }\r\n      ]\r\n    });\r\n\r\n    await alert.present();\r\n  }\r\n}\r\n\r\n"
+        }
+    ]
+}

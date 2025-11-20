@@ -8,6 +8,7 @@ import { OrderService } from '../../../../services/order.service';
 import { AuthService } from '../../../../services/auth.service';
 import { ProductService } from '../../../../services/product.service';
 import { UserService } from '../../../../services/user.service';
+import { EmailService } from '../../../../services/email.service';
 
 @Component({
   selector: 'app-cart',
@@ -25,6 +26,7 @@ export class CartPage implements OnInit {
     name: '',
     phone: '',
     address: '',
+    meetupLocation: '',
     paymentMethod: 'cod' as 'cod' | 'gcash' | 'bank_transfer' | 'meet_and_pay',
     paymentProofImage: ''
   };
@@ -39,6 +41,7 @@ export class CartPage implements OnInit {
     private authService: AuthService,
     private productService: ProductService,
     private userService: UserService,
+    private emailService: EmailService,
     private router: Router,
     private alertController: AlertController,
     private toastController: ToastController
@@ -106,7 +109,31 @@ export class CartPage implements OnInit {
   async checkout() {
     if (this.cartItems.length === 0) return;
     
-    // Show checkout form first
+    // Validate payment method requirements
+    if (this.checkoutData.paymentMethod === 'meet_and_pay' && !this.checkoutData.meetupLocation) {
+      const toast = await this.toastController.create({
+        message: 'Please enter meetup location',
+        duration: 2000,
+        color: 'warning',
+        position: 'top'
+      });
+      await toast.present();
+      return;
+    }
+    
+    if ((this.checkoutData.paymentMethod === 'gcash' || this.checkoutData.paymentMethod === 'bank_transfer') && 
+        !this.checkoutData.paymentProofImage) {
+      const toast = await this.toastController.create({
+        message: 'Please upload payment proof',
+        duration: 2000,
+        color: 'warning',
+        position: 'top'
+      });
+      await toast.present();
+      return;
+    }
+    
+    // Show checkout form
     const alert = await this.alertController.create({
       header: 'Checkout Information',
       inputs: [
@@ -125,7 +152,7 @@ export class CartPage implements OnInit {
         {
           name: 'address',
           type: 'textarea',
-          placeholder: 'Delivery Address',
+          placeholder: this.checkoutData.paymentMethod === 'meet_and_pay' ? 'Your Address (Optional)' : 'Delivery Address',
           value: this.checkoutData.address
         }
       ],
@@ -137,9 +164,9 @@ export class CartPage implements OnInit {
         {
           text: 'Place Order',
           handler: async (data) => {
-            if (!data.name || !data.phone || !data.address) {
+            if (!data.name || !data.phone) {
               const toast = await this.toastController.create({
-                message: 'Please fill in all required fields',
+                message: 'Please fill in name and phone number',
                 duration: 2000,
                 color: 'warning',
                 position: 'top'
@@ -148,10 +175,20 @@ export class CartPage implements OnInit {
               return false;
             }
             
-            this.checkoutData = {
-              ...data,
-              paymentMethod: 'cash_on_delivery'
-            };
+            if (this.checkoutData.paymentMethod !== 'meet_and_pay' && !data.address) {
+              const toast = await this.toastController.create({
+                message: 'Please fill in delivery address',
+                duration: 2000,
+                color: 'warning',
+                position: 'top'
+              });
+              await toast.present();
+              return false;
+            }
+            
+            this.checkoutData.name = data.name;
+            this.checkoutData.phone = data.phone;
+            this.checkoutData.address = data.address;
             
             await this.processCheckout();
             return true;
@@ -241,13 +278,40 @@ export class CartPage implements OnInit {
         console.log('Order created successfully:', orderId);
       }
 
+      // Send email receipt
+      try {
+        const emailSent = await this.emailService.sendOrderReceipt({
+          customerEmail: user.email,
+          customerName: user.name || user.email,
+          orderId: Array.from(itemsBySeller.keys())[0], // First order ID
+          items: this.cartItems.map(item => ({
+            productName: item.productName,
+            quantity: item.quantity,
+            price: item.price
+          })),
+          totalAmount: this.getTotal(),
+          orderDate: new Date().toLocaleDateString(),
+          paymentMethod: this.checkoutData.paymentMethod,
+          deliveryAddress: this.checkoutData.paymentMethod === 'meet_and_pay' 
+            ? this.checkoutData.meetupLocation 
+            : this.checkoutData.address
+        });
+        
+        if (emailSent) {
+          console.log('Order receipt email sent successfully');
+        }
+      } catch (emailError) {
+        console.error('Failed to send email receipt:', emailError);
+        // Don't block order completion if email fails
+      }
+
       // Clear cart
       await this.cartService.clearCart();
       
       // Show success message
       const toast = await this.toastController.create({
-        message: '🎉 Order placed successfully! Track it in "My Orders"',
-        duration: 3000,
+        message: '🎉 Order placed successfully! Check your email for receipt. Track order in "My Orders"',
+        duration: 4000,
         color: 'success',
         position: 'top'
       });

@@ -1,0 +1,47 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Users Map</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="loadUsers()">
+        <ion-icon name="refresh"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading user locations...</p>
+    </div>
+  } @else {
+    <ion-card class="filter-card">
+      <ion-card-content>
+        <ion-segment [(ngModel)]="filterRole" (ionChange)="onFilterChange()">
+          <ion-segment-button value="all">
+            <ion-label>All Users</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="customer">
+            <ion-label>Customers</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="seller">
+            <ion-label>Sellers</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="admin">
+            <ion-label>Admins</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        <p class="user-count">
+          Showing {{ users.filter(u => filterRole === 'all' || u.role === filterRole).filter(u => u.location).length }} 
+          users with locations
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <div id="map" class="main-map"></div>
+  }
+</ion-content>

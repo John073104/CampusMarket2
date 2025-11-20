@@ -1,0 +1,13 @@
+<div class="map-container">
+  @if (editable) {
+    <ion-card class="map-controls">
+      <ion-button expand="block" (click)="getCurrentLocation()">
+        <ion-icon name="locate" slot="start"></ion-icon>
+        Use My Current Location
+      </ion-button>
+      <p class="hint">Click on the map or drag the marker to set your location</p>
+    </ion-card>
+  }
+  
+  <div id="map" [style.height]="height"></div>
+</div>

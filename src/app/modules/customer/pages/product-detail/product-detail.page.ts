@@ -79,9 +79,29 @@ export class ProductDetailPage implements OnInit {
         sellerName: this.product.sellerName
       };
       await this.cartService.addToCart(cartItem);
-      this.router.navigate(['/customer/cart']);
+      
+      // Show success toast
+      const toast = document.createElement('ion-toast');
+      toast.message = `✅ ${this.product.title} added to cart!`;
+      toast.duration = 2000;
+      toast.color = 'success';
+      toast.position = 'top';
+      document.body.appendChild(toast);
+      await toast.present();
+      
+      // Navigate after a brief delay
+      setTimeout(() => {
+        this.router.navigate(['/customer/cart']);
+      }, 500);
     } catch (error) {
       console.error('Error adding to cart:', error);
+      const toast = document.createElement('ion-toast');
+      toast.message = 'Failed to add to cart';
+      toast.duration = 2000;
+      toast.color = 'danger';
+      toast.position = 'top';
+      document.body.appendChild(toast);
+      await toast.present();
     }
   }
 

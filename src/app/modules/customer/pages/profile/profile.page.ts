@@ -6,18 +6,20 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
 import { UserService } from '../../../../services/user.service';
 import { User } from '../../../../models/user.model';
+import { LocationMapComponent } from '../../../../components/location-map/location-map.component';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule]
+  imports: [CommonModule, FormsModule, IonicModule, LocationMapComponent]
 })
 export class ProfilePage implements OnInit {
   user: User | null = null;
   loading: boolean = false;
   editing: boolean = false;
+  showLocationPicker: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -42,7 +44,8 @@ export class ProfilePage implements OnInit {
     try {
       await this.userService.updateUserProfile(this.user.userId!, {
         name: this.user.name,
-        phone: this.user.phone
+        phone: this.user.phone,
+        location: this.user.location
       });
       this.editing = false;
       
@@ -64,6 +67,20 @@ export class ProfilePage implements OnInit {
       await toast.present();
     } finally {
       this.loading = false;
+    }
+  }
+
+  toggleLocationPicker() {
+    this.showLocationPicker = !this.showLocationPicker;
+  }
+
+  onLocationSelected(locationData: { latitude: number; longitude: number; address?: string }) {
+    if (this.user) {
+      this.user.location = {
+        latitude: locationData.latitude,
+        longitude: locationData.longitude,
+        address: locationData.address
+      };
     }
   }
 

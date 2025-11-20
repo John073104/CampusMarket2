@@ -28,15 +28,25 @@ export class OrdersPage implements OnInit {
     this.loadOrders();
   }
 
+  ionViewWillEnter() {
+    this.loadOrders();
+  }
+
   async loadOrders() {
     this.loading = true;
     try {
       const user = this.authService.getCurrentUser();
-      if (user) {
-        this.orders = await this.orderService.getOrdersBySeller(user.userId!);
+      if (user && user.userId) {
+        console.log('Loading orders for seller:', user.userId);
+        this.orders = await this.orderService.getOrdersBySeller(user.userId);
+        console.log('Loaded orders:', this.orders.length);
+      } else {
+        console.error('No user found');
+        this.orders = [];
       }
     } catch (error) {
       console.error('Error loading orders:', error);
+      this.orders = [];
     } finally {
       this.loading = false;
     }

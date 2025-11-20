@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 1,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1763389782571,
@@ -12,6 +12,10 @@
                 {
                     "date": 1763606933042,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,11 +17,9 @@\n \r\n     <ion-tab-button tab=\"chats\">\r\n       <ion-icon name=\"chatbubbles\"></ion-icon>\r\n       <ion-label>Messages</ion-label>\r\n-      @if (unreadMessages > 0) {\r\n-        <ion-badge color=\"danger\">{{ unreadMessages }}</ion-badge>\r\n-      }\r\n+      <ion-badge color=\"danger\" *ngIf=\"unreadMessages > 0\">{{ unreadMessages }}</ion-badge>\r\n     </ion-tab-button>\r\n \r\n     <ion-tab-button tab=\"profile\">\r\n       <ion-icon name=\"person\"></ion-icon>\r\n"
+                },
+                {
+                    "date": 1763607317310,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,9 +17,11 @@\n \r\n     <ion-tab-button tab=\"chats\">\r\n       <ion-icon name=\"chatbubbles\"></ion-icon>\r\n       <ion-label>Messages</ion-label>\r\n-      <ion-badge color=\"danger\" *ngIf=\"unreadMessages > 0\">{{ unreadMessages }}</ion-badge>\r\n+      @if (unreadMessages > 0) {\r\n+        <ion-badge color=\"danger\">{{ unreadMessages }}</ion-badge>\r\n+      }\r\n     </ion-tab-button>\r\n \r\n     <ion-tab-button tab=\"profile\">\r\n       <ion-icon name=\"person\"></ion-icon>\r\n"
                 }
             ],
             "date": 1763389782571,

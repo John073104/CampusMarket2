@@ -53,3 +53,48 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+
+.location-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  margin-bottom: 15px;
+
+  ion-icon {
+    font-size: 24px;
+    margin-top: 2px;
+  }
+
+  p {
+    margin: 4px 0;
+    font-size: 0.95rem;
+  }
+
+  .address {
+    color: var(--ion-color-medium);
+    font-size: 0.9rem;
+  }
+}
+
+.no-location {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  color: var(--ion-color-medium);
+  font-style: italic;
+
+  ion-icon {
+    font-size: 24px;
+  }
+}
+
+.map-wrapper {
+  margin-top: 15px;
+  border-radius: 8px;
+  overflow: hidden;
+}

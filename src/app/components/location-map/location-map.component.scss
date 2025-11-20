@@ -1,0 +1,42 @@
+.map-container {
+  width: 100%;
+  position: relative;
+
+  .map-controls {
+    margin-bottom: 15px;
+
+    ion-button {
+      margin: 10px 0;
+    }
+
+    .hint {
+      text-align: center;
+      color: var(--ion-color-medium);
+      font-size: 0.9rem;
+      margin: 10px 0;
+    }
+  }
+
+  #map {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 0;
+  }
+}
+
+/* Leaflet popup styling */
+:host ::ng-deep {
+  .leaflet-container {
+    font-family: inherit;
+  }
+
+  .leaflet-popup-content-wrapper {
+    border-radius: 8px;
+  }
+
+  .leaflet-popup-content {
+    margin: 10px;
+    font-size: 14px;
+  }
+}

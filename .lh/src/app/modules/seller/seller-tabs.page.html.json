@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 1,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1763389846558,
@@ -12,6 +12,10 @@
                 {
                     "date": 1763606933045,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,19 +12,15 @@\n \r\n     <ion-tab-button tab=\"orders\">\r\n       <ion-icon name=\"receipt\"></ion-icon>\r\n       <ion-label>Orders</ion-label>\r\n-      @if (pendingOrders > 0) {\r\n-        <ion-badge color=\"danger\">{{ pendingOrders }}</ion-badge>\r\n-      }\r\n+      <ion-badge color=\"danger\" *ngIf=\"pendingOrders > 0\">{{ pendingOrders }}</ion-badge>\r\n     </ion-tab-button>\r\n \r\n     <ion-tab-button tab=\"chats\">\r\n       <ion-icon name=\"chatbubbles\"></ion-icon>\r\n       <ion-label>Messages</ion-label>\r\n-      @if (unreadMessages > 0) {\r\n-        <ion-badge color=\"danger\">{{ unreadMessages }}</ion-badge>\r\n-      }\r\n+      <ion-badge color=\"danger\" *ngIf=\"unreadMessages > 0\">{{ unreadMessages }}</ion-badge>\r\n     </ion-tab-button>\r\n \r\n     <ion-tab-button tab=\"profile\">\r\n       <ion-icon name=\"person\"></ion-icon>\r\n"
+                },
+                {
+                    "date": 1763607317313,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,15 +12,19 @@\n \r\n     <ion-tab-button tab=\"orders\">\r\n       <ion-icon name=\"receipt\"></ion-icon>\r\n       <ion-label>Orders</ion-label>\r\n-      <ion-badge color=\"danger\" *ngIf=\"pendingOrders > 0\">{{ pendingOrders }}</ion-badge>\r\n+      @if (pendingOrders > 0) {\r\n+        <ion-badge color=\"danger\">{{ pendingOrders }}</ion-badge>\r\n+      }\r\n     </ion-tab-button>\r\n \r\n     <ion-tab-button tab=\"chats\">\r\n       <ion-icon name=\"chatbubbles\"></ion-icon>\r\n       <ion-label>Messages</ion-label>\r\n-      <ion-badge color=\"danger\" *ngIf=\"unreadMessages > 0\">{{ unreadMessages }}</ion-badge>\r\n+      @if (unreadMessages > 0) {\r\n+        <ion-badge color=\"danger\">{{ unreadMessages }}</ion-badge>\r\n+      }\r\n     </ion-tab-button>\r\n \r\n     <ion-tab-button tab=\"profile\">\r\n       <ion-icon name=\"person\"></ion-icon>\r\n"
                 }
             ],
             "date": 1763389846558,

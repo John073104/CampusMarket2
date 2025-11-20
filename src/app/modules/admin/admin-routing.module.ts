@@ -43,6 +43,10 @@ const routes: Routes = [
       {
         path: 'analytics',
         loadChildren: () => import('./pages/analytics/analytics.module').then(m => m.AnalyticsPageModule)
+      },
+      {
+        path: 'users-map',
+        loadChildren: () => import('./pages/users-map/users-map.module').then(m => m.UsersMapPageModule)
       }
     ]
   }

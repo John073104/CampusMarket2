@@ -65,6 +65,10 @@ export class ReportsPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    // Don't load here, wait for ionViewDidEnter
+  }
+
+  ionViewDidEnter() {
     this.loadReports();
   }
 
@@ -134,10 +138,11 @@ export class ReportsPage implements OnInit {
       const data = sortedDates.map(date => salesByDate.get(date) || 0);
 
       setTimeout(() => {
-        if (this.salesChartRef) {
+        if (this.salesChartRef && this.salesChartRef.nativeElement) {
           if (this.salesChart) this.salesChart.destroy();
           
           const ctx = this.salesChartRef.nativeElement.getContext('2d');
+          if (!ctx) return;
           this.salesChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -184,10 +189,11 @@ export class ReportsPage implements OnInit {
       const counts = categories.map(cat => categoryCount.get(cat) || 0);
 
       setTimeout(() => {
-        if (this.categoryChartRef) {
+        if (this.categoryChartRef && this.categoryChartRef.nativeElement) {
           if (this.categoryChart) this.categoryChart.destroy();
           
           const ctx = this.categoryChartRef.nativeElement.getContext('2d');
+          if (!ctx) return;
           this.categoryChart = new Chart(ctx, {
             type: 'pie',
             data: {
@@ -236,10 +242,11 @@ export class ReportsPage implements OnInit {
         .slice(0, 10);
 
       setTimeout(() => {
-        if (this.topSellersChartRef) {
+        if (this.topSellersChartRef && this.topSellersChartRef.nativeElement) {
           if (this.topSellersChart) this.topSellersChart.destroy();
           
           const ctx = this.topSellersChartRef.nativeElement.getContext('2d');
+          if (!ctx) return;
           this.topSellersChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -290,10 +297,11 @@ export class ReportsPage implements OnInit {
       });
 
       setTimeout(() => {
-        if (this.statusChartRef) {
+        if (this.statusChartRef && this.statusChartRef.nativeElement) {
           if (this.statusChart) this.statusChart.destroy();
           
           const ctx = this.statusChartRef.nativeElement.getContext('2d');
+          if (!ctx) return;
           this.statusChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -332,45 +340,60 @@ export class ReportsPage implements OnInit {
   async exportPDF() {
     this.loading = true;
     try {
+      // Wait for charts to fully render
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       const element = this.reportContent.nativeElement;
+      if (!element) {
+        throw new Error('Report content not found');
+      }
+
       const canvas = await html2canvas(element, {
         scale: 2,
         logging: false,
-        useCORS: true
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
       });
 
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const imgWidth = 210; // A4 width in mm
+      const pageHeight = 297; // A4 height in mm
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
       let heightLeft = imgHeight;
       let position = 0;
 
+      // Add first page
       pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= 297; // A4 height
+      heightLeft -= pageHeight;
 
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
+      // Add additional pages if needed
+      while (heightLeft > 0) {
+        position = -pageHeight;
         pdf.addPage();
         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= 297;
+        heightLeft -= pageHeight;
       }
 
-      pdf.save(`CampusMarket-Report-${new Date().toLocaleDateString()}.pdf`);
+      const fileName = `CampusMarket-Report-${new Date().toISOString().split('T')[0]}.pdf`;
+      pdf.save(fileName);
 
       const toast = await this.toastController.create({
-        message: 'Report exported successfully!',
+        message: '📄 Report exported successfully!',
         duration: 2000,
-        color: 'success'
+        color: 'success',
+        position: 'top'
       });
       await toast.present();
     } catch (error) {
       console.error('Error exporting PDF:', error);
       const toast = await this.toastController.create({
-        message: 'Failed to export PDF',
+        message: `Failed to export PDF: ${error instanceof Error ? error.message : 'Unknown error'}`,
         duration: 3000,
-        color: 'danger'
+        color: 'danger',
+        position: 'top'
       });
       await toast.present();
     } finally {
