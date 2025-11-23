@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1763388132035,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763883756182,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,9 +25,13 @@\n   @if (!loading && products.length > 0) {\r\n     <ion-list>\r\n       @for (product of products; track product.productId) {\r\n         <ion-card>\r\n-          <img [src]=\"product.images[0] || 'assets/placeholder.png'\" [alt]=\"product.title\" />\r\n+          <img \r\n+            [src]=\"product.images[0] || 'assets/placeholder.png'\" \r\n+            [alt]=\"product.title\"\r\n+            (click)=\"openImageModal(product.images[0] || 'assets/placeholder.png')\"\r\n+            style=\"cursor: pointer; filter: none; opacity: 1;\" />\r\n           \r\n           <ion-card-header>\r\n             <ion-card-title>{{ product.title }}</ion-card-title>\r\n             <ion-card-subtitle>\r\n@@ -71,5 +75,21 @@\n         </ion-card>\r\n       }\r\n     </ion-list>\r\n   }\r\n+\r\n+  <!-- Image Modal -->\r\n+  @if (showImageModal) {\r\n+    <div class=\"image-modal\" (click)=\"closeImageModal()\">\r\n+      <div class=\"modal-content\" (click)=\"$event.stopPropagation()\">\r\n+        <ion-button \r\n+          class=\"close-button\" \r\n+          fill=\"clear\" \r\n+          color=\"light\"\r\n+          (click)=\"closeImageModal()\">\r\n+          <ion-icon name=\"close\" slot=\"icon-only\"></ion-icon>\r\n+        </ion-button>\r\n+        <img [src]=\"selectedImage\" alt=\"Product Image\" />\r\n+      </div>\r\n+    </div>\r\n+  }\r\n </ion-content>\r\n"
                 }
             ],
             "date": 1763388132035,

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, ModalController, AlertController } from '@ionic/angular';
+import { IonicModule, ModalController, AlertController, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { ChatService } from '../../../../services/chat.service';
 import { AuthService } from '../../../../services/auth.service';
@@ -32,7 +32,8 @@ export class ChatsPage implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private router: Router,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private loadingController: LoadingController
   ) { }
 
   async ngOnInit() {
@@ -46,6 +47,12 @@ export class ChatsPage implements OnInit {
     this.currentUserName = user.name || user.email;
     
     this.loadChats();
+  }
+
+  ionViewWillEnter() {
+    if (this.currentUserId) {
+      this.loadChats();
+    }
   }
 
   loadChats() {
@@ -80,7 +87,8 @@ export class ChatsPage implements OnInit {
     this.selectedChat = chat;
     if (chat.chatId) {
       this.loadMessages(chat.chatId);
-      this.chatService.markMessagesAsRead(chat.chatId, this.currentUserId);
+      this.chatService.markMessagesAsRead(chat.chatId, this.currentUserId)
+        .catch(err => console.warn('Could not mark messages as read:', err));
     }
   }
 
@@ -92,6 +100,7 @@ export class ChatsPage implements OnInit {
       },
       error: (error) => {
         console.error('Error loading messages:', error);
+        this.messages = [];
       }
     });
   }
@@ -254,7 +263,15 @@ export class ChatsPage implements OnInit {
   }
 
   async startNewChat(otherUserId: string, otherUserName: string) {
+    const loading = await this.loadingController.create({
+      message: 'Starting chat...',
+      spinner: 'crescent'
+    });
+    await loading.present();
+
     try {
+      console.log('Starting chat with:', { otherUserId, otherUserName });
+      
       const chatId = await this.chatService.getOrCreateChat(
         this.currentUserId,
         this.currentUserName,
@@ -262,14 +279,31 @@ export class ChatsPage implements OnInit {
         otherUserName
       );
       
+      console.log('Chat created/retrieved:', chatId);
+      await loading.dismiss();
+      
       // Navigate to the chat
       this.router.navigate(['/seller/chat', chatId]);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error starting chat:', error);
+      await loading.dismiss();
+      
+      const errorMessage = error?.message || 'Unknown error occurred';
       const alert = await this.alertController.create({
-        header: 'Error',
-        message: 'Failed to start chat. Please try again.',
-        buttons: ['OK']
+        header: 'Chat Error',
+        message: `Unable to start chat: ${errorMessage}. Please check your connection and try again.`,
+        buttons: [
+          {
+            text: 'Retry',
+            handler: () => {
+              this.startNewChat(otherUserId, otherUserName);
+            }
+          },
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          }
+        ]
       });
       await alert.present();
     }

@@ -133,17 +133,43 @@ export class OrderService {
 
   // Get orders by seller
   async getOrdersBySeller(sellerId: string): Promise<Order[]> {
-    const q = query(
-      collection(this.firestore, 'orders'),
-      where('sellerId', '==', sellerId),
-      orderBy('createdAt', 'desc')
-    );
-    
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      orderId: doc.id,
-      ...doc.data()
-    } as Order));
+    try {
+      const q = query(
+        collection(this.firestore, 'orders'),
+        where('sellerId', '==', sellerId),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const snapshot = await getDocs(q);
+      console.log('Seller orders found:', snapshot.size);
+      return snapshot.docs.map(doc => ({
+        orderId: doc.id,
+        ...doc.data()
+      } as Order));
+    } catch (error: any) {
+      console.warn('Composite index not available for seller orders, using fallback...', error);
+      // Fallback: Query without orderBy
+      const fallbackQuery = query(
+        collection(this.firestore, 'orders'),
+        where('sellerId', '==', sellerId)
+      );
+      
+      const snapshot = await getDocs(fallbackQuery);
+      const orders = snapshot.docs.map(doc => ({
+        orderId: doc.id,
+        ...doc.data()
+      } as Order));
+      
+      // Sort manually by createdAt
+      orders.sort((a, b) => {
+        const aTime = a.createdAt?.seconds || 0;
+        const bTime = b.createdAt?.seconds || 0;
+        return bTime - aTime;
+      });
+      
+      console.log('Seller orders (fallback):', orders.length);
+      return orders;
+    }
   }
 
   // Get all orders (Admin)
@@ -321,5 +347,16 @@ export class OrderService {
         'order'
       );
     }
+  }
+
+  // Update order details (customer can edit delivery info and notes)
+  async updateOrderDetails(orderId: string, updates: {
+    pickupLocation?: string;
+    notes?: string;
+  }): Promise<void> {
+    await updateDoc(doc(this.firestore, 'orders', orderId), {
+      ...updates,
+      updatedAt: serverTimestamp()
+    });
   }
 }

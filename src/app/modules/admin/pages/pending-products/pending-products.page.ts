@@ -16,6 +16,8 @@ import { Product } from '../../../../models/product.model';
 export class PendingProductsPage implements OnInit {
   products: Product[] = [];
   loading: boolean = false;
+  selectedImage: string = '';
+  showImageModal: boolean = false;
 
   constructor(
     private productService: ProductService,
@@ -48,6 +50,16 @@ export class PendingProductsPage implements OnInit {
     } finally {
       this.loading = false;
     }
+  }
+
+  openImageModal(imageUrl: string) {
+    this.selectedImage = imageUrl;
+    this.showImageModal = true;
+  }
+
+  closeImageModal() {
+    this.showImageModal = false;
+    this.selectedImage = '';
   }
 
   async approveProduct(productId: string) {

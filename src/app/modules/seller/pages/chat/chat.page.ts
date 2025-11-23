@@ -57,19 +57,32 @@ export class ChatPage implements OnInit, OnDestroy {
   async loadChat() {
     try {
       this.chat = await this.chatService.getChatById(this.chatId);
-      if (this.chat) {
-        const otherUserId = this.chat.participantIds.find(id => id !== this.currentUserId);
-        this.otherUserName = otherUserId ? this.chat.participantNames[otherUserId] : 'Unknown';
-        await this.chatService.markMessagesAsRead(this.chatId, this.currentUserId);
+      if (!this.chat) {
+        console.error('Chat not found');
+        this.router.navigate(['/seller/chats']);
+        return;
       }
+      const otherUserId = this.chat.participantIds.find(id => id !== this.currentUserId);
+      this.otherUserName = otherUserId ? this.chat.participantNames[otherUserId] : 'Unknown';
+      
+      // Mark as read (non-blocking)
+      this.chatService.markMessagesAsRead(this.chatId, this.currentUserId)
+        .catch(err => console.warn('Could not mark messages as read:', err));
+      
       this.loading = false;
     } catch (error) {
       console.error('Error loading chat:', error);
       this.loading = false;
+      this.router.navigate(['/seller/chats']);
     }
   }
 
   loadMessages() {
+    if (!this.chatId) {
+      console.error('No chat ID provided');
+      return;
+    }
+    
     this.messagesSubscription = this.chatService.getMessages(this.chatId).subscribe({
       next: (messages) => {
         this.messages = messages;
@@ -77,6 +90,7 @@ export class ChatPage implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error loading messages:', error);
+        this.messages = [];
       }
     });
   }

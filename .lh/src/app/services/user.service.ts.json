@@ -3,11 +3,19 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1763461219138,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763889659873,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -172,7 +172,22 @@\n   async updateUserProfile(\r\n     userId: string, \r\n     updates: Partial<User>\r\n   ): Promise<void> {\r\n-    await updateDoc(doc(this.firestore, 'users', userId), updates);\r\n+    try {\r\n+      console.log('UserService: Updating user', userId, 'with data:', updates);\r\n+      const userRef = doc(this.firestore, 'users', userId);\r\n+      \r\n+      // Add updatedAt timestamp\r\n+      const updateData = {\r\n+        ...updates,\r\n+        updatedAt: serverTimestamp()\r\n+      };\r\n+      \r\n+      await updateDoc(userRef, updateData);\r\n+      console.log('UserService: Profile updated successfully');\r\n+    } catch (error: any) {\r\n+      console.error('UserService: Error updating profile:', error);\r\n+      throw new Error(`Failed to update profile: ${error.message || 'Unknown error'}`);\r\n+    }\r\n   }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1763889847531,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -176,14 +176,24 @@\n     try {\r\n       console.log('UserService: Updating user', userId, 'with data:', updates);\r\n       const userRef = doc(this.firestore, 'users', userId);\r\n       \r\n+      // Filter out undefined values (Firestore doesn't accept undefined)\r\n+      const cleanUpdates: any = {};\r\n+      Object.keys(updates).forEach(key => {\r\n+        const value = (updates as any)[key];\r\n+        if (value !== undefined) {\r\n+          cleanUpdates[key] = value;\r\n+        }\r\n+      });\r\n+      \r\n       // Add updatedAt timestamp\r\n       const updateData = {\r\n-        ...updates,\r\n+        ...cleanUpdates,\r\n         updatedAt: serverTimestamp()\r\n       };\r\n       \r\n+      console.log('UserService: Cleaned update data:', updateData);\r\n       await updateDoc(userRef, updateData);\r\n       console.log('UserService: Profile updated successfully');\r\n     } catch (error: any) {\r\n       console.error('UserService: Error updating profile:', error);\r\n"
                 }
             ],
             "date": 1763461219138,

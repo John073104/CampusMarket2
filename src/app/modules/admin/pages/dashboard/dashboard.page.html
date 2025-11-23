@@ -2,6 +2,9 @@
   <ion-toolbar color="danger">
     <ion-title>Admin Dashboard</ion-title>
     <ion-buttons slot="end">
+      <ion-button (click)="goToProfile()">
+        <ion-icon name="person-circle"></ion-icon>
+      </ion-button>
       <ion-button (click)="logout()">
         <ion-icon name="log-out"></ion-icon>
       </ion-button>
@@ -80,6 +83,16 @@
               <ion-icon name="map" color="secondary" class="big-icon"></ion-icon>
               <h2>Users Map</h2>
               <p>View user locations</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <ion-card button (click)="goToMessages()">
+            <ion-card-content>
+              <ion-icon name="chatbubbles" color="tertiary" class="big-icon"></ion-icon>
+              <h2>Messages</h2>
+              <p>View all platform messages</p>
             </ion-card-content>
           </ion-card>
         </ion-col>

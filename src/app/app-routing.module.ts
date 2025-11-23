@@ -41,6 +41,12 @@ const routes: Routes = [
   {
     path: 'init-demo',
     loadChildren: () => import('./pages/init-demo/init-demo.module').then( m => m.InitDemoPageModule)
+  },
+  {
+    path: 'fix-products',
+    loadChildren: () => import('./pages/fix-products/fix-products.module').then( m => m.FixProductsPageModule),
+    canActivate: [AuthGuard],
+    data: { roles: ['admin'] }
   }
 ];
 

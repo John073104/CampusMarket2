@@ -1,0 +1,123 @@
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 20px;
+  
+  p {
+    color: var(--ion-color-medium);
+    font-size: 16px;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  text-align: center;
+  padding: 20px;
+  
+  ion-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    color: var(--ion-color-dark);
+    margin: 10px 0;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin-bottom: 30px;
+  }
+}
+
+.content-container {
+  padding: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.info-card {
+  margin-bottom: 20px;
+  
+  ion-card-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    ion-icon {
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+    
+    p {
+      margin: 0;
+      flex: 1;
+    }
+  }
+}
+
+ion-card {
+  margin-bottom: 16px;
+}
+
+.problem-name {
+  color: var(--ion-color-danger);
+  font-size: 18px;
+}
+
+.product-details {
+  margin-bottom: 16px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  
+  ion-icon {
+    font-size: 18px;
+  }
+  
+  span {
+    font-size: 14px;
+    color: var(--ion-color-dark);
+  }
+}
+
+.suggestion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  
+  ion-icon {
+    font-size: 20px;
+  }
+  
+  span {
+    font-size: 14px;
+    font-style: italic;
+    color: var(--ion-color-medium-shade);
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  
+  ion-button {
+    flex: 1;
+  }
+}

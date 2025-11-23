@@ -7,9 +7,9 @@ import emailjs from '@emailjs/browser';
 export class EmailService {
   // EmailJS Configuration
   // Sign up at https://www.emailjs.com/ and get your credentials
-  private serviceId = 'service_xxxxxxx'; // Replace with your EmailJS service ID
-  private templateId = 'template_xxxxxxx'; // Replace with your EmailJS template ID
-  private publicKey = 'YOUR_PUBLIC_KEY'; // Replace with your EmailJS public key
+  private serviceId = 'service_jyyi7e2'; // Replace with your EmailJS service ID
+  private templateId = 'template_96rsgmv'; // Replace with your EmailJS template ID
+  private publicKey = '889ioeKjOwcpQ-K7F'; // Replacewith your EmailJS public key
 
   constructor() {
     // Initialize EmailJS with your public key

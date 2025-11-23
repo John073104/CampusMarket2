@@ -78,6 +78,9 @@ export class ProfilePage implements OnInit {
         bankAccountName: this.profileData.bankAccountName
       });
       
+      // Refresh the user data from AuthService
+      await this.authService.refreshCurrentUser();
+      
       this.editMode = false;
       this.loadProfile();
       

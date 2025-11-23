@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from 'src/app/services/order.service';
 import { ChatService } from 'src/app/services/chat.service';
@@ -19,13 +19,20 @@ export class OrderDetailPage implements OnInit {
   order: Order | null = null;
   loading = false;
   orderId = '';
+  isEditing = false;
+  editData = {
+    pickupLocation: '',
+    notes: ''
+  };
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private orderService: OrderService,
     private chatService: ChatService,
-    private authService: AuthService
+    private authService: AuthService,
+    private alertController: AlertController,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
@@ -76,6 +83,117 @@ export class OrderDetailPage implements OnInit {
       this.router.navigate([`/customer/chat/${chatId}`]);
     } catch (error) {
       console.error('Error creating chat:', error);
+    }
+  }
+
+  canCancelOrder(): boolean {
+    return this.order?.status === 'placed' || this.order?.status === 'confirmed';
+  }
+
+  canEditOrder(): boolean {
+    return this.order?.status === 'placed';
+  }
+
+  async cancelOrder() {
+    if (!this.order) return;
+
+    const alert = await this.alertController.create({
+      header: 'Cancel Order',
+      message: 'Are you sure you want to cancel this order? This action cannot be undone.',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel'
+        },
+        {
+          text: 'Yes, Cancel Order',
+          role: 'destructive',
+          handler: async () => {
+            await this.performCancelOrder();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async performCancelOrder() {
+    if (!this.order?.orderId) return;
+
+    this.loading = true;
+    try {
+      await this.orderService.cancelOrder(this.order.orderId);
+      
+      const toast = await this.toastController.create({
+        message: 'Order cancelled successfully',
+        duration: 2000,
+        color: 'success',
+        position: 'top'
+      });
+      await toast.present();
+      
+      // Reload order to show updated status
+      await this.loadOrder();
+    } catch (error) {
+      console.error('Error cancelling order:', error);
+      const toast = await this.toastController.create({
+        message: 'Failed to cancel order. Please try again.',
+        duration: 3000,
+        color: 'danger',
+        position: 'top'
+      });
+      await toast.present();
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  startEditOrder() {
+    if (!this.order) return;
+    
+    this.isEditing = true;
+    this.editData = {
+      pickupLocation: this.order.pickupLocation || '',
+      notes: this.order.notes || ''
+    };
+  }
+
+  cancelEdit() {
+    this.isEditing = false;
+  }
+
+  async saveOrderChanges() {
+    if (!this.order?.orderId) return;
+
+    this.loading = true;
+    try {
+      await this.orderService.updateOrderDetails(this.order.orderId, {
+        pickupLocation: this.editData.pickupLocation,
+        notes: this.editData.notes
+      });
+      
+      const toast = await this.toastController.create({
+        message: 'Order updated successfully',
+        duration: 2000,
+        color: 'success',
+        position: 'top'
+      });
+      await toast.present();
+      
+      this.isEditing = false;
+      await this.loadOrder();
+    } catch (error) {
+      console.error('Error updating order:', error);
+      const toast = await this.toastController.create({
+        message: 'Failed to update order. Please try again.',
+        duration: 3000,
+        color: 'danger',
+        position: 'top'
+      });
+      await toast.present();
+    } finally {
+      this.loading = false;
     }
   }
 }

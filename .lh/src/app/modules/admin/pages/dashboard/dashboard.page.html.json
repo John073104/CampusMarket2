@@ -3,11 +3,23 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 3,
             "patches": [
                 {
                     "date": 1763642147093,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763884980871,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -82,8 +82,18 @@\n               <p>View user locations</p>\r\n             </ion-card-content>\r\n           </ion-card>\r\n         </ion-col>\r\n+\r\n+        <ion-col size=\"12\" size-md=\"6\">\r\n+          <ion-card button (click)=\"goToFixProducts()\">\r\n+            <ion-card-content>\r\n+              <ion-icon name=\"construct\" color=\"warning\" class=\"big-icon\"></ion-icon>\r\n+              <h2>Fix Product Names</h2>\r\n+              <p>Fix incorrect product names</p>\r\n+            </ion-card-content>\r\n+          </ion-card>\r\n+        </ion-col>\r\n       </ion-row>\r\n     </ion-grid>\r\n   </div>\r\n </ion-content>\r\n"
+                },
+                {
+                    "date": 1763885282826,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,11 @@\n <ion-header>\r\n   <ion-toolbar color=\"danger\">\r\n     <ion-title>Admin Dashboard</ion-title>\r\n     <ion-buttons slot=\"end\">\r\n+      <ion-button (click)=\"goToProfile()\">\r\n+        <ion-icon name=\"person-circle\"></ion-icon>\r\n+      </ion-button>\r\n       <ion-button (click)=\"logout()\">\r\n         <ion-icon name=\"log-out\"></ion-icon>\r\n       </ion-button>\r\n     </ion-buttons>\r\n"
+                },
+                {
+                    "date": 1763885776736,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -87,13 +87,13 @@\n           </ion-card>\r\n         </ion-col>\r\n \r\n         <ion-col size=\"12\" size-md=\"6\">\r\n-          <ion-card button (click)=\"goToFixProducts()\">\r\n+          <ion-card button (click)=\"goToMessages()\">\r\n             <ion-card-content>\r\n-              <ion-icon name=\"construct\" color=\"warning\" class=\"big-icon\"></ion-icon>\r\n-              <h2>Fix Product Names</h2>\r\n-              <p>Fix incorrect product names</p>\r\n+              <ion-icon name=\"chatbubbles\" color=\"tertiary\" class=\"big-icon\"></ion-icon>\r\n+              <h2>Messages</h2>\r\n+              <p>View all platform messages</p>\r\n             </ion-card-content>\r\n           </ion-card>\r\n         </ion-col>\r\n       </ion-row>\r\n"
                 }
             ],
             "date": 1763642147093,

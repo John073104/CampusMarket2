@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1763638999725,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763644267302,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -56,28 +56,42 @@\n \r\n   async loadChat() {\r\n     try {\r\n       this.chat = await this.chatService.getChatById(this.chatId);\r\n-      if (this.chat) {\r\n-        const otherUserId = this.chat.participantIds.find(id => id !== this.currentUserId);\r\n-        this.otherUserName = otherUserId ? this.chat.participantNames[otherUserId] : 'Unknown';\r\n-        await this.chatService.markMessagesAsRead(this.chatId, this.currentUserId);\r\n+      if (!this.chat) {\r\n+        console.error('Chat not found');\r\n+        this.router.navigate(['/customer/chats']);\r\n+        return;\r\n       }\r\n+      const otherUserId = this.chat.participantIds.find(id => id !== this.currentUserId);\r\n+      this.otherUserName = otherUserId ? this.chat.participantNames[otherUserId] : 'Unknown';\r\n+      \r\n+      // Mark as read (non-blocking)\r\n+      this.chatService.markMessagesAsRead(this.chatId, this.currentUserId)\r\n+        .catch(err => console.warn('Could not mark messages as read:', err));\r\n+      \r\n       this.loading = false;\r\n     } catch (error) {\r\n       console.error('Error loading chat:', error);\r\n       this.loading = false;\r\n+      this.router.navigate(['/customer/chats']);\r\n     }\r\n   }\r\n \r\n   loadMessages() {\r\n+    if (!this.chatId) {\r\n+      console.error('No chat ID provided');\r\n+      return;\r\n+    }\r\n+    \r\n     this.messagesSubscription = this.chatService.getMessages(this.chatId).subscribe({\r\n       next: (messages) => {\r\n         this.messages = messages;\r\n         setTimeout(() => this.scrollToBottom(), 100);\r\n       },\r\n       error: (error) => {\r\n         console.error('Error loading messages:', error);\r\n+        this.messages = [];\r\n       }\r\n     });\r\n   }\r\n \r\n"
                 }
             ],
             "date": 1763638999725,

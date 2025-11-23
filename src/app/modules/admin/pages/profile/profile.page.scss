@@ -1,0 +1,103 @@
+.profile-container {
+  padding: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.profile-header {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, var(--ion-color-danger-tint), var(--ion-color-danger-shade));
+  border-radius: 12px;
+  margin-bottom: 20px;
+  color: white;
+
+  .large-avatar {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1rem;
+    border: 4px solid white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+    border-radius: 50%;
+
+    ion-icon {
+      color: white;
+      font-size: 56px;
+    }
+  }
+
+  h2 {
+    margin: 0.5rem 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  p {
+    margin: 0.25rem 0 1rem 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+  }
+
+  ion-badge {
+    font-weight: 600;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    
+    ion-icon {
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+  }
+}
+
+ion-card {
+  margin-bottom: 16px;
+}
+
+.edit-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+ion-list ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  
+  ion-label {
+    margin: 8px 0;
+  }
+
+  h3 {
+    font-weight: 600;
+    margin: 0 0 4px 0;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+}
+
+ion-note {
+  font-size: 0.75rem;
+  margin-top: 4px;
+}

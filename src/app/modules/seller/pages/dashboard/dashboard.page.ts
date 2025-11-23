@@ -55,6 +55,10 @@ export class DashboardPage implements OnInit {
         ['placed', 'confirmed'].includes(o.status)
       ).length;
 
+      // Fix any incorrect unread counts (run in background)
+      this.chatService.fixUnreadCounts(userId)
+        .catch(err => console.warn('Could not fix unread counts:', err));
+
       // Load unread messages count
       this.unreadMessagesCount = await this.chatService.getTotalUnreadCount(userId);
 

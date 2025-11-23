@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/app-routing.module.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763884980164,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763884980164,
+            "name": "Commit-0",
+            "content": "import { NgModule } from '@angular/core';\nimport { PreloadAllModules, RouterModule, Routes } from '@angular/router';\nimport { AuthGuard } from './guards/auth.guard';\n\nconst routes: Routes = [\n  {\n    path: '',\n    redirectTo: 'landing',\n    pathMatch: 'full'\n  },\n  {\n    path: 'landing',\n    loadChildren: () => import('./pages/landing/landing.module').then( m => m.LandingPageModule)\n  },\n  {\n    path: 'auth/login',\n    loadChildren: () => import('./modules/auth/login/login.module').then( m => m.LoginPageModule)\n  },\n  {\n    path: 'auth/signup',\n    loadChildren: () => import('./modules/auth/signup/signup.module').then( m => m.SignupPageModule)\n  },\n  {\n    path: 'customer',\n    loadChildren: () => import('./modules/customer/customer.module').then( m => m.CustomerModule),\n    canActivate: [AuthGuard],\n    data: { roles: ['customer', 'seller'] }\n  },\n  {\n    path: 'seller',\n    loadChildren: () => import('./modules/seller/seller.module').then( m => m.SellerModule),\n    canActivate: [AuthGuard],\n    data: { roles: ['seller'] }\n  },\n  {\n    path: 'admin',\n    loadChildren: () => import('./modules/admin/admin.module').then( m => m.AdminModule),\n    canActivate: [AuthGuard],\n    data: { roles: ['admin'] }\n  },\n  {\n    path: 'init-demo',\n    loadChildren: () => import('./pages/init-demo/init-demo.module').then( m => m.InitDemoPageModule)\n  },\n  {\n    path: 'fix-products',\n    loadChildren: () => import('./pages/fix-products/fix-products.module').then( m => m.FixProductsPageModule),\n    canActivate: [AuthGuard],\n    data: { roles: ['admin'] }\n  }\n];\n\n@NgModule({\n  imports: [\n    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })\n  ],\n  exports: [RouterModule]\n})\nexport class AppRoutingModule { }\n"
+        }
+    ]
+}

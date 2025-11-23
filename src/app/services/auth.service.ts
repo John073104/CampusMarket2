@@ -191,6 +191,22 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  async refreshCurrentUser(): Promise<void> {
+    const currentUser = this.currentUserSubject.value;
+    if (currentUser && currentUser.userId) {
+      try {
+        const userDoc = await getDoc(doc(this.firestore, 'users', currentUser.userId));
+        if (userDoc.exists()) {
+          const userData = userDoc.data() as User;
+          this.currentUserSubject.next(userData);
+          localStorage.setItem('currentUser', JSON.stringify(userData));
+        }
+      } catch (error) {
+        console.error('Error refreshing user:', error);
+      }
+    }
+  }
+
   isAuthenticated(): boolean {
     return this.currentUserSubject.value !== null;
   }

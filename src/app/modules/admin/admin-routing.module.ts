@@ -47,6 +47,14 @@ const routes: Routes = [
       {
         path: 'users-map',
         loadChildren: () => import('./pages/users-map/users-map.module').then(m => m.UsersMapPageModule)
+      },
+      {
+        path: 'profile',
+        loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule)
+      },
+      {
+        path: 'messages',
+        loadChildren: () => import('./pages/messages/messages.module').then(m => m.MessagesPageModule)
       }
     ]
   }

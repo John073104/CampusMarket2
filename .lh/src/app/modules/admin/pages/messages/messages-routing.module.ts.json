@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/admin/pages/messages/messages-routing.module.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763886735597,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763886735597,
+            "name": "Commit-0",
+            "content": "import { NgModule } from '@angular/core';\r\nimport { Routes, RouterModule } from '@angular/router';\r\nimport { MessagesPage } from './messages.page';\r\n\r\nconst routes: Routes = [\r\n  {\r\n    path: '',\r\n    component: MessagesPage\r\n  }\r\n];\r\n\r\n@NgModule({\r\n  imports: [RouterModule.forChild(routes)],\r\n  exports: [RouterModule],\r\n})\r\nexport class MessagesPageRoutingModule {}\r\n"
+        }
+    ]
+}

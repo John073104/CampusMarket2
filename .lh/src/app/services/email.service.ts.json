@@ -3,11 +3,19 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1763640468897,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763883254118,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,11 +6,11 @@\n })\r\n export class EmailService {\r\n   // EmailJS Configuration\r\n   // Sign up at https://www.emailjs.com/ and get your credentials\r\n-  private serviceId = 'service_xxxxxxx'; // Replace with your EmailJS service ID\r\n-  private templateId = 'template_xxxxxxx'; // Replace with your EmailJS template ID\r\n-  private publicKey = 'YOUR_PUBLIC_KEY'; // Replace with your EmailJS public key\r\n+  private serviceId = 'service_jyyi7e2'; // Replace with your EmailJS service ID\r\n+  private templateId = ''; // Replace with your EmailJS template ID\r\n+  private publicKey = '889ioeKjOwcpQ-K7F'; // Replacewith your EmailJS public key\r\n \r\n   constructor() {\r\n     // Initialize EmailJS with your public key\r\n     emailjs.init(this.publicKey);\r\n"
+                },
+                {
+                    "date": 1763883283815,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,9 +7,9 @@\n export class EmailService {\r\n   // EmailJS Configuration\r\n   // Sign up at https://www.emailjs.com/ and get your credentials\r\n   private serviceId = 'service_jyyi7e2'; // Replace with your EmailJS service ID\r\n-  private templateId = ''; // Replace with your EmailJS template ID\r\n+  private templateId = 'template_96rsgmv'; // Replace with your EmailJS template ID\r\n   private publicKey = '889ioeKjOwcpQ-K7F'; // Replacewith your EmailJS public key\r\n \r\n   constructor() {\r\n     // Initialize EmailJS with your public key\r\n"
                 }
             ],
             "date": 1763640468897,

@@ -3,11 +3,23 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 3,
             "patches": [
                 {
                     "date": 1763642147081,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763885056255,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -74,8 +74,12 @@\n   goToUsersMap() {\r\n     this.router.navigate(['/admin/users-map']);\r\n   }\r\n \r\n+  goToFixProducts() {\r\n+    this.router.navigate(['/fix-products']);\r\n+  }\r\n+\r\n   async logout() {\r\n     const alert = await this.alertController.create({\r\n       header: 'Sign Out',\r\n       message: 'Are you sure you want to sign out?',\r\n"
+                },
+                {
+                    "date": 1763885282820,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -78,8 +78,12 @@\n   goToFixProducts() {\r\n     this.router.navigate(['/fix-products']);\r\n   }\r\n \r\n+  goToProfile() {\r\n+    this.router.navigate(['/admin/profile']);\r\n+  }\r\n+\r\n   async logout() {\r\n     const alert = await this.alertController.create({\r\n       header: 'Sign Out',\r\n       message: 'Are you sure you want to sign out?',\r\n"
+                },
+                {
+                    "date": 1763885776734,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -74,10 +74,10 @@\n   goToUsersMap() {\r\n     this.router.navigate(['/admin/users-map']);\r\n   }\r\n \r\n-  goToFixProducts() {\r\n-    this.router.navigate(['/fix-products']);\r\n+  goToMessages() {\r\n+    this.router.navigate(['/admin/messages']);\r\n   }\r\n \r\n   goToProfile() {\r\n     this.router.navigate(['/admin/profile']);\r\n"
                 }
             ],
             "date": 1763642147081,

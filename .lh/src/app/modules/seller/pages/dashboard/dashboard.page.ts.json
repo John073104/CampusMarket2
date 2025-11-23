@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1763638999724,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763884300193,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -54,8 +54,12 @@\n       this.newOrdersCount = orders.filter(o => \r\n         ['placed', 'confirmed'].includes(o.status)\r\n       ).length;\r\n \r\n+      // Fix any incorrect unread counts (run in background)\r\n+      this.chatService.fixUnreadCounts(userId)\r\n+        .catch(err => console.warn('Could not fix unread counts:', err));\r\n+\r\n       // Load unread messages count\r\n       this.unreadMessagesCount = await this.chatService.getTotalUnreadCount(userId);\r\n \r\n       // Load low stock products (quantity <= 5)\r\n"
                 }
             ],
             "date": 1763638999724,

@@ -37,6 +37,10 @@ export class AnalyticsPage implements OnInit {
     await this.loadAnalytics();
   }
 
+  ionViewWillEnter() {
+    this.loadAnalytics();
+  }
+
   getStatusColor(status: string): string {
     const colors: any = {
       'placed': 'warning',

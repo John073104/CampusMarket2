@@ -3,11 +3,19 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1763641024717,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763643294926,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -122,8 +122,15 @@\n   onFilterChange() {\r\n     this.updateMapMarkers();\r\n   }\r\n \r\n+  getFilteredUsersWithLocationCount(): number {\r\n+    const filtered = this.filterRole === 'all' \r\n+      ? this.users \r\n+      : this.users.filter(u => u.role === this.filterRole);\r\n+    return filtered.filter(u => u.location).length;\r\n+  }\r\n+\r\n   ngOnDestroy() {\r\n     if (this.map) {\r\n       this.map.remove();\r\n       this.map = null;\r\n"
+                },
+                {
+                    "date": 1763883756134,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,10 +26,15 @@\n   }\r\n \r\n   ngAfterViewInit() {\r\n     setTimeout(() => {\r\n-      this.initializeMap();\r\n-    }, 100);\r\n+      const mapContainer = document.getElementById('map');\r\n+      if (mapContainer) {\r\n+        this.initializeMap();\r\n+      } else {\r\n+        console.error('Map container not found');\r\n+      }\r\n+    }, 300);\r\n   }\r\n \r\n   async loadUsers() {\r\n     this.loading = true;\r\n@@ -43,33 +48,43 @@\n     }\r\n   }\r\n \r\n   private initializeMap() {\r\n-    // Fix Leaflet icon issue\r\n-    const iconRetinaUrl = 'assets/marker-icon-2x.png';\r\n-    const iconUrl = 'assets/marker-icon.png';\r\n-    const shadowUrl = 'assets/marker-shadow.png';\r\n-    const iconDefault = L.icon({\r\n-      iconRetinaUrl,\r\n-      iconUrl,\r\n-      shadowUrl,\r\n-      iconSize: [25, 41],\r\n-      iconAnchor: [12, 41],\r\n-      popupAnchor: [1, -34],\r\n-      tooltipAnchor: [16, -28],\r\n-      shadowSize: [41, 41]\r\n-    });\r\n-    L.Marker.prototype.options.icon = iconDefault;\r\n+    try {\r\n+      // Fix Leaflet icon issue\r\n+      const iconRetinaUrl = 'assets/marker-icon-2x.png';\r\n+      const iconUrl = 'assets/marker-icon.png';\r\n+      const shadowUrl = 'assets/marker-shadow.png';\r\n+      const iconDefault = L.icon({\r\n+        iconRetinaUrl,\r\n+        iconUrl,\r\n+        shadowUrl,\r\n+        iconSize: [25, 41],\r\n+        iconAnchor: [12, 41],\r\n+        popupAnchor: [1, -34],\r\n+        tooltipAnchor: [16, -28],\r\n+        shadowSize: [41, 41]\r\n+      });\r\n+      L.Marker.prototype.options.icon = iconDefault;\r\n \r\n-    // Default center: Philippines\r\n-    this.map = L.map('map').setView([14.5995, 120.9842], 12);\r\n+      // Check if map already exists and remove it\r\n+      if (this.map) {\r\n+        this.map.remove();\r\n+        this.map = null;\r\n+      }\r\n \r\n-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\r\n-      attribution: '© OpenStreetMap contributors',\r\n-      maxZoom: 19\r\n-    }).addTo(this.map);\r\n+      // Default center: Philippines\r\n+      this.map = L.map('map').setView([14.5995, 120.9842], 12);\r\n \r\n-    this.updateMapMarkers();\r\n+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\r\n+        attribution: '© OpenStreetMap contributors',\r\n+        maxZoom: 19\r\n+      }).addTo(this.map);\r\n+\r\n+      this.updateMapMarkers();\r\n+    } catch (error) {\r\n+      console.error('Error initializing map:', error);\r\n+    }\r\n   }\r\n \r\n   private updateMapMarkers() {\r\n     if (!this.map) return;\r\n"
                 }
             ],
             "date": 1763641024717,

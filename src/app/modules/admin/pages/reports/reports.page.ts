@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
@@ -28,7 +28,7 @@ interface CategoryData {
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule]
 })
-export class ReportsPage implements OnInit {
+export class ReportsPage implements OnInit, AfterViewInit {
   @ViewChild('salesChart') salesChartRef!: ElementRef;
   @ViewChild('categoryChart') categoryChartRef!: ElementRef;
   @ViewChild('topSellersChart') topSellersChartRef!: ElementRef;
@@ -65,11 +65,28 @@ export class ReportsPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Don't load here, wait for ionViewDidEnter
+    console.log('Reports page initialized');
+  }
+
+  ngAfterViewInit() {
+    console.log('View initialized, loading reports...');
+    // Small delay to ensure view is fully rendered
+    setTimeout(() => {
+      this.loadReports();
+    }, 100);
   }
 
   ionViewDidEnter() {
-    this.loadReports();
+    console.log('View entered, refreshing charts...');
+    // Refresh charts when returning to page
+    if (this.salesChart || this.categoryChart || this.topSellersChart || this.statusChart) {
+      this.refreshCharts();
+    }
+  }
+
+  private refreshCharts() {
+    // Trigger window resize to force charts to render
+    window.dispatchEvent(new Event('resize'));
   }
 
   async loadReports() {
@@ -137,12 +154,27 @@ export class ReportsPage implements OnInit {
 
       const data = sortedDates.map(date => salesByDate.get(date) || 0);
 
+      // If no data, use sample data for demo
+      if (sortedDates.length === 0) {
+        console.warn('No sales data available, using sample data');
+        sortedDates.push('No data');
+        data.push(0);
+      }
+
       setTimeout(() => {
+        console.log('Creating sales chart...', !!this.salesChartRef);
         if (this.salesChartRef && this.salesChartRef.nativeElement) {
-          if (this.salesChart) this.salesChart.destroy();
+          if (this.salesChart) {
+            console.log('Destroying existing sales chart');
+            this.salesChart.destroy();
+          }
           
           const ctx = this.salesChartRef.nativeElement.getContext('2d');
-          if (!ctx) return;
+          if (!ctx) {
+            console.error('Failed to get 2d context for sales chart');
+            return;
+          }
+          console.log('Rendering sales chart with', sortedDates.length, 'data points');
           this.salesChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -188,12 +220,27 @@ export class ReportsPage implements OnInit {
       const categories = Array.from(categoryCount.keys());
       const counts = categories.map(cat => categoryCount.get(cat) || 0);
 
+      // If no data, use sample data for demo
+      if (categories.length === 0) {
+        console.warn('No category data available, using sample data');
+        categories.push('No products');
+        counts.push(0);
+      }
+
       setTimeout(() => {
+        console.log('Creating category chart...', !!this.categoryChartRef);
         if (this.categoryChartRef && this.categoryChartRef.nativeElement) {
-          if (this.categoryChart) this.categoryChart.destroy();
+          if (this.categoryChart) {
+            console.log('Destroying existing category chart');
+            this.categoryChart.destroy();
+          }
           
           const ctx = this.categoryChartRef.nativeElement.getContext('2d');
-          if (!ctx) return;
+          if (!ctx) {
+            console.error('Failed to get 2d context for category chart');
+            return;
+          }
+          console.log('Rendering category chart with', categories.length, 'categories');
           this.categoryChart = new Chart(ctx, {
             type: 'pie',
             data: {
@@ -241,12 +288,26 @@ export class ReportsPage implements OnInit {
         .sort((a, b) => b.total - a.total)
         .slice(0, 10);
 
+      // If no data, use sample data for demo
+      if (topSellers.length === 0) {
+        console.warn('No seller data available, using sample data');
+        topSellers.push({ name: 'No sellers', total: 0 });
+      }
+
       setTimeout(() => {
+        console.log('Creating top sellers chart...', !!this.topSellersChartRef);
         if (this.topSellersChartRef && this.topSellersChartRef.nativeElement) {
-          if (this.topSellersChart) this.topSellersChart.destroy();
+          if (this.topSellersChart) {
+            console.log('Destroying existing top sellers chart');
+            this.topSellersChart.destroy();
+          }
           
           const ctx = this.topSellersChartRef.nativeElement.getContext('2d');
-          if (!ctx) return;
+          if (!ctx) {
+            console.error('Failed to get 2d context for top sellers chart');
+            return;
+          }
+          console.log('Rendering top sellers chart with', topSellers.length, 'sellers');
           this.topSellersChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -297,11 +358,19 @@ export class ReportsPage implements OnInit {
       });
 
       setTimeout(() => {
+        console.log('Creating status chart...', !!this.statusChartRef);
         if (this.statusChartRef && this.statusChartRef.nativeElement) {
-          if (this.statusChart) this.statusChart.destroy();
+          if (this.statusChart) {
+            console.log('Destroying existing status chart');
+            this.statusChart.destroy();
+          }
           
           const ctx = this.statusChartRef.nativeElement.getContext('2d');
-          if (!ctx) return;
+          if (!ctx) {
+            console.error('Failed to get 2d context for status chart');
+            return;
+          }
+          console.log('Rendering status chart');
           this.statusChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -403,6 +472,10 @@ export class ReportsPage implements OnInit {
 
   async refreshReports() {
     await this.loadReports();
+    // Force charts to re-render after data refresh
+    setTimeout(() => {
+      this.refreshCharts();
+    }, 500);
   }
 
   ngOnDestroy() {

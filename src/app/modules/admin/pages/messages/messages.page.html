@@ -1,0 +1,92 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>My Messages</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="loadAllChats()">
+        <ion-icon name="refresh"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  
+  <ion-toolbar>
+    <ion-searchbar 
+      [(ngModel)]="searchTerm" 
+      (ionInput)="filterChats()"
+      placeholder="Search conversations...">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading messages...</p>
+    </div>
+  } @else if (filteredChats.length === 0) {
+    <div class="empty-state">
+      <ion-icon name="chatbubbles-outline" size="large"></ion-icon>
+      <h2>No Messages Found</h2>
+      @if (searchTerm) {
+        <p>No conversations match "{{ searchTerm }}"</p>
+        <ion-button (click)="searchTerm = ''; filterChats()">
+          Clear Search
+        </ion-button>
+      } @else {
+        <p>No messages yet. Users can contact you for support.</p>
+      }
+    </div>
+  } @else {
+    <div class="messages-container">
+      <ion-card class="info-card">
+        <ion-card-content>
+          <ion-icon name="information-circle" color="primary"></ion-icon>
+          <p><strong>{{ filteredChats.length }}</strong> conversation(s)</p>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-list>
+        @for (chat of filteredChats; track chat.chatId) {
+          <ion-card>
+            <ion-item button (click)="viewChat(chat)">
+              <ion-icon name="chatbubble-ellipses" slot="start" color="tertiary"></ion-icon>
+              <ion-label>
+                <h2>{{ getParticipantNames(chat) }}</h2>
+                <p class="last-message">{{ chat.lastMessage || 'No messages yet' }}</p>
+                @if (getLastMessageTime(chat)) {
+                  <p class="message-time">
+                    <ion-icon name="time-outline"></ion-icon>
+                    {{ getLastMessageTime(chat) | date:'short' }}
+                  </p>
+                }
+              </ion-label>
+              @if (getTotalUnreadCount(chat) > 0) {
+                <ion-badge color="danger" slot="end">
+                  {{ getTotalUnreadCount(chat) }} unread
+                </ion-badge>
+              }
+            </ion-item>
+
+            <ion-card-content>
+              <div class="chat-details">
+                <div class="detail-item">
+                  <ion-icon name="people" color="medium"></ion-icon>
+                  <span><strong>Chat ID:</strong> {{ chat.chatId?.slice(-8) }}</span>
+                </div>
+                @if (chat.orderId) {
+                  <div class="detail-item">
+                    <ion-icon name="receipt" color="medium"></ion-icon>
+                    <span><strong>Order:</strong> #{{ chat.orderId.slice(-8) }}</span>
+                  </div>
+                }
+              </div>
+            </ion-card-content>
+          </ion-card>
+        }
+      </ion-list>
+    </div>
+  }
+</ion-content>

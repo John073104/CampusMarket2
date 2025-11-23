@@ -3,11 +3,19 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1763460442678,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763643503747,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n <!-- Top Navigation Bar -->\r\n <ion-header class=\"landing-header\" [translucent]=\"true\">\r\n-  <ion-toolbar color=\"primary\">\r\n+  <ion-toolbar color=\"\">\r\n     <div class=\"nav-container\">\r\n       <div class=\"logo\" (click)=\"scrollToSection('hero')\">\r\n         <ion-icon name=\"storefront\"></ion-icon>\r\n         <span>Campus Market</span>\r\n"
+                },
+                {
+                    "date": 1763643579750,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n <!-- Top Navigation Bar -->\r\n <ion-header class=\"landing-header\" [translucent]=\"true\">\r\n-  <ion-toolbar color=\"\">\r\n+  <ion-toolbar color=\"primary\">\r\n     <div class=\"nav-container\">\r\n       <div class=\"logo\" (click)=\"scrollToSection('hero')\">\r\n         <ion-icon name=\"storefront\"></ion-icon>\r\n         <span>Campus Market</span>\r\n"
                 }
             ],
             "date": 1763460442678,

@@ -72,5 +72,18 @@ export class OrdersPage implements OnInit {
     }
     return 'N/A';
   }
+
+  getOrderItemsDisplay(order: Order): string {
+    if (order.items.length === 1) {
+      const item = order.items[0];
+      const productName = item.productName;
+      // Check if product name looks valid (not empty, not just seller name)
+      if (productName && productName.trim().length > 0) {
+        return `${productName} × ${item.quantity}`;
+      }
+      return `Product × ${item.quantity}`;
+    }
+    return `${order.items.length} items`;
+  }
 }
 

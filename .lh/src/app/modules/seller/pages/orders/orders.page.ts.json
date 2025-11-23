@@ -3,11 +3,23 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 3,
             "patches": [
                 {
                     "date": 1763638999725,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763883833614,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -37,10 +37,18 @@\n     try {\r\n       const user = this.authService.getCurrentUser();\r\n       if (user && user.userId) {\r\n         console.log('Loading orders for seller:', user.userId);\r\n-        this.orders = await this.orderService.getOrdersBySeller(user.userId);\r\n-        console.log('Loaded orders:', this.orders.length);\r\n+        try {\r\n+          this.orders = await this.orderService.getOrdersBySeller(user.userId);\r\n+          console.log('Loaded orders:', this.orders.length);\r\n+        } catch (error: any) {\r\n+          console.warn('Error loading orders, retrying...', error);\r\n+          // Retry once after a short delay\r\n+          await new Promise(resolve => setTimeout(resolve, 1000));\r\n+          this.orders = await this.orderService.getOrdersBySeller(user.userId);\r\n+          console.log('Loaded orders (retry):', this.orders.length);\r\n+        }\r\n       } else {\r\n         console.error('No user found');\r\n         this.orders = [];\r\n       }\r\n"
+                },
+                {
+                    "date": 1763884667879,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -90,6 +90,13 @@\n       return timestamp.toDate().toLocaleDateString();\r\n     }\r\n     return 'N/A';\r\n   }\r\n+\r\n+  getOrderItemsDisplay(order: Order): string {\r\n+    if (order.items.length === 1) {\r\n+      return order.items[0].productName;\r\n+    }\r\n+    return `${order.items.length} items`;\r\n+  }\r\n }\r\n \r\n"
+                },
+                {
+                    "date": 1763884980883,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -93,9 +93,15 @@\n   }\r\n \r\n   getOrderItemsDisplay(order: Order): string {\r\n     if (order.items.length === 1) {\r\n-      return order.items[0].productName;\r\n+      const item = order.items[0];\r\n+      const productName = item.productName;\r\n+      // Check if product name looks valid (not empty, not just seller name)\r\n+      if (productName && productName.trim().length > 0) {\r\n+        return `${productName} × ${item.quantity}`;\r\n+      }\r\n+      return `Product × ${item.quantity}`;\r\n     }\r\n     return `${order.items.length} items`;\r\n   }\r\n }\r\n"
                 }
             ],
             "date": 1763638999725,

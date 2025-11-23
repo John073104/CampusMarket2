@@ -38,15 +38,20 @@ export class ProfilePage implements OnInit {
   }
 
   async saveProfile() {
-    if (!this.user) return;
+    if (!this.user || !this.user.userId) return;
     
     this.loading = true;
     try {
-      await this.userService.updateUserProfile(this.user.userId!, {
+      await this.userService.updateUserProfile(this.user.userId, {
         name: this.user.name,
         phone: this.user.phone,
         location: this.user.location
       });
+      
+      // Refresh the user data
+      await this.authService.refreshCurrentUser();
+      this.user = this.authService.getCurrentUser();
+      
       this.editing = false;
       
       const toast = await this.toastController.create({

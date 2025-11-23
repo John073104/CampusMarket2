@@ -40,10 +40,22 @@
 
 .chart-container {
   height: 300px;
+  min-height: 300px;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   canvas {
     max-height: 300px;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+  .no-data-message {
+    text-align: center;
+    color: var(--ion-color-medium);
+    padding: 40px;
   }
 }
 

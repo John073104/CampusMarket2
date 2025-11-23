@@ -38,8 +38,16 @@ export class OrdersPage implements OnInit {
       const user = this.authService.getCurrentUser();
       if (user && user.userId) {
         console.log('Loading orders for seller:', user.userId);
-        this.orders = await this.orderService.getOrdersBySeller(user.userId);
-        console.log('Loaded orders:', this.orders.length);
+        try {
+          this.orders = await this.orderService.getOrdersBySeller(user.userId);
+          console.log('Loaded orders:', this.orders.length);
+        } catch (error: any) {
+          console.warn('Error loading orders, retrying...', error);
+          // Retry once after a short delay
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          this.orders = await this.orderService.getOrdersBySeller(user.userId);
+          console.log('Loaded orders (retry):', this.orders.length);
+        }
       } else {
         console.error('No user found');
         this.orders = [];
@@ -82,6 +90,19 @@ export class OrdersPage implements OnInit {
       return timestamp.toDate().toLocaleDateString();
     }
     return 'N/A';
+  }
+
+  getOrderItemsDisplay(order: Order): string {
+    if (order.items.length === 1) {
+      const item = order.items[0];
+      const productName = item.productName;
+      // Check if product name looks valid (not empty, not just seller name)
+      if (productName && productName.trim().length > 0) {
+        return `${productName} × ${item.quantity}`;
+      }
+      return `Product × ${item.quantity}`;
+    }
+    return `${order.items.length} items`;
   }
 }
 

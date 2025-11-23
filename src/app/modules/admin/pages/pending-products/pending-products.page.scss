@@ -32,6 +32,12 @@ ion-card {
     width: 100%;
     height: 250px;
     object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.2s;
+    
+    &:hover {
+      transform: scale(1.02);
+    }
   }
 
   .description {
@@ -63,5 +69,39 @@ ion-card {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     margin-top: 15px;
+  }
+}
+
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  
+  .modal-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    
+    img {
+      width: 100%;
+      height: auto;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+    
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      --background: rgba(0, 0, 0, 0.5);
+      z-index: 10000;
+    }
   }
 }

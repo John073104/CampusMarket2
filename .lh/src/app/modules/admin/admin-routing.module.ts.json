@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 2,
+            "activePatchIndex": 4,
             "patches": [
                 {
                     "date": 1763388132033,
@@ -16,6 +16,14 @@
                 {
                     "date": 1763641213115,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -42,8 +42,12 @@\n       },\r\n       {\r\n         path: 'analytics',\r\n         loadChildren: () => import('./pages/analytics/analytics.module').then(m => m.AnalyticsPageModule)\r\n+      },\r\n+      {\r\n+        path: 'users-map',\r\n+        loadChildren: () => import('./pages/users-map/users-map.module').then(m => m.UsersMapPageModule)\r\n       }\r\n     ]\r\n   }\r\n ];\r\n"
+                },
+                {
+                    "date": 1763885282839,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -46,8 +46,12 @@\n       },\r\n       {\r\n         path: 'users-map',\r\n         loadChildren: () => import('./pages/users-map/users-map.module').then(m => m.UsersMapPageModule)\r\n+      },\r\n+      {\r\n+        path: 'profile',\r\n+        loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule)\r\n       }\r\n     ]\r\n   }\r\n ];\r\n"
+                },
+                {
+                    "date": 1763886735700,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -50,8 +50,12 @@\n       },\r\n       {\r\n         path: 'profile',\r\n         loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule)\r\n+      },\r\n+      {\r\n+        path: 'messages',\r\n+        loadChildren: () => import('./pages/messages/messages.module').then(m => m.MessagesPageModule)\r\n       }\r\n     ]\r\n   }\r\n ];\r\n"
                 }
             ],
             "date": 1763388132033,

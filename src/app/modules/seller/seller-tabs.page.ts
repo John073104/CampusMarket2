@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
-import { NotificationService } from 'src/app/services/notification.service';
+import { ChatService } from 'src/app/services/chat.service';
 import { OrderService } from 'src/app/services/order.service';
 import { interval, Subscription } from 'rxjs';
 
@@ -21,7 +21,7 @@ export class SellerTabsPage implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private notificationService: NotificationService,
+    private chatService: ChatService,
     private orderService: OrderService
   ) {}
 
@@ -33,12 +33,26 @@ export class SellerTabsPage implements OnInit {
     }
   }
 
+  ionViewWillEnter() {
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.updateCounts(user.userId);
+    }
+  }
+
   private async updateCounts(userId: string) {
     try {
-      const unread = await this.notificationService.getUnreadCount(userId);
+      // Fix unread counts first (in background)
+      this.chatService.fixUnreadCounts(userId)
+        .catch(err => console.warn('Could not fix unread counts:', err));
+      
+      // Get chat unread count
+      const unread = await this.chatService.getTotalUnreadCount(userId);
       this.unreadMessages = unread;
+      console.log('Seller tab - unread messages:', unread);
     } catch (err) {
-      console.error('Failed to get unread notifications:', err);
+      console.error('Failed to get unread messages:', err);
+      this.unreadMessages = 0;
     }
 
     try {

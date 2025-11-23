@@ -1,0 +1,22 @@
+{
+    "sourceFile": "src/app/modules/customer/pages/orders/orders.page.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1763883484456,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763884980901,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -74,9 +74,15 @@\n   }\r\n \r\n   getOrderItemsDisplay(order: Order): string {\r\n     if (order.items.length === 1) {\r\n-      return order.items[0].productName;\r\n+      const item = order.items[0];\r\n+      const productName = item.productName;\r\n+      // Check if product name looks valid (not empty, not just seller name)\r\n+      if (productName && productName.trim().length > 0) {\r\n+        return `${productName} × ${item.quantity}`;\r\n+      }\r\n+      return `Product × ${item.quantity}`;\r\n     }\r\n     return `${order.items.length} items`;\r\n   }\r\n }\r\n"
+                }
+            ],
+            "date": 1763883484456,
+            "name": "Commit-0",
+            "content": "import { Component, OnInit } from '@angular/core';\r\nimport { CommonModule } from '@angular/common';\r\nimport { FormsModule } from '@angular/forms';\r\nimport { IonicModule } from '@ionic/angular';\r\nimport { Router } from '@angular/router';\r\nimport { OrderService } from '../../../../services/order.service';\r\nimport { AuthService } from '../../../../services/auth.service';\r\nimport { Order } from '../../../../models/order.model';\r\n\r\n@Component({\r\n  selector: 'app-orders',\r\n  templateUrl: './orders.page.html',\r\n  styleUrls: ['./orders.page.scss'],\r\n  standalone: true,\r\n  imports: [CommonModule, FormsModule, IonicModule]\r\n})\r\nexport class OrdersPage implements OnInit {\r\n  orders: Order[] = [];\r\n  loading: boolean = false;\r\n  selectedStatus: string = 'all';\r\n\r\n  constructor(\r\n    private orderService: OrderService,\r\n    private authService: AuthService,\r\n    private router: Router\r\n  ) { }\r\n\r\n  ngOnInit() {\r\n    this.loadOrders();\r\n  }\r\n\r\n  async loadOrders() {\r\n    this.loading = true;\r\n    try {\r\n      const user = this.authService.getCurrentUser();\r\n      if (user) {\r\n        this.orders = await this.orderService.getOrdersByCustomer(user.userId!);\r\n      }\r\n    } catch (error) {\r\n      console.error('Error loading orders:', error);\r\n    } finally {\r\n      this.loading = false;\r\n    }\r\n  }\r\n\r\n  getFilteredOrders(): Order[] {\r\n    if (this.selectedStatus === 'all') {\r\n      return this.orders;\r\n    }\r\n    return this.orders.filter(order => order.status === this.selectedStatus);\r\n  }\r\n\r\n  viewOrderDetail(orderId: string) {\r\n    this.router.navigate(['/customer/order-detail', orderId]);\r\n  }\r\n\r\n  getStatusColor(status: string): string {\r\n    const colors: any = {\r\n      'placed': 'primary',\r\n      'confirmed': 'secondary',\r\n      'preparing': 'warning',\r\n      'ready': 'success',\r\n      'completed': 'success',\r\n      'cancelled': 'danger'\r\n    };\r\n    return colors[status] || 'medium';\r\n  }\r\n\r\n  formatDate(timestamp: any): string {\r\n    if (timestamp?.toDate) {\r\n      return timestamp.toDate().toLocaleDateString();\r\n    }\r\n    return 'N/A';\r\n  }\r\n\r\n  getOrderItemsDisplay(order: Order): string {\r\n    if (order.items.length === 1) {\r\n      return order.items[0].productName;\r\n    }\r\n    return `${order.items.length} items`;\r\n  }\r\n}\r\n\r\n"
+        }
+    ]
+}

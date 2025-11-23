@@ -75,6 +75,14 @@ export class DashboardPage implements OnInit {
     this.router.navigate(['/admin/users-map']);
   }
 
+  goToMessages() {
+    this.router.navigate(['/admin/messages']);
+  }
+
+  goToProfile() {
+    this.router.navigate(['/admin/profile']);
+  }
+
   async logout() {
     const alert = await this.alertController.create({
       header: 'Sign Out',

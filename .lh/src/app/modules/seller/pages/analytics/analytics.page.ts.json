@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app/modules/seller/pages/analytics/analytics.page.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1763883833615,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1763883833615,
+            "name": "Commit-0",
+            "content": "import { Component, OnInit } from '@angular/core';\r\nimport { CommonModule } from '@angular/common';\r\nimport { FormsModule } from '@angular/forms';\r\nimport { IonicModule } from '@ionic/angular';\r\nimport { OrderService } from '../../../../services/order.service';\r\nimport { ProductService } from '../../../../services/product.service';\r\nimport { AuthService } from '../../../../services/auth.service';\r\n\r\n@Component({\r\n  selector: 'app-analytics',\r\n  templateUrl: './analytics.page.html',\r\n  styleUrls: ['./analytics.page.scss'],\r\n  standalone: true,\r\n  imports: [CommonModule, FormsModule, IonicModule]\r\n})\r\nexport class AnalyticsPage implements OnInit {\r\n  loading: boolean = true;\r\n  \r\n  stats = {\r\n    totalOrders: 0,\r\n    totalRevenue: 0,\r\n    totalProducts: 0,\r\n    activeProducts: 0,\r\n    pendingOrders: 0,\r\n    completedOrders: 0\r\n  };\r\n\r\n  recentOrders: any[] = [];\r\n\r\n  constructor(\r\n    private orderService: OrderService,\r\n    private productService: ProductService,\r\n    private authService: AuthService\r\n  ) { }\r\n\r\n  async ngOnInit() {\r\n    await this.loadAnalytics();\r\n  }\r\n\r\n  ionViewWillEnter() {\r\n    this.loadAnalytics();\r\n  }\r\n\r\n  getStatusColor(status: string): string {\r\n    const colors: any = {\r\n      'placed': 'warning',\r\n      'confirmed': 'primary',\r\n      'ready_for_pickup': 'secondary',\r\n      'completed': 'success',\r\n      'cancelled': 'danger'\r\n    };\r\n    return colors[status] || 'medium';\r\n  }\r\n\r\n  async loadAnalytics() {\r\n    this.loading = true;\r\n    try {\r\n      const user = this.authService.getCurrentUser();\r\n      if (!user) return;\r\n\r\n      // Get seller orders\r\n      const orders = await this.orderService.getOrdersBySeller(user.userId!);\r\n      \r\n      // Calculate stats\r\n      this.stats.totalOrders = orders.length;\r\n      this.stats.totalRevenue = orders\r\n        .filter(o => o.status === 'completed')\r\n        .reduce((sum, o) => sum + o.totalPrice, 0);\r\n      this.stats.pendingOrders = orders.filter(o => \r\n        o.status === 'placed' || o.status === 'confirmed'\r\n      ).length;\r\n      this.stats.completedOrders = orders.filter(o => \r\n        o.status === 'completed'\r\n      ).length;\r\n\r\n      // Get recent orders (last 5)\r\n      this.recentOrders = orders\r\n        .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())\r\n        .slice(0, 5);\r\n\r\n      // Get products\r\n      const products = await this.productService.getProductsBySeller(user.userId!);\r\n      this.stats.totalProducts = products.length;\r\n      this.stats.activeProducts = products.filter(p => p.approved).length;\r\n\r\n    } catch (error) {\r\n      console.error('Error loading analytics:', error);\r\n    } finally {\r\n      this.loading = false;\r\n    }\r\n  }\r\n\r\n  async doRefresh(event: any) {\r\n    await this.loadAnalytics();\r\n    event.target.complete();\r\n  }\r\n}\r\n\r\n"
+        }
+    ]
+}

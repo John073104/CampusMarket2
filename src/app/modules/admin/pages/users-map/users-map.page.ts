@@ -27,8 +27,13 @@ export class UsersMapPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     setTimeout(() => {
-      this.initializeMap();
-    }, 100);
+      const mapContainer = document.getElementById('map');
+      if (mapContainer) {
+        this.initializeMap();
+      } else {
+        console.error('Map container not found');
+      }
+    }, 300);
   }
 
   async loadUsers() {
@@ -44,31 +49,41 @@ export class UsersMapPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initializeMap() {
-    // Fix Leaflet icon issue
-    const iconRetinaUrl = 'assets/marker-icon-2x.png';
-    const iconUrl = 'assets/marker-icon.png';
-    const shadowUrl = 'assets/marker-shadow.png';
-    const iconDefault = L.icon({
-      iconRetinaUrl,
-      iconUrl,
-      shadowUrl,
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      tooltipAnchor: [16, -28],
-      shadowSize: [41, 41]
-    });
-    L.Marker.prototype.options.icon = iconDefault;
+    try {
+      // Fix Leaflet icon issue
+      const iconRetinaUrl = 'assets/marker-icon-2x.png';
+      const iconUrl = 'assets/marker-icon.png';
+      const shadowUrl = 'assets/marker-shadow.png';
+      const iconDefault = L.icon({
+        iconRetinaUrl,
+        iconUrl,
+        shadowUrl,
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        tooltipAnchor: [16, -28],
+        shadowSize: [41, 41]
+      });
+      L.Marker.prototype.options.icon = iconDefault;
 
-    // Default center: Philippines
-    this.map = L.map('map').setView([14.5995, 120.9842], 12);
+      // Check if map already exists and remove it
+      if (this.map) {
+        this.map.remove();
+        this.map = null;
+      }
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 19
-    }).addTo(this.map);
+      // Default center: Philippines
+      this.map = L.map('map').setView([14.5995, 120.9842], 12);
 
-    this.updateMapMarkers();
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(this.map);
+
+      this.updateMapMarkers();
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
   }
 
   private updateMapMarkers() {
@@ -121,6 +136,13 @@ export class UsersMapPage implements OnInit, AfterViewInit, OnDestroy {
 
   onFilterChange() {
     this.updateMapMarkers();
+  }
+
+  getFilteredUsersWithLocationCount(): number {
+    const filtered = this.filterRole === 'all' 
+      ? this.users 
+      : this.users.filter(u => u.role === this.filterRole);
+    return filtered.filter(u => u.location).length;
   }
 
   ngOnDestroy() {

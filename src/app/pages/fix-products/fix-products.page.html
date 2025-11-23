@@ -1,0 +1,99 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Fix Product Names</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="scanProducts()" [disabled]="loading">
+        <ion-icon name="refresh"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Scanning products...</p>
+    </div>
+  }
+
+  @if (!loading && issues.length === 0) {
+    <div class="empty-state">
+      <ion-icon name="checkmark-circle" color="success" size="large"></ion-icon>
+      <h2>All Products Look Good!</h2>
+      <p>No products with suspicious names found</p>
+      <ion-button (click)="scanProducts()">
+        <ion-icon name="refresh" slot="start"></ion-icon>
+        Scan Again
+      </ion-button>
+    </div>
+  }
+
+  @if (!loading && issues.length > 0) {
+    <div class="content-container">
+      <ion-card class="info-card">
+        <ion-card-content>
+          <ion-icon name="alert-circle" color="warning"></ion-icon>
+          <p>
+            <strong>Found {{ issues.length }} product(s)</strong> with names that look like seller names instead of actual product names.
+          </p>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-list>
+        @for (issue of issues; track issue.productId) {
+          <ion-card>
+            <ion-card-header>
+              <ion-card-subtitle>
+                <ion-icon name="alert-circle" color="warning"></ion-icon>
+                Product ID: {{ issue.productId }}
+              </ion-card-subtitle>
+              <ion-card-title class="problem-name">
+                "{{ issue.currentName }}"
+              </ion-card-title>
+            </ion-card-header>
+
+            <ion-card-content>
+              <div class="product-details">
+                <div class="detail-row">
+                  <ion-icon name="person" color="medium"></ion-icon>
+                  <span><strong>Seller:</strong> {{ issue.sellerName }}</span>
+                </div>
+                
+                <div class="detail-row">
+                  <ion-icon name="pricetag" color="medium"></ion-icon>
+                  <span><strong>Category:</strong> {{ issue.category }}</span>
+                </div>
+                
+                <div class="detail-row">
+                  <ion-icon name="cash" color="medium"></ion-icon>
+                  <span><strong>Price:</strong> ₱{{ issue.price.toFixed(2) }}</span>
+                </div>
+                
+                <div class="detail-row">
+                  <ion-icon name="cube" color="medium"></ion-icon>
+                  <span><strong>Stock:</strong> {{ issue.stock }}</span>
+                </div>
+              </div>
+
+              <div class="suggestion">
+                <ion-icon name="bulb" color="warning"></ion-icon>
+                <span>Suggested: {{ getSuggestedName(issue) }}</span>
+              </div>
+
+              <div class="action-buttons">
+                <ion-button expand="block" (click)="fixProduct(issue)">
+                  <ion-icon name="create" slot="start"></ion-icon>
+                  Fix Name
+                </ion-button>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        }
+      </ion-list>
+    </div>
+  }
+</ion-content>

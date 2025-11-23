@@ -26,7 +26,11 @@
     <ion-list>
       @for (product of products; track product.productId) {
         <ion-card>
-          <img [src]="product.images[0] || 'assets/placeholder.png'" [alt]="product.title" />
+          <img 
+            [src]="product.images[0] || 'assets/placeholder.png'" 
+            [alt]="product.title"
+            (click)="openImageModal(product.images[0] || 'assets/placeholder.png')"
+            style="cursor: pointer; filter: none; opacity: 1;" />
           
           <ion-card-header>
             <ion-card-title>{{ product.title }}</ion-card-title>
@@ -71,5 +75,21 @@
         </ion-card>
       }
     </ion-list>
+  }
+
+  <!-- Image Modal -->
+  @if (showImageModal) {
+    <div class="image-modal" (click)="closeImageModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <ion-button 
+          class="close-button" 
+          fill="clear" 
+          color="light"
+          (click)="closeImageModal()">
+          <ion-icon name="close" slot="icon-only"></ion-icon>
+        </ion-button>
+        <img [src]="selectedImage" alt="Product Image" />
+      </div>
+    </div>
   }
 </ion-content>

@@ -33,41 +33,65 @@ export class ChatService {
     userName2: string,
     orderId?: string
   ): Promise<string> {
-    // Check if chat already exists
-    const q = query(
-      collection(this.firestore, 'chats'),
-      where('participantIds', 'array-contains', userId1)
-    );
-    
-    const snapshot = await getDocs(q);
-    const existingChat = snapshot.docs.find(doc => {
-      const chat = doc.data() as Chat;
-      return chat.participantIds.includes(userId2) && 
-             (!orderId || chat.orderId === orderId);
-    });
-
-    if (existingChat) {
-      return existingChat.id;
-    }
-
-    // Create new chat
-    const newChat: Omit<Chat, 'chatId'> = {
-      participantIds: [userId1, userId2],
-      participantNames: {
-        [userId1]: userName1,
-        [userId2]: userName2
-      },
-      orderId,
-      lastMessage: '',
-      lastMessageTime: serverTimestamp(),
-      unreadCount: {
-        [userId1]: 0,
-        [userId2]: 0
+    try {
+      console.log('getOrCreateChat called with:', { userId1, userName1, userId2, userName2, orderId });
+      
+      // Validate inputs
+      if (!userId1 || !userId2) {
+        throw new Error('User IDs are required');
       }
-    };
+      if (!userName1 || !userName2) {
+        throw new Error('User names are required');
+      }
 
-    const docRef = await addDoc(collection(this.firestore, 'chats'), newChat);
-    return docRef.id;
+      // Check if chat already exists
+      const q = query(
+        collection(this.firestore, 'chats'),
+        where('participantIds', 'array-contains', userId1)
+      );
+      
+      const snapshot = await getDocs(q);
+      console.log('Found existing chats:', snapshot.size);
+      
+      const existingChat = snapshot.docs.find(doc => {
+        const chat = doc.data() as Chat;
+        return chat.participantIds.includes(userId2) && 
+               (!orderId || chat.orderId === orderId);
+      });
+
+      if (existingChat) {
+        console.log('Returning existing chat:', existingChat.id);
+        return existingChat.id;
+      }
+
+      // Create new chat
+      console.log('Creating new chat...');
+      const newChat: any = {
+        participantIds: [userId1, userId2],
+        participantNames: {
+          [userId1]: userName1,
+          [userId2]: userName2
+        },
+        lastMessage: '',
+        lastMessageTime: serverTimestamp(),
+        unreadCount: {
+          [userId1]: 0,
+          [userId2]: 0
+        }
+      };
+
+      // Only add orderId if it's defined
+      if (orderId) {
+        newChat.orderId = orderId;
+      }
+
+      const docRef = await addDoc(collection(this.firestore, 'chats'), newChat);
+      console.log('New chat created:', docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error('Error in getOrCreateChat:', error);
+      throw error;
+    }
   }
 
   // Send message
@@ -233,43 +257,131 @@ export class ChatService {
     });
   }
 
+  // Get all chats (for admin) - real-time
+  getAllChats(): Observable<Chat[]> {
+    return new Observable(observer => {
+      let unsubscribe: (() => void) | undefined;
+      let hasEmitted = false;
+
+      try {
+        console.log('Loading all platform chats...');
+        
+        const q = query(collection(this.firestore, 'chats'));
+
+        unsubscribe = onSnapshot(q, 
+          (snapshot) => {
+            hasEmitted = true;
+            const chats = snapshot.docs.map(doc => ({
+              chatId: doc.id,
+              ...doc.data()
+            } as Chat));
+            
+            // Sort by last message time
+            chats.sort((a, b) => {
+              const aTime = a.lastMessageTime?.seconds || 0;
+              const bTime = b.lastMessageTime?.seconds || 0;
+              return bTime - aTime;
+            });
+            
+            console.log('All chats loaded:', chats.length);
+            observer.next(chats);
+          },
+          (error) => {
+            console.error('Error loading all chats:', error);
+            if (!hasEmitted) {
+              observer.next([]);
+              hasEmitted = true;
+            }
+            observer.error(error);
+          }
+        );
+        
+        // Timeout fallback
+        setTimeout(() => {
+          if (!hasEmitted) {
+            console.log('No chats loaded after 5s, emitting empty array');
+            observer.next([]);
+            hasEmitted = true;
+          }
+        }, 5000);
+        
+      } catch (error) {
+        console.error('Error setting up all chats listener:', error);
+        observer.next([]);
+        observer.error(error);
+      }
+
+      return () => {
+        if (unsubscribe) {
+          unsubscribe();
+        }
+      };
+    });
+  }
+
   // Mark messages as read
   async markMessagesAsRead(chatId: string, userId: string): Promise<void> {
-    await updateDoc(doc(this.firestore, 'chats', chatId), {
-      [`unreadCount.${userId}`]: 0
-    });
+    try {
+      // Reset unread count to 0
+      await updateDoc(doc(this.firestore, 'chats', chatId), {
+        [`unreadCount.${userId}`]: 0
+      });
 
-    // Update all unread messages
-    const q = query(
-      collection(this.firestore, 'chats', chatId, 'messages'),
-      where('senderId', '!=', userId),
-      where('read', '==', false)
-    );
+      console.log(`Marked messages as read for user ${userId} in chat ${chatId}`);
 
-    const snapshot = await getDocs(q);
-    const updatePromises = snapshot.docs.map(doc => 
-      updateDoc(doc.ref, { read: true })
-    );
+      // Update all unread messages
+      try {
+        const q = query(
+          collection(this.firestore, 'chats', chatId, 'messages'),
+          where('senderId', '!=', userId),
+          where('read', '==', false)
+        );
 
-    await Promise.all(updatePromises);
+        const snapshot = await getDocs(q);
+        console.log(`Found ${snapshot.size} unread messages to mark as read`);
+        
+        const updatePromises = snapshot.docs.map(doc => 
+          updateDoc(doc.ref, { read: true })
+        );
+
+        await Promise.all(updatePromises);
+      } catch (msgError) {
+        console.warn('Could not update message read status:', msgError);
+        // Don't throw error - unread count is already reset
+      }
+    } catch (error) {
+      console.error('Error marking messages as read:', error);
+      throw error;
+    }
   }
 
   // Get total unread count for user
   async getTotalUnreadCount(userId: string): Promise<number> {
-    const q = query(
-      collection(this.firestore, 'chats'),
-      where('participantIds', 'array-contains', userId)
-    );
+    try {
+      const q = query(
+        collection(this.firestore, 'chats'),
+        where('participantIds', 'array-contains', userId)
+      );
 
-    const snapshot = await getDocs(q);
-    let totalUnread = 0;
+      const snapshot = await getDocs(q);
+      let totalUnread = 0;
 
-    snapshot.docs.forEach(doc => {
-      const chat = doc.data() as Chat;
-      totalUnread += chat.unreadCount[userId] || 0;
-    });
+      snapshot.docs.forEach(doc => {
+        const chat = doc.data() as Chat;
+        // Safely get unread count, default to 0
+        const unreadCount = chat.unreadCount?.[userId] || 0;
+        // Only count valid numbers greater than 0
+        if (typeof unreadCount === 'number' && unreadCount > 0) {
+          totalUnread += unreadCount;
+        }
+      });
 
-    return totalUnread;
+      console.log(`Total unread messages for ${userId}:`, totalUnread);
+      return totalUnread;
+    } catch (error) {
+      console.error('Error getting total unread count:', error);
+      return 0;
+    }
   }
 
   // Get chat by ID
@@ -279,5 +391,47 @@ export class ChatService {
       chatId: chatDoc.id,
       ...chatDoc.data()
     } as Chat : null;
+  }
+
+  // Fix incorrect unread counts (utility method)
+  async fixUnreadCounts(userId: string): Promise<void> {
+    try {
+      const q = query(
+        collection(this.firestore, 'chats'),
+        where('participantIds', 'array-contains', userId)
+      );
+
+      const snapshot = await getDocs(q);
+      console.log(`Checking ${snapshot.size} chats for user ${userId}`);
+
+      const fixPromises = snapshot.docs.map(async (chatDoc) => {
+        const chatId = chatDoc.id;
+        const chat = chatDoc.data() as Chat;
+        
+        // Count actual unread messages
+        const messagesQuery = query(
+          collection(this.firestore, 'chats', chatId, 'messages'),
+          where('senderId', '!=', userId),
+          where('read', '==', false)
+        );
+        
+        const messagesSnapshot = await getDocs(messagesQuery);
+        const actualUnreadCount = messagesSnapshot.size;
+        const currentUnreadCount = chat.unreadCount?.[userId] || 0;
+
+        // Update if counts don't match
+        if (actualUnreadCount !== currentUnreadCount) {
+          console.log(`Fixing unread count for chat ${chatId}: ${currentUnreadCount} -> ${actualUnreadCount}`);
+          await updateDoc(doc(this.firestore, 'chats', chatId), {
+            [`unreadCount.${userId}`]: actualUnreadCount
+          });
+        }
+      });
+
+      await Promise.all(fixPromises);
+      console.log('Unread counts fixed successfully');
+    } catch (error) {
+      console.error('Error fixing unread counts:', error);
+    }
   }
 }

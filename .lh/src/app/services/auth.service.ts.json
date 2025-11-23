@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1763385225714,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1763888577875,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -190,8 +190,24 @@\n   getCurrentUser(): User | null {\r\n     return this.currentUserSubject.value;\r\n   }\r\n \r\n+  async refreshCurrentUser(): Promise<void> {\r\n+    const currentUser = this.currentUserSubject.value;\r\n+    if (currentUser && currentUser.userId) {\r\n+      try {\r\n+        const userDoc = await getDoc(doc(this.firestore, 'users', currentUser.userId));\r\n+        if (userDoc.exists()) {\r\n+          const userData = userDoc.data() as User;\r\n+          this.currentUserSubject.next(userData);\r\n+          localStorage.setItem('currentUser', JSON.stringify(userData));\r\n+        }\r\n+      } catch (error) {\r\n+        console.error('Error refreshing user:', error);\r\n+      }\r\n+    }\r\n+  }\r\n+\r\n   isAuthenticated(): boolean {\r\n     return this.currentUserSubject.value !== null;\r\n   }\r\n \r\n"
                 }
             ],
             "date": 1763385225714,

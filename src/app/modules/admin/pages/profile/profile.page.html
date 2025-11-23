@@ -1,0 +1,176 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Admin Profile</ion-title>
+    <ion-buttons slot="end">
+      @if (!editing) {
+        <ion-button (click)="toggleEdit()">
+          <ion-icon name="create"></ion-icon>
+        </ion-button>
+      }
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (user) {
+    <div class="profile-container">
+      <div class="profile-header">
+        <ion-avatar class="large-avatar">
+          @if (user.profileImage) {
+            <img [src]="user.profileImage" [alt]="user.name" (error)="onImageError($event)" />
+          } @else {
+            <div class="avatar-placeholder">
+              <ion-icon name="shield-checkmark" size="large"></ion-icon>
+            </div>
+          }
+        </ion-avatar>
+        <h2>{{ user.name || 'Administrator' }}</h2>
+        <p>{{ user.email }}</p>
+        <ion-badge color="danger">
+          <ion-icon name="star" size="small"></ion-icon>
+          ADMIN
+        </ion-badge>
+      </div>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Account Information</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">Full Name</ion-label>
+              <ion-input 
+                [(ngModel)]="user.name"
+                [readonly]="!editing"
+                type="text"
+                placeholder="Enter your name">
+              </ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Email</ion-label>
+              <ion-input 
+                [value]="user.email"
+                readonly
+                type="email">
+              </ion-input>
+              <ion-note slot="helper">Email cannot be changed</ion-note>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Phone Number</ion-label>
+              <ion-input 
+                [(ngModel)]="user.phone"
+                [readonly]="!editing"
+                type="tel"
+                placeholder="Enter phone number">
+              </ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Role</ion-label>
+              <ion-input 
+                value="Administrator"
+                readonly>
+              </ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Member Since</ion-label>
+              <ion-input 
+                [value]="user.dateJoined?.toDate?.() | date:'medium'"
+                readonly>
+              </ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Account Status</ion-label>
+              <ion-badge [color]="user.isActive ? 'success' : 'danger'" slot="end">
+                {{ user.isActive ? 'Active' : 'Inactive' }}
+              </ion-badge>
+            </ion-item>
+          </ion-list>
+
+          @if (editing) {
+            <div class="edit-actions">
+              <ion-button expand="block" (click)="saveProfile()" [disabled]="loading">
+                @if (loading) {
+                  <ion-spinner name="crescent"></ion-spinner>
+                } @else {
+                  <ion-icon name="save" slot="start"></ion-icon>
+                  Save Changes
+                }
+              </ion-button>
+              <ion-button expand="block" fill="outline" (click)="toggleEdit()">
+                <ion-icon name="close" slot="start"></ion-icon>
+                Cancel
+              </ion-button>
+            </div>
+          }
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Admin Privileges Card -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Administrator Privileges</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <ion-list>
+            <ion-item>
+              <ion-icon name="people" slot="start" color="primary"></ion-icon>
+              <ion-label>
+                <h3>User Management</h3>
+                <p>Full access to manage all users</p>
+              </ion-label>
+              <ion-icon name="checkmark-circle" slot="end" color="success"></ion-icon>
+            </ion-item>
+
+            <ion-item>
+              <ion-icon name="cube" slot="start" color="warning"></ion-icon>
+              <ion-label>
+                <h3>Product Approval</h3>
+                <p>Review and approve product listings</p>
+              </ion-label>
+              <ion-icon name="checkmark-circle" slot="end" color="success"></ion-icon>
+            </ion-item>
+
+            <ion-item>
+              <ion-icon name="document-text" slot="start" color="tertiary"></ion-icon>
+              <ion-label>
+                <h3>Seller Applications</h3>
+                <p>Review seller registration requests</p>
+              </ion-label>
+              <ion-icon name="checkmark-circle" slot="end" color="success"></ion-icon>
+            </ion-item>
+
+            <ion-item>
+              <ion-icon name="bar-chart" slot="start" color="danger"></ion-icon>
+              <ion-label>
+                <h3>Analytics & Reports</h3>
+                <p>Access to platform analytics</p>
+              </ion-label>
+              <ion-icon name="checkmark-circle" slot="end" color="success"></ion-icon>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-icon name="settings" slot="start" color="secondary"></ion-icon>
+              <ion-label>
+                <h3>System Configuration</h3>
+                <p>Manage system settings</p>
+              </ion-label>
+              <ion-icon name="checkmark-circle" slot="end" color="success"></ion-icon>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+
+    </div>
+  }
+</ion-content>

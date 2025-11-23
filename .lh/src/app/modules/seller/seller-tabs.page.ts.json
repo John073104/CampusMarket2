@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 1,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1763389846555,
@@ -12,6 +12,10 @@
                 {
                     "date": 1763606933038,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,11 @@\n import { Component, OnInit } from '@angular/core';\r\n import { CommonModule } from '@angular/common';\r\n import { IonicModule } from '@ionic/angular';\r\n+import { AuthService } from 'src/app/services/auth.service';\r\n+import { NotificationService } from 'src/app/services/notification.service';\r\n+import { OrderService } from 'src/app/services/order.service';\r\n+import { interval, Subscription } from 'rxjs';\r\n \r\n @Component({\r\n   selector: 'app-seller-tabs',\r\n   templateUrl: './seller-tabs.page.html',\r\n@@ -12,8 +16,40 @@\n export class SellerTabsPage implements OnInit {\r\n   unreadMessages = 0;\r\n   pendingOrders = 0;\r\n \r\n-  constructor() {}\r\n+  private _pollSub?: Subscription;\r\n \r\n-  ngOnInit() {}\r\n+  constructor(\r\n+    private authService: AuthService,\r\n+    private notificationService: NotificationService,\r\n+    private orderService: OrderService\r\n+  ) {}\r\n+\r\n+  ngOnInit() {\r\n+    const user = this.authService.getCurrentUser();\r\n+    if (user) {\r\n+      this.updateCounts(user.userId);\r\n+      this._pollSub = interval(10000).subscribe(() => this.updateCounts(user.userId));\r\n+    }\r\n+  }\r\n+\r\n+  private async updateCounts(userId: string) {\r\n+    try {\r\n+      const unread = await this.notificationService.getUnreadCount(userId);\r\n+      this.unreadMessages = unread;\r\n+    } catch (err) {\r\n+      console.error('Failed to get unread notifications:', err);\r\n+    }\r\n+\r\n+    try {\r\n+      const stats = await this.orderService.getSellerStats(userId);\r\n+      this.pendingOrders = stats.pendingOrders;\r\n+    } catch (err) {\r\n+      console.error('Failed to get seller stats:', err);\r\n+    }\r\n+  }\r\n+\r\n+  ngOnDestroy(): void {\r\n+    if (this._pollSub) this._pollSub.unsubscribe();\r\n+  }\r\n }\r\n"
+                },
+                {
+                    "date": 1763884422290,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,9 @@\n import { Component, OnInit } from '@angular/core';\r\n import { CommonModule } from '@angular/common';\r\n import { IonicModule } from '@ionic/angular';\r\n import { AuthService } from 'src/app/services/auth.service';\r\n-import { NotificationService } from 'src/app/services/notification.service';\r\n+import { ChatService } from 'src/app/services/chat.service';\r\n import { OrderService } from 'src/app/services/order.service';\r\n import { interval, Subscription } from 'rxjs';\r\n \r\n @Component({\r\n@@ -20,9 +20,9 @@\n   private _pollSub?: Subscription;\r\n \r\n   constructor(\r\n     private authService: AuthService,\r\n-    private notificationService: NotificationService,\r\n+    private chatService: ChatService,\r\n     private orderService: OrderService\r\n   ) {}\r\n \r\n   ngOnInit() {\r\n"
                 }
             ],
             "date": 1763389846555,

@@ -173,6 +173,31 @@ export class UserService {
     userId: string, 
     updates: Partial<User>
   ): Promise<void> {
-    await updateDoc(doc(this.firestore, 'users', userId), updates);
+    try {
+      console.log('UserService: Updating user', userId, 'with data:', updates);
+      const userRef = doc(this.firestore, 'users', userId);
+      
+      // Filter out undefined values (Firestore doesn't accept undefined)
+      const cleanUpdates: any = {};
+      Object.keys(updates).forEach(key => {
+        const value = (updates as any)[key];
+        if (value !== undefined) {
+          cleanUpdates[key] = value;
+        }
+      });
+      
+      // Add updatedAt timestamp
+      const updateData = {
+        ...cleanUpdates,
+        updatedAt: serverTimestamp()
+      };
+      
+      console.log('UserService: Cleaned update data:', updateData);
+      await updateDoc(userRef, updateData);
+      console.log('UserService: Profile updated successfully');
+    } catch (error: any) {
+      console.error('UserService: Error updating profile:', error);
+      throw new Error(`Failed to update profile: ${error.message || 'Unknown error'}`);
+    }
   }
 }

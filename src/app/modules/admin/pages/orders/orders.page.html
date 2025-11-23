@@ -60,9 +60,8 @@
           <ion-card-header>
             <div class="order-header">
               <div>
-                <ion-card-subtitle>Order #{{ order.orderId?.slice(-8) }}</ion-card-subtitle>
-                <ion-card-title class="customer-name">{{ order.customerName }}</ion-card-title>
-                <p class="seller-name">Seller: {{ order.sellerName }}</p>
+                <ion-card-subtitle>Order #{{ order.orderId?.slice(-8) }} • {{ order.customerName }} → {{ order.sellerName }}</ion-card-subtitle>
+                <ion-card-title>{{ getOrderItemsDisplay(order) }}</ion-card-title>
               </div>
               <ion-badge [color]="getStatusColor(order.status)">
                 {{ order.status | uppercase }}

@@ -36,8 +36,7 @@
           </ion-segment-button>
         </ion-segment>
         <p class="user-count">
-          Showing {{ users.filter(u => filterRole === 'all' || u.role === filterRole).filter(u => u.location).length }} 
-          users with locations
+          Showing {{ getFilteredUsersWithLocationCount() }} users with locations
         </p>
       </ion-card-content>
     </ion-card>
