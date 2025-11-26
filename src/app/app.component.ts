@@ -18,14 +18,12 @@ export class AppComponent implements OnInit {
     // Check if user is already logged in on app start
     this.authService.currentUser$.subscribe(user => {
       const currentUrl = this.router.url;
-      // Only redirect if on root or landing page, not when refreshing other pages
+      // Only redirect if on root or landing page when logged in
       if (user && (currentUrl === '/' || currentUrl === '/landing')) {
         // Redirect to appropriate dashboard if on landing page
         this.router.navigate([`/${user.role}/dashboard`]);
-      } else if (!user && currentUrl !== '/' && currentUrl !== '/landing' && !currentUrl.startsWith('/auth')) {
-        // If not logged in and trying to access protected route, redirect to landing
-        this.router.navigate(['/landing']);
       }
+      // Let auth guard handle redirects for protected routes
     });
   }
 }

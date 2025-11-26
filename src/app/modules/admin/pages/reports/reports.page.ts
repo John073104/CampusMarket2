@@ -70,17 +70,15 @@ export class ReportsPage implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     console.log('View initialized, loading reports...');
-    // Small delay to ensure view is fully rendered
-    setTimeout(() => {
-      this.loadReports();
-    }, 100);
+    // Immediate load without delay
+    this.loadReports();
   }
 
   ionViewDidEnter() {
-    console.log('View entered, refreshing charts...');
-    // Refresh charts when returning to page
-    if (this.salesChart || this.categoryChart || this.topSellersChart || this.statusChart) {
-      this.refreshCharts();
+    console.log('View entered, ensuring charts render...');
+    // Force reload and render on each view enter
+    if (!this.loading) {
+      this.loadReports();
     }
   }
 
@@ -161,47 +159,58 @@ export class ReportsPage implements OnInit, AfterViewInit {
         data.push(0);
       }
 
-      setTimeout(() => {
-        console.log('Creating sales chart...', !!this.salesChartRef);
-        if (this.salesChartRef && this.salesChartRef.nativeElement) {
-          if (this.salesChart) {
-            console.log('Destroying existing sales chart');
-            this.salesChart.destroy();
-          }
-          
-          const ctx = this.salesChartRef.nativeElement.getContext('2d');
-          if (!ctx) {
-            console.error('Failed to get 2d context for sales chart');
-            return;
-          }
-          console.log('Rendering sales chart with', sortedDates.length, 'data points');
-          this.salesChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-              labels: sortedDates,
-              datasets: [{
-                label: 'Sales (₱)',
-                data: data,
-                borderColor: '#ffc107',
-                backgroundColor: 'rgba(255, 193, 7, 0.1)',
-                tension: 0.4,
-                fill: true
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: { display: true },
-                title: { display: true, text: 'Sales Over Time' }
-              },
-              scales: {
-                y: { beginAtZero: true }
-              }
+      console.log('Creating sales chart...', !!this.salesChartRef);
+      if (!this.salesChartRef || !this.salesChartRef.nativeElement) {
+        console.error('Sales chart canvas not found');
+        return;
+      }
+      
+      if (this.salesChart) {
+        console.log('Destroying existing sales chart');
+        this.salesChart.destroy();
+        this.salesChart = null;
+      }
+      
+      const canvas = this.salesChartRef.nativeElement;
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 300;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        console.error('Failed to get 2d context for sales chart');
+        return;
+      }
+      
+      console.log('Rendering sales chart with', sortedDates.length, 'data points');
+      this.salesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: sortedDates,
+          datasets: [{
+            label: 'Sales (₱)',
+            data: data,
+            borderColor: '#ffc107',
+            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true },
+            title: { 
+              display: true, 
+              text: 'Sales Over Time',
+              font: { size: 16, weight: 'bold' }
             }
-          });
+          },
+          scales: {
+            y: { beginAtZero: true }
+          }
         }
-      }, 100);
+      });
+      console.log('Sales chart created successfully');
     } catch (error) {
       console.error('Error loading sales chart:', error);
     }
@@ -227,42 +236,53 @@ export class ReportsPage implements OnInit, AfterViewInit {
         counts.push(0);
       }
 
-      setTimeout(() => {
-        console.log('Creating category chart...', !!this.categoryChartRef);
-        if (this.categoryChartRef && this.categoryChartRef.nativeElement) {
-          if (this.categoryChart) {
-            console.log('Destroying existing category chart');
-            this.categoryChart.destroy();
-          }
-          
-          const ctx = this.categoryChartRef.nativeElement.getContext('2d');
-          if (!ctx) {
-            console.error('Failed to get 2d context for category chart');
-            return;
-          }
-          console.log('Rendering category chart with', categories.length, 'categories');
-          this.categoryChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-              labels: categories,
-              datasets: [{
-                data: counts,
-                backgroundColor: [
-                  '#ffc107', '#4caf50', '#2196f3', '#ff5722', '#9c27b0', '#00bcd4', '#ff9800'
-                ]
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: { position: 'right' },
-                title: { display: true, text: 'Products by Category' }
-              }
+      console.log('Creating category chart...', !!this.categoryChartRef);
+      if (!this.categoryChartRef || !this.categoryChartRef.nativeElement) {
+        console.error('Category chart canvas not found');
+        return;
+      }
+      
+      if (this.categoryChart) {
+        console.log('Destroying existing category chart');
+        this.categoryChart.destroy();
+        this.categoryChart = null;
+      }
+      
+      const canvas = this.categoryChartRef.nativeElement;
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 300;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        console.error('Failed to get 2d context for category chart');
+        return;
+      }
+      
+      console.log('Rendering category chart with', categories.length, 'categories');
+      this.categoryChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: categories,
+          datasets: [{
+            data: counts,
+            backgroundColor: [
+              '#ffc107', '#4caf50', '#2196f3', '#ff5722', '#9c27b0', '#00bcd4', '#ff9800'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'right' },
+            title: { 
+              display: true, 
+              text: 'Products by Category',
+              font: { size: 16, weight: 'bold' }
             }
-          });
+          }
         }
-      }, 100);
+      });
+      console.log('Category chart created successfully');
     } catch (error) {
       console.error('Error loading category chart:', error);
     }
@@ -294,45 +314,56 @@ export class ReportsPage implements OnInit, AfterViewInit {
         topSellers.push({ name: 'No sellers', total: 0 });
       }
 
-      setTimeout(() => {
-        console.log('Creating top sellers chart...', !!this.topSellersChartRef);
-        if (this.topSellersChartRef && this.topSellersChartRef.nativeElement) {
-          if (this.topSellersChart) {
-            console.log('Destroying existing top sellers chart');
-            this.topSellersChart.destroy();
-          }
-          
-          const ctx = this.topSellersChartRef.nativeElement.getContext('2d');
-          if (!ctx) {
-            console.error('Failed to get 2d context for top sellers chart');
-            return;
-          }
-          console.log('Rendering top sellers chart with', topSellers.length, 'sellers');
-          this.topSellersChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: topSellers.map(s => s.name),
-              datasets: [{
-                label: 'Sales (₱)',
-                data: topSellers.map(s => s.total),
-                backgroundColor: '#4caf50'
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              indexAxis: 'y',
-              plugins: {
-                legend: { display: false },
-                title: { display: true, text: 'Top 10 Sellers' }
-              },
-              scales: {
-                x: { beginAtZero: true }
-              }
+      console.log('Creating top sellers chart...', !!this.topSellersChartRef);
+      if (!this.topSellersChartRef || !this.topSellersChartRef.nativeElement) {
+        console.error('Top sellers chart canvas not found');
+        return;
+      }
+      
+      if (this.topSellersChart) {
+        console.log('Destroying existing top sellers chart');
+        this.topSellersChart.destroy();
+        this.topSellersChart = null;
+      }
+      
+      const canvas = this.topSellersChartRef.nativeElement;
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 300;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        console.error('Failed to get 2d context for top sellers chart');
+        return;
+      }
+      
+      console.log('Rendering top sellers chart with', topSellers.length, 'sellers');
+      this.topSellersChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: topSellers.map(s => s.name),
+          datasets: [{
+            label: 'Sales (₱)',
+            data: topSellers.map(s => s.total),
+            backgroundColor: '#4caf50'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            title: { 
+              display: true, 
+              text: 'Top 10 Sellers',
+              font: { size: 16, weight: 'bold' }
             }
-          });
+          },
+          scales: {
+            x: { beginAtZero: true }
+          }
         }
-      }, 100);
+      });
+      console.log('Top sellers chart created successfully');
     } catch (error) {
       console.error('Error loading top sellers chart:', error);
     }
@@ -357,46 +388,57 @@ export class ReportsPage implements OnInit, AfterViewInit {
         }
       });
 
-      setTimeout(() => {
-        console.log('Creating status chart...', !!this.statusChartRef);
-        if (this.statusChartRef && this.statusChartRef.nativeElement) {
-          if (this.statusChart) {
-            console.log('Destroying existing status chart');
-            this.statusChart.destroy();
-          }
-          
-          const ctx = this.statusChartRef.nativeElement.getContext('2d');
-          if (!ctx) {
-            console.error('Failed to get 2d context for status chart');
-            return;
-          }
-          console.log('Rendering status chart');
-          this.statusChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-              labels: ['Placed', 'Confirmed', 'Ready for Pickup', 'Completed', 'Cancelled'],
-              datasets: [{
-                data: [
-                  statusCount.placed,
-                  statusCount.confirmed,
-                  statusCount.ready_for_pickup,
-                  statusCount.completed,
-                  statusCount.cancelled
-                ],
-                backgroundColor: ['#ff9800', '#2196f3', '#9c27b0', '#4caf50', '#f44336']
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: { position: 'bottom' },
-                title: { display: true, text: 'Order Status Breakdown' }
-              }
+      console.log('Creating status chart...', !!this.statusChartRef);
+      if (!this.statusChartRef || !this.statusChartRef.nativeElement) {
+        console.error('Status chart canvas not found');
+        return;
+      }
+      
+      if (this.statusChart) {
+        console.log('Destroying existing status chart');
+        this.statusChart.destroy();
+        this.statusChart = null;
+      }
+      
+      const canvas = this.statusChartRef.nativeElement;
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 300;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        console.error('Failed to get 2d context for status chart');
+        return;
+      }
+      
+      console.log('Rendering status chart');
+      this.statusChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Placed', 'Confirmed', 'Ready for Pickup', 'Completed', 'Cancelled'],
+          datasets: [{
+            data: [
+              statusCount.placed,
+              statusCount.confirmed,
+              statusCount.ready_for_pickup,
+              statusCount.completed,
+              statusCount.cancelled
+            ],
+            backgroundColor: ['#ff9800', '#2196f3', '#9c27b0', '#4caf50', '#f44336']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom' },
+            title: { 
+              display: true, 
+              text: 'Order Status Breakdown',
+              font: { size: 16, weight: 'bold' }
             }
-          });
+          }
         }
-      }, 100);
+      });
+      console.log('Status chart created successfully');
     } catch (error) {
       console.error('Error loading status chart:', error);
     }

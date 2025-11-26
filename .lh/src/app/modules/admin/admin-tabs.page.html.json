@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 3,
+            "activePatchIndex": 4,
             "patches": [
                 {
                     "date": 1763389963679,
@@ -20,6 +20,10 @@
                 {
                     "date": 1763888387790,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,13 +25,8 @@\n         <ion-badge color=\"danger\">{{ pendingApplications }}</ion-badge>\r\n       }\r\n     </ion-tab-button>\r\n \r\n-    <ion-tab-button tab=\"messages\">\r\n-      <ion-icon name=\"chatbubbles\"></ion-icon>\r\n-      <ion-label>Messages</ion-label>\r\n-    </ion-tab-button>\r\n-\r\n     <ion-tab-button tab=\"profile\">\r\n       <ion-icon name=\"person-circle\"></ion-icon>\r\n       <ion-label>Profile</ion-label>\r\n     </ion-tab-button>\r\n"
+                },
+                {
+                    "date": 1764140682254,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,10 +25,10 @@\n         <ion-badge color=\"danger\">{{ pendingApplications }}</ion-badge>\r\n       }\r\n     </ion-tab-button>\r\n \r\n-    <ion-tab-button tab=\"profile\">\r\n-      <ion-icon name=\"person-circle\"></ion-icon>\r\n-      <ion-label>Profile</ion-label>\r\n+    <ion-tab-button tab=\"reports\">\r\n+      <ion-icon name=\"bar-chart\"></ion-icon>\r\n+      <ion-label>Reports</ion-label>\r\n     </ion-tab-button>\r\n   </ion-tab-bar>\r\n </ion-tabs>\r\n"
                 }
             ],
             "date": 1763389963679,
