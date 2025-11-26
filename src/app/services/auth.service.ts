@@ -35,12 +35,29 @@ export class AuthService {
   }
 
   private initAuthListener() {
+    // Check localStorage first for immediate user state
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      try {
+        const userData = JSON.parse(storedUser);
+        this.currentUserSubject.next(userData);
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem('currentUser');
+      }
+    }
+
+    // Then listen for auth state changes
     onAuthStateChanged(this.auth, async (firebaseUser) => {
       if (firebaseUser) {
         const userData = await this.getUserData(firebaseUser.uid);
         this.currentUserSubject.next(userData);
+        if (userData) {
+          localStorage.setItem('currentUser', JSON.stringify(userData));
+        }
       } else {
         this.currentUserSubject.next(null);
+        localStorage.removeItem('currentUser');
       }
     });
   }
@@ -127,6 +144,7 @@ export class AuthService {
       }
       
       this.currentUserSubject.next(userData);
+      localStorage.setItem('currentUser', JSON.stringify(userData));
       
       await this.redirectByRole(userData.role);
     } catch (error: any) {
@@ -163,6 +181,7 @@ export class AuthService {
   async signOut(): Promise<void> {
     await signOut(this.auth);
     this.currentUserSubject.next(null);
+    localStorage.removeItem('currentUser');
     this.router.navigate(['/landing']);
   }
 

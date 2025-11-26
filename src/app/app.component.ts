@@ -15,15 +15,13 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Check if user is already logged in on app start
-    this.authService.currentUser$.subscribe(user => {
-      const currentUrl = this.router.url;
-      // Only redirect if on root or landing page when logged in
-      if (user && (currentUrl === '/' || currentUrl === '/landing')) {
-        // Redirect to appropriate dashboard if on landing page
-        this.router.navigate([`/${user.role}/dashboard`]);
-      }
-      // Let auth guard handle redirects for protected routes
-    });
+    // Initialize auth - check if user is logged in
+    const user = this.authService.getCurrentUser();
+    const currentUrl = this.router.url;
+    
+    // Only redirect if on landing or root and user is logged in
+    if (user && (currentUrl === '/' || currentUrl === '/landing')) {
+      this.router.navigate([`/${user.role}/dashboard`]);
+    }
   }
 }
