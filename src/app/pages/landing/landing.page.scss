@@ -60,6 +60,95 @@
   }
 }
 
+// Mobile menu button (hidden on desktop)
+.mobile-menu-btn {
+  display: none;
+  --color: white;
+  font-size: 1.8rem;
+}
+
+// Mobile menu overlay
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+
+  &.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+// Mobile menu drawer
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 280px;
+  height: 100%;
+  background: white;
+  z-index: 999;
+  transition: right 0.3s ease;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+
+  &.open {
+    right: 0;
+  }
+
+  .mobile-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: var(--ion-color-primary);
+    color: white;
+
+    h2 {
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    ion-button {
+      --color: white;
+      font-size: 1.5rem;
+    }
+  }
+
+  .mobile-menu-items {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+
+    ion-button {
+      margin-bottom: 10px;
+      --padding-start: 15px;
+      justify-content: flex-start;
+      text-align: left;
+      font-size: 1rem;
+
+      ion-icon {
+        margin-right: 10px;
+      }
+    }
+
+    .mobile-menu-divider {
+      height: 1px;
+      background: var(--ion-color-light);
+      margin: 20px 0;
+    }
+  }
+}
+
 // Mobile menu
 @media (max-width: 768px) {
   .landing-header {
@@ -67,19 +156,16 @@
       display: none;
     }
 
-    .auth-buttons {
-      flex-direction: column;
-      gap: 5px;
+    .mobile-menu-btn {
+      display: block;
+    }
 
-      ion-button {
-        font-size: 0.85rem;
-        --padding-start: 8px;
-        --padding-end: 8px;
-      }
+    .auth-buttons {
+      display: none;
     }
 
     .logo span {
-      display: none;
+      font-size: 1.1rem;
     }
   }
 }
@@ -481,11 +567,12 @@
   padding: 30px 20px;
   text-align: center;
   background: var(--ion-color-dark);
-  color: white;
+  color: rgba(255, 255, 255, 0.9);
 
   p {
     margin: 0;
-    opacity: 0.8;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
   }
 }
 

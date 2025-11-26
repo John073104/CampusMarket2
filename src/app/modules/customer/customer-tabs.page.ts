@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
-import { NotificationService } from 'src/app/services/notification.service';
+import { ChatService } from 'src/app/services/chat.service';
 import { interval, Subscription } from 'rxjs';
 
 @Component({
@@ -21,26 +21,39 @@ export class CustomerTabsPage implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private notificationService: NotificationService
+    private chatService: ChatService
   ) {}
 
   ngOnInit() {
     const user = this.authService.getCurrentUser();
     if (user) {
       this.updateUnread(user.userId);
-      // poll every 10 seconds
-      const sub = interval(10000).subscribe(() => this.updateUnread(user.userId));
-      // keep subscription in case we add cleanup later
-      (this as any)._unreadSub = sub as Subscription;
+      // poll every 5 seconds for real-time updates
+      const sub = interval(5000).subscribe(() => this.updateUnread(user.userId));
+      this._unreadSub = sub as Subscription;
+    }
+  }
+
+  ionViewWillEnter() {
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.updateUnread(user.userId);
     }
   }
 
   private async updateUnread(userId: string) {
     try {
-      const count = await this.notificationService.getUnreadCount(userId);
+      // Fix unread counts first (in background)
+      this.chatService.fixUnreadCounts(userId)
+        .catch(err => console.warn('Could not fix unread counts:', err));
+      
+      // Get accurate unread count from chat service
+      const count = await this.chatService.getTotalUnreadCount(userId);
       this.unreadMessages = count;
+      console.log('Customer tab - unread messages:', count);
     } catch (err) {
       console.error('Failed to fetch unread count:', err);
+      this.unreadMessages = 0;
     }
   }
 

@@ -22,6 +22,11 @@
         </ion-button>
       </nav>
 
+      <!-- Mobile Menu Button -->
+      <ion-button class="mobile-menu-btn" fill="clear" (click)="toggleMobileMenu()">
+        <ion-icon name="menu" slot="icon-only"></ion-icon>
+      </ion-button>
+
       <div class="auth-buttons">
         <ion-button fill="outline" color="light" (click)="goToLogin()">
           <ion-icon name="log-in" slot="start"></ion-icon>
@@ -35,6 +40,40 @@
     </div>
   </ion-toolbar>
 </ion-header>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu-overlay" [class.open]="showMobileMenu" (click)="toggleMobileMenu()"></div>
+<div class="mobile-menu" [class.open]="showMobileMenu">
+  <div class="mobile-menu-header">
+    <h2>Menu</h2>
+    <ion-button fill="clear" (click)="toggleMobileMenu()">
+      <ion-icon name="close" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+  <div class="mobile-menu-items">
+    <ion-button expand="block" fill="clear" (click)="scrollToSection('hero'); toggleMobileMenu()">
+      <ion-icon name="home" slot="start"></ion-icon>
+      Home
+    </ion-button>
+    <ion-button expand="block" fill="clear" (click)="scrollToSection('about'); toggleMobileMenu()">
+      <ion-icon name="information-circle" slot="start"></ion-icon>
+      About
+    </ion-button>
+    <ion-button expand="block" fill="clear" (click)="scrollToSection('contact'); toggleMobileMenu()">
+      <ion-icon name="mail" slot="start"></ion-icon>
+      Contact
+    </ion-button>
+    <div class="mobile-menu-divider"></div>
+    <ion-button expand="block" fill="solid" color="primary" (click)="goToLogin(); toggleMobileMenu()">
+      <ion-icon name="log-in" slot="start"></ion-icon>
+      Login
+    </ion-button>
+    <ion-button expand="block" fill="solid" color="warning" (click)="goToSignup(); toggleMobileMenu()">
+      <ion-icon name="person-add" slot="start"></ion-icon>
+      Register
+    </ion-button>
+  </div>
+</div>
 
 <ion-content class="landing-content" [fullscreen]="true">
   <!-- Hero Section -->

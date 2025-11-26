@@ -12,7 +12,13 @@ import { Router } from '@angular/router';
   imports: [CommonModule, FormsModule, IonicModule]
 })
 export class LandingPage {
+  showMobileMenu = false;
+
   constructor(private router: Router) {}
+
+  toggleMobileMenu() {
+    this.showMobileMenu = !this.showMobileMenu;
+  }
 
   scrollToSection(sectionId: string) {
     const element = document.getElementById(sectionId);

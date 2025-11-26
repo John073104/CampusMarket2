@@ -24,6 +24,7 @@ export class AuthGuard implements CanActivate {
     const user = this.authService.getCurrentUser();
     
     if (!user) {
+      // Store the attempted URL for redirecting after login
       this.router.navigate(['/landing']);
       return false;
     }
@@ -33,7 +34,7 @@ export class AuthGuard implements CanActivate {
     
     if (requiredRoles && !requiredRoles.includes(user.role)) {
       // Redirect to appropriate dashboard
-      this.router.navigate([`/${user.role}`]);
+      this.router.navigate([`/${user.role}/dashboard`]);
       return false;
     }
 
