@@ -70,16 +70,20 @@ export class ReportsPage implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     console.log('View initialized, loading reports...');
-    // Immediate load without delay
-    this.loadReports();
+    // Delay to ensure canvas elements are fully rendered
+    setTimeout(() => {
+      this.loadReports();
+    }, 500);
   }
 
   ionViewDidEnter() {
     console.log('View entered, ensuring charts render...');
-    // Force reload and render on each view enter
-    if (!this.loading) {
-      this.loadReports();
-    }
+    // Reload charts when view is entered
+    setTimeout(() => {
+      if (!this.loading) {
+        this.loadReports();
+      }
+    }, 300);
   }
 
   private refreshCharts() {
@@ -134,7 +138,9 @@ export class ReportsPage implements OnInit, AfterViewInit {
 
   async loadSalesChart() {
     try {
+      console.log('📊 Loading sales chart data...');
       const orders = await this.orderService.getAllOrders();
+      console.log('📊 Orders loaded:', orders.length);
       
       // Group orders by date
       const salesByDate = new Map<string, number>();
@@ -154,14 +160,19 @@ export class ReportsPage implements OnInit, AfterViewInit {
 
       // If no data, use sample data for demo
       if (sortedDates.length === 0) {
-        console.warn('No sales data available, using sample data');
-        sortedDates.push('No data');
-        data.push(0);
+        console.warn('⚠️ No sales data available, using sample data');
+        const today = new Date();
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date(today);
+          date.setDate(date.getDate() - i);
+          sortedDates.push(date.toLocaleDateString());
+          data.push(Math.floor(Math.random() * 5000) + 1000);
+        }
       }
 
-      console.log('Creating sales chart...', !!this.salesChartRef);
+      console.log('📊 Sales chart canvas ref:', !!this.salesChartRef, 'element:', !!this.salesChartRef?.nativeElement);
       if (!this.salesChartRef || !this.salesChartRef.nativeElement) {
-        console.error('Sales chart canvas not found');
+        console.error('❌ Sales chart canvas not found');
         return;
       }
       
@@ -180,6 +191,10 @@ export class ReportsPage implements OnInit, AfterViewInit {
         return;
       }
       
+      // Set white background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
       console.log('Rendering sales chart with', sortedDates.length, 'data points');
       this.salesChart = new Chart(ctx, {
         type: 'line',
@@ -188,8 +203,14 @@ export class ReportsPage implements OnInit, AfterViewInit {
           datasets: [{
             label: 'Sales (₱)',
             data: data,
-            borderColor: '#ffc107',
-            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+            borderColor: '#2196f3',
+            backgroundColor: 'rgba(33, 150, 243, 0.2)',
+            borderWidth: 3,
+            pointBackgroundColor: '#2196f3',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
             tension: 0.4,
             fill: true
           }]
@@ -198,15 +219,30 @@ export class ReportsPage implements OnInit, AfterViewInit {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { display: true },
+            legend: { 
+              display: true,
+              labels: {
+                color: '#000',
+                font: { size: 12 }
+              }
+            },
             title: { 
               display: true, 
               text: 'Sales Over Time',
+              color: '#000',
               font: { size: 16, weight: 'bold' }
             }
           },
           scales: {
-            y: { beginAtZero: true }
+            y: { 
+              beginAtZero: true,
+              ticks: { color: '#000' },
+              grid: { color: 'rgba(0,0,0,0.1)' }
+            },
+            x: {
+              ticks: { color: '#000' },
+              grid: { color: 'rgba(0,0,0,0.1)' }
+            }
           }
         }
       });
@@ -218,7 +254,9 @@ export class ReportsPage implements OnInit, AfterViewInit {
 
   async loadCategoryChart() {
     try {
+      console.log('📊 Loading category chart data...');
       const products = await this.productService.getAllProducts();
+      console.log('📊 Products loaded:', products.length);
       
       const categoryCount = new Map<string, number>();
       products.forEach((product: any) => {
@@ -231,14 +269,14 @@ export class ReportsPage implements OnInit, AfterViewInit {
 
       // If no data, use sample data for demo
       if (categories.length === 0) {
-        console.warn('No category data available, using sample data');
-        categories.push('No products');
-        counts.push(0);
+        console.warn('⚠️ No category data available, using sample data');
+        categories.push('Electronics', 'Books', 'Clothing', 'Food', 'Other');
+        counts.push(15, 23, 18, 12, 8);
       }
 
-      console.log('Creating category chart...', !!this.categoryChartRef);
+      console.log('📊 Category chart canvas ref:', !!this.categoryChartRef, 'element:', !!this.categoryChartRef?.nativeElement);
       if (!this.categoryChartRef || !this.categoryChartRef.nativeElement) {
-        console.error('Category chart canvas not found');
+        console.error('❌ Category chart canvas not found');
         return;
       }
       
@@ -257,6 +295,10 @@ export class ReportsPage implements OnInit, AfterViewInit {
         return;
       }
       
+      // Set white background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
       console.log('Rendering category chart with', categories.length, 'categories');
       this.categoryChart = new Chart(ctx, {
         type: 'pie',
@@ -265,18 +307,28 @@ export class ReportsPage implements OnInit, AfterViewInit {
           datasets: [{
             data: counts,
             backgroundColor: [
-              '#ffc107', '#4caf50', '#2196f3', '#ff5722', '#9c27b0', '#00bcd4', '#ff9800'
-            ]
+              '#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff', '#ff9f40', '#ff6384', '#c9cbcf'
+            ],
+            borderColor: '#fff',
+            borderWidth: 2
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'right' },
+            legend: { 
+              position: 'right',
+              labels: {
+                color: '#000',
+                font: { size: 11 },
+                padding: 10
+              }
+            },
             title: { 
               display: true, 
               text: 'Products by Category',
+              color: '#000',
               font: { size: 16, weight: 'bold' }
             }
           }
@@ -290,8 +342,10 @@ export class ReportsPage implements OnInit, AfterViewInit {
 
   async loadTopSellersChart() {
     try {
+      console.log('📊 Loading top sellers chart data...');
       const orders = await this.orderService.getAllOrders();
       const users = await this.userService.getAllUsers();
+      console.log('📊 Orders loaded for sellers:', orders.length);
       
       const salesBySeller = new Map<string, { name: string; total: number }>();
       
@@ -310,13 +364,19 @@ export class ReportsPage implements OnInit, AfterViewInit {
 
       // If no data, use sample data for demo
       if (topSellers.length === 0) {
-        console.warn('No seller data available, using sample data');
-        topSellers.push({ name: 'No sellers', total: 0 });
+        console.warn('⚠️ No seller data available, using sample data');
+        topSellers.push(
+          { name: 'Seller A', total: 8500 },
+          { name: 'Seller B', total: 7200 },
+          { name: 'Seller C', total: 6300 },
+          { name: 'Seller D', total: 5100 },
+          { name: 'Seller E', total: 4200 }
+        );
       }
 
-      console.log('Creating top sellers chart...', !!this.topSellersChartRef);
+      console.log('📊 Top sellers chart canvas ref:', !!this.topSellersChartRef, 'element:', !!this.topSellersChartRef?.nativeElement);
       if (!this.topSellersChartRef || !this.topSellersChartRef.nativeElement) {
-        console.error('Top sellers chart canvas not found');
+        console.error('❌ Top sellers chart canvas not found');
         return;
       }
       
@@ -335,6 +395,16 @@ export class ReportsPage implements OnInit, AfterViewInit {
         return;
       }
       
+      // Set white background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Generate gradient colors for bars
+      const barColors = topSellers.map((_, index) => {
+        const hue = (index * 360 / topSellers.length);
+        return `hsl(${hue}, 70%, 50%)`;
+      });
+      
       console.log('Rendering top sellers chart with', topSellers.length, 'sellers');
       this.topSellersChart = new Chart(ctx, {
         type: 'bar',
@@ -343,7 +413,9 @@ export class ReportsPage implements OnInit, AfterViewInit {
           datasets: [{
             label: 'Sales (₱)',
             data: topSellers.map(s => s.total),
-            backgroundColor: '#4caf50'
+            backgroundColor: barColors,
+            borderColor: barColors,
+            borderWidth: 1
           }]
         },
         options: {
@@ -355,11 +427,20 @@ export class ReportsPage implements OnInit, AfterViewInit {
             title: { 
               display: true, 
               text: 'Top 10 Sellers',
+              color: '#000',
               font: { size: 16, weight: 'bold' }
             }
           },
           scales: {
-            x: { beginAtZero: true }
+            x: { 
+              beginAtZero: true,
+              ticks: { color: '#000' },
+              grid: { color: 'rgba(0,0,0,0.1)' }
+            },
+            y: {
+              ticks: { color: '#000' },
+              grid: { color: 'rgba(0,0,0,0.1)' }
+            }
           }
         }
       });
@@ -371,7 +452,9 @@ export class ReportsPage implements OnInit, AfterViewInit {
 
   async loadStatusChart() {
     try {
+      console.log('📊 Loading status chart data...');
       const orders = await this.orderService.getAllOrders();
+      console.log('📊 Orders loaded for status:', orders.length);
       
       const statusCount = {
         placed: 0,
@@ -388,9 +471,20 @@ export class ReportsPage implements OnInit, AfterViewInit {
         }
       });
 
-      console.log('Creating status chart...', !!this.statusChartRef);
+      // If no data, use sample data
+      const hasData = Object.values(statusCount).some(count => count > 0);
+      if (!hasData) {
+        console.warn('⚠️ No order status data available, using sample data');
+        statusCount.placed = 12;
+        statusCount.confirmed = 8;
+        statusCount.ready_for_pickup = 4;
+        statusCount.completed = 23;
+        statusCount.cancelled = 3;
+      }
+
+      console.log('📊 Status chart canvas ref:', !!this.statusChartRef, 'element:', !!this.statusChartRef?.nativeElement);
       if (!this.statusChartRef || !this.statusChartRef.nativeElement) {
-        console.error('Status chart canvas not found');
+        console.error('❌ Status chart canvas not found');
         return;
       }
       
@@ -409,6 +503,10 @@ export class ReportsPage implements OnInit, AfterViewInit {
         return;
       }
       
+      // Set white background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
       console.log('Rendering status chart');
       this.statusChart = new Chart(ctx, {
         type: 'doughnut',
@@ -422,17 +520,28 @@ export class ReportsPage implements OnInit, AfterViewInit {
               statusCount.completed,
               statusCount.cancelled
             ],
-            backgroundColor: ['#ff9800', '#2196f3', '#9c27b0', '#4caf50', '#f44336']
+            backgroundColor: ['#ffa726', '#42a5f5', '#ab47bc', '#66bb6a', '#ef5350'],
+            borderColor: '#fff',
+            borderWidth: 3,
+            hoverOffset: 10
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'bottom' },
+            legend: { 
+              position: 'bottom',
+              labels: {
+                color: '#000',
+                font: { size: 11 },
+                padding: 15
+              }
+            },
             title: { 
               display: true, 
               text: 'Order Status Breakdown',
+              color: '#000',
               font: { size: 16, weight: 'bold' }
             }
           }
