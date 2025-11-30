@@ -1,0 +1,149 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && getUserRole() == 'admin';
+    }
+    
+    function isSeller() {
+      return isAuthenticated() && getUserRole() == 'seller';
+    }
+    
+    function isCustomer() {
+      return isAuthenticated() && getUserRole() == 'customer';
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Anyone authenticated can read user data
+      allow read: if isAuthenticated();
+      
+      // Users can create their own profile during signup
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Users can update their own profile, admins can update any
+      allow update: if isOwner(userId) || isAdmin();
+      
+      // Only admins can delete users
+      allow delete: if isAdmin();
+    }
+    
+    // Products collection
+    match /products/{productId} {
+      // Anyone authenticated can read approved products
+      allow read: if isAuthenticated();
+      
+      // Sellers can create products
+      allow create: if isAuthenticated() && isSeller();
+      
+      // Sellers can update their own products, admins can update any
+      allow update: if isAuthenticated() && 
+                      (resource.data.sellerId == request.auth.uid || isAdmin());
+      
+      // Sellers can delete their own products, admins can delete any
+      allow delete: if isAuthenticated() && 
+                      (resource.data.sellerId == request.auth.uid || isAdmin());
+    }
+    
+    // Orders collection
+    match /orders/{orderId} {
+      // Customers can read their own orders, sellers can read orders for their products
+      allow read: if isAuthenticated() && 
+                    (resource.data.customerId == request.auth.uid || 
+                     resource.data.sellerId == request.auth.uid ||
+                     isAdmin());
+      
+      // Customers can create orders
+      allow create: if isAuthenticated();
+      
+      // Customers, sellers, and admins can update orders
+      allow update: if isAuthenticated() && 
+                      (resource.data.customerId == request.auth.uid || 
+                       resource.data.sellerId == request.auth.uid ||
+                       isAdmin());
+      
+      // Only admins can delete orders
+      allow delete: if isAdmin();
+    }
+    
+    // Chats collection
+    match /chats/{chatId} {
+      // Participants and admins can read chats
+      allow read: if isAuthenticated() && 
+                    (request.auth.uid in resource.data.participantIds || isAdmin());
+      
+      // Any authenticated user can create chats
+      allow create: if isAuthenticated();
+      
+      // Participants can update chats (for last message, unread counts)
+      allow update: if isAuthenticated() && 
+                      (request.auth.uid in resource.data.participantIds || isAdmin());
+      
+      // Admins can delete chats
+      allow delete: if isAdmin();
+      
+      // Messages subcollection
+      match /messages/{messageId} {
+        // Participants can read messages
+        allow read: if isAuthenticated() && 
+                      request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participantIds;
+        
+        // Participants can create messages
+        allow create: if isAuthenticated() && 
+                        request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participantIds;
+        
+        // Participants can update messages (mark as read)
+        allow update: if isAuthenticated() && 
+                        request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participantIds;
+        
+        // No one can delete individual messages
+        allow delete: if false;
+      }
+    }
+    
+    // Seller Applications collection
+    match /sellerApplications/{applicationId} {
+      // Users can read their own applications, admins can read all
+      allow read: if isAuthenticated() && 
+                    (resource.data.userId == request.auth.uid || isAdmin());
+      
+      // Customers can create applications
+      allow create: if isAuthenticated() && isCustomer();
+      
+      // Only admins can update applications (approve/reject)
+      allow update: if isAdmin();
+      
+      // Only admins can delete applications
+      allow delete: if isAdmin();
+    }
+    
+    // Notifications collection (if you add it later)
+    match /notifications/{notificationId} {
+      // Users can read their own notifications
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      
+      // System can create notifications
+      allow create: if isAuthenticated();
+      
+      // Users can update their own notifications (mark as read)
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      
+      // Users can delete their own notifications
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

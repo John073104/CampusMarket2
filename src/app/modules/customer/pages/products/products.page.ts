@@ -43,8 +43,19 @@ export class ProductsPage implements OnInit {
       this.products = await this.productService.getApprovedProducts();
       console.log('Loaded products:', this.products.length, this.products);
       this.filteredProducts = [...this.products];
-    } catch (error) {
+      
+      if (this.products.length === 0) {
+        console.warn('No approved products found. Check if products are approved in admin panel.');
+      }
+    } catch (error: any) {
       console.error('Error loading products:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      
+      if (error.code === 'permission-denied') {
+        console.error('FIRESTORE PERMISSION DENIED! Please deploy firestore.rules to Firebase.');
+        console.error('Run: firebase deploy --only firestore:rules');
+      }
     } finally {
       this.loading = false;
     }
