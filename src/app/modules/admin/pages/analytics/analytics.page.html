@@ -94,6 +94,39 @@
       </ion-row>
     </ion-grid>
 
+    <!-- Charts -->
+    <ion-grid>
+      <ion-row>
+        <!-- Sales Chart -->
+        <ion-col size="12" sizeMd="6">
+          <ion-card class="chart-card">
+            <ion-card-header>
+              <ion-card-title>📈 Sales Trend (Last 7 Days)</ion-card-title>
+            </ion-card-header>
+            <ion-card-content class="chart-content">
+              <div class="chart-wrapper">
+                <canvas #salesChart id="salesChart"></canvas>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <!-- Category Chart -->
+        <ion-col size="12" sizeMd="6">
+          <ion-card class="chart-card">
+            <ion-card-header>
+              <ion-card-title>📊 Products by Category</ion-card-title>
+            </ion-card-header>
+            <ion-card-content class="chart-content">
+              <div class="chart-wrapper">
+                <canvas #categoryChart id="categoryChart"></canvas>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
     <!-- Recent Orders -->
     <ion-card>
       <ion-card-header>

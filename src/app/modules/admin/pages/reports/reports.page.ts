@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
@@ -28,12 +28,12 @@ interface CategoryData {
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule]
 })
-export class ReportsPage implements OnInit, AfterViewInit {
-  @ViewChild('salesChart') salesChartRef!: ElementRef;
-  @ViewChild('categoryChart') categoryChartRef!: ElementRef;
-  @ViewChild('topSellersChart') topSellersChartRef!: ElementRef;
-  @ViewChild('statusChart') statusChartRef!: ElementRef;
-  @ViewChild('reportContent') reportContent!: ElementRef;
+export class ReportsPage implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('salesChart', { static: false }) salesChartRef!: ElementRef;
+  @ViewChild('categoryChart', { static: false }) categoryChartRef!: ElementRef;
+  @ViewChild('topSellersChart', { static: false }) topSellersChartRef!: ElementRef;
+  @ViewChild('statusChart', { static: false }) statusChartRef!: ElementRef;
+  @ViewChild('reportContent', { static: false }) reportContent!: ElementRef;
 
   salesChart: Chart | null = null;
   categoryChart: Chart | null = null;
@@ -41,6 +41,12 @@ export class ReportsPage implements OnInit, AfterViewInit {
   statusChart: Chart | null = null;
 
   loading = false;
+  chartsReady = false;
+  
+  // Pre-loaded data for charts
+  private allOrders: any[] = [];
+  private allProducts: any[] = [];
+  private allUsers: any[] = [];
   dateRange = {
     start: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0],
     end: new Date().toISOString().split('T')[0]
@@ -56,59 +62,59 @@ export class ReportsPage implements OnInit, AfterViewInit {
     cancelledOrders: 0
   };
 
-  constructor(
-    private orderService: OrderService,
-    private productService: ProductService,
-    private userService: UserService,
-    private alertController: AlertController,
-    private toastController: ToastController
-  ) {}
+  // Use inject() for proper Angular injection context
+  private orderService = inject(OrderService);
+  private productService = inject(ProductService);
+  private userService = inject(UserService);
+  private alertController = inject(AlertController);
+  private toastController = inject(ToastController);
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
-    console.log('Reports page initialized');
+    console.log('📊 Reports page initialized');
+    // Load data in ngOnInit
+    this.loadReports();
   }
 
   ngAfterViewInit() {
-    console.log('🚀 View initialized');
-    // Wait longer for Ionic to fully render the view
+    console.log('🚀 View initialized, waiting for canvas elements');
+    // Wait for Ionic to fully render the view
     setTimeout(() => {
-      this.checkAndLoadReports();
-    }, 800);
+      this.initializeChartsWhenReady();
+    }, 100);
   }
 
   ionViewDidEnter() {
     console.log('🚀 View entered');
-    // Only reload if charts don't exist
-    setTimeout(() => {
-      if (!this.salesChart || !this.categoryChart || !this.topSellersChart || !this.statusChart) {
-        console.log('⚠️ Charts missing, reloading...');
-        this.checkAndLoadReports();
-      }
-    }, 500);
+    // Only reinitialize if charts were destroyed or never created
+    if (!this.chartsReady && !this.loading) {
+      setTimeout(() => {
+        this.initializeChartsWhenReady();
+      }, 100);
+    }
   }
 
-  private checkAndLoadReports() {
-    // Verify all canvas elements exist before attempting to load
+  private initializeChartsWhenReady() {
+    // Verify all canvas elements exist before proceeding
     const salesCanvas = this.salesChartRef?.nativeElement;
     const categoryCanvas = this.categoryChartRef?.nativeElement;
     const topSellersCanvas = this.topSellersChartRef?.nativeElement;
     const statusCanvas = this.statusChartRef?.nativeElement;
 
-    console.log('Canvas elements check:', {
-      salesCanvas: !!salesCanvas,
-      categoryCanvas: !!categoryCanvas,
-      topSellersCanvas: !!topSellersCanvas,
-      statusCanvas: !!statusCanvas
-    });
+    const allReady = salesCanvas && categoryCanvas && topSellersCanvas && statusCanvas;
 
-    if (!salesCanvas || !categoryCanvas || !topSellersCanvas || !statusCanvas) {
-      console.error('❌ Some canvas elements not found, retrying in 1 second...');
-      setTimeout(() => this.checkAndLoadReports(), 1000);
+    if (!allReady) {
+      console.warn('⚠️ Canvas elements not ready yet');
       return;
     }
 
-    console.log('✅ All canvas elements found, loading reports...');
-    this.loadReports();
+    console.log('✅ All canvas elements ready, initializing charts');
+    this.chartsReady = true;
+    
+    // Only load charts if we already have data
+    if (this.allOrders.length > 0) {
+      this.loadAllCharts();
+    }
   }
 
   private destroyAllCharts() {
@@ -130,40 +136,25 @@ export class ReportsPage implements OnInit, AfterViewInit {
     }
   }
 
-  private refreshCharts() {
-    // Trigger window resize to force charts to render
-    window.dispatchEvent(new Event('resize'));
-  }
-
   async loadReports() {
-    console.log('📊 Starting loadReports...');
+    console.log('📊 Loading reports data...');
     this.loading = true;
     
     try {
-      // Load stats first
+      // Load all data first and cache it
       await this.loadStats();
-      console.log('✅ Stats loaded');
+      console.log('✅ Stats and data loaded');
       
-      // Load all charts with delays between each
-      await new Promise(resolve => setTimeout(resolve, 250));
-      await this.loadSalesChart();
+      this.cdr.detectChanges();
       
-      await new Promise(resolve => setTimeout(resolve, 250));
-      await this.loadCategoryChart();
+      // If canvas elements are ready, load charts
+      if (this.chartsReady) {
+        await this.loadAllCharts();
+      }
       
-      await new Promise(resolve => setTimeout(resolve, 250));
-      await this.loadTopSellersChart();
-      
-      await new Promise(resolve => setTimeout(resolve, 250));
-      await this.loadStatusChart();
-      
-      // Force final update after all charts loaded
-      await new Promise(resolve => setTimeout(resolve, 300));
-      this.forceChartsUpdate();
-      
-      console.log('✅✅✅ ALL CHARTS LOADED SUCCESSFULLY ✅✅✅');
+      console.log('✅ Reports loaded successfully');
     } catch (error) {
-      console.error('❌❌❌ Error loading reports:', error);
+      console.error('❌ Error loading reports:', error);
       const toast = await this.toastController.create({
         message: 'Failed to load reports. Click refresh to try again.',
         duration: 4000,
@@ -173,43 +164,43 @@ export class ReportsPage implements OnInit, AfterViewInit {
       await toast.present();
     } finally {
       this.loading = false;
-      // One more update after loading state changes
-      setTimeout(() => {
-        this.forceChartsUpdate();
-        console.log('🔄 Final chart update completed');
-      }, 300);
-    }
-  }
-  
-  private forceChartsUpdate() {
-    try {
-      if (this.salesChart) {
-        this.salesChart.resize();
-        this.salesChart.update('none');
-      }
-      if (this.categoryChart) {
-        this.categoryChart.resize();
-        this.categoryChart.update('none');
-      }
-      if (this.topSellersChart) {
-        this.topSellersChart.resize();
-        this.topSellersChart.update('none');
-      }
-      if (this.statusChart) {
-        this.statusChart.resize();
-        this.statusChart.update('none');
-      }
-      window.dispatchEvent(new Event('resize'));
-    } catch (e) {
-      console.error('Error updating charts:', e);
+      this.cdr.detectChanges();
     }
   }
 
+  private async loadAllCharts() {
+    if (!this.chartsReady) {
+      console.warn('⚠️ Charts not ready yet');
+      return;
+    }
+
+    try {
+      // Load all charts using cached data
+      await this.loadSalesChart();
+      await this.loadCategoryChart();
+      await this.loadTopSellersChart();
+      await this.loadStatusChart();
+      
+      console.log('✅ All charts rendered successfully');
+    } catch (error) {
+      console.error('❌ Error loading charts:', error);
+    }
+  }
+
+
   async loadStats() {
     try {
-      const orders = await this.orderService.getAllOrders();
-      const products = await this.productService.getAllProducts();
-      const users = await this.userService.getAllUsers();
+      // Load and cache all data
+      const [orders, products, users] = await Promise.all([
+        this.orderService.getAllOrders(),
+        this.productService.getAllProducts(),
+        this.userService.getAllUsers()
+      ]);
+
+      // Cache for chart rendering
+      this.allOrders = orders;
+      this.allProducts = products;
+      this.allUsers = users;
 
       this.stats.totalOrders = orders.length;
       this.stats.totalProducts = products.length;
@@ -222,8 +213,11 @@ export class ReportsPage implements OnInit, AfterViewInit {
       this.stats.completedOrders = orders.filter((o: any) => o.status === 'completed').length;
       this.stats.pendingOrders = orders.filter((o: any) => o.status === 'placed').length;
       this.stats.cancelledOrders = orders.filter((o: any) => o.status === 'cancelled').length;
+
+      console.log('✅ Stats loaded and data cached');
     } catch (error) {
-      console.error('Error loading stats:', error);
+      console.error('❌ Error loading stats:', error);
+      throw error;
     }
   }
 
@@ -272,11 +266,10 @@ export class ReportsPage implements OnInit, AfterViewInit {
         this.salesChart = null;
       }
 
-      // GET REAL DATA FROM DATABASE
-      const orders = await this.orderService.getAllOrders();
+      // Use cached data - NO Firebase calls
       const last7Days = this.getLast7Days();
       const salesByDay = last7Days.map(date => {
-        const dayOrders = orders.filter((o: any) => {
+        const dayOrders = this.allOrders.filter((o: any) => {
           const orderDate = o.createdAt?.toDate ? o.createdAt.toDate() : new Date(o.createdAt);
           return orderDate.toDateString() === date.toDateString() && o.status === 'completed';
         });
@@ -389,10 +382,9 @@ export class ReportsPage implements OnInit, AfterViewInit {
         this.categoryChart = null;
       }
 
-      // GET REAL DATA FROM DATABASE
-      const products = await this.productService.getAllProducts();
+      // Use cached data - NO Firebase calls
       const categoryCount: { [key: string]: number } = {};
-      products.forEach((p: any) => {
+      this.allProducts.forEach((p: any) => {
         const cat = p.category || 'Other';
         categoryCount[cat] = (categoryCount[cat] || 0) + 1;
       });
@@ -494,11 +486,10 @@ export class ReportsPage implements OnInit, AfterViewInit {
         this.topSellersChart = null;
       }
 
-      // GET REAL DATA FROM DATABASE
-      const orders = await this.orderService.getAllOrders();
+      // Use cached data - NO Firebase calls
       const sellerSales: { [key: string]: number } = {};
       
-      orders.filter((o: any) => o.status === 'completed').forEach((o: any) => {
+      this.allOrders.filter((o: any) => o.status === 'completed').forEach((o: any) => {
         const sellerId = o.sellerId || 'Unknown';
         sellerSales[sellerId] = (sellerSales[sellerId] || 0) + (o.totalPrice || 0);
       });
@@ -507,9 +498,9 @@ export class ReportsPage implements OnInit, AfterViewInit {
         .sort(([, a], [, b]) => (b as number) - (a as number))
         .slice(0, 10);
 
-      const users = await this.userService.getAllUsers();
+      // Use cached data
       const sellerNames = sortedSellers.map(([id]) => {
-        const user: any = users.find((u: any) => u.uid === id);
+        const user: any = this.allUsers.find((u: any) => u.uid === id);
         return user?.displayName || user?.email?.split('@')[0] || 'Seller';
       });
       const sellerTotals = sortedSellers.map(([, total]) => total);
@@ -603,14 +594,13 @@ export class ReportsPage implements OnInit, AfterViewInit {
         this.statusChart = null;
       }
 
-      // GET REAL DATA FROM DATABASE
-      const orders = await this.orderService.getAllOrders();
+      // Use cached data - NO Firebase calls
       const statusCount = {
-        placed: orders.filter((o: any) => o.status === 'placed').length,
-        confirmed: orders.filter((o: any) => o.status === 'confirmed').length,
-        ready: orders.filter((o: any) => o.status === 'ready_for_pickup').length,
-        completed: orders.filter((o: any) => o.status === 'completed').length,
-        cancelled: orders.filter((o: any) => o.status === 'cancelled').length
+        placed: this.allOrders.filter((o: any) => o.status === 'placed').length,
+        confirmed: this.allOrders.filter((o: any) => o.status === 'confirmed').length,
+        ready: this.allOrders.filter((o: any) => o.status === 'ready_for_pickup').length,
+        completed: this.allOrders.filter((o: any) => o.status === 'completed').length,
+        cancelled: this.allOrders.filter((o: any) => o.status === 'cancelled').length
       };
 
       this.statusChart = new Chart(ctx, {
@@ -737,7 +727,7 @@ export class ReportsPage implements OnInit, AfterViewInit {
     console.log('🔄 Manually refreshing reports...');
     
     const toast = await this.toastController.create({
-      message: '🔄 Refreshing charts...',
+      message: '🔄 Refreshing data and charts...',
       duration: 1500,
       color: 'primary',
       position: 'top'
@@ -745,11 +735,20 @@ export class ReportsPage implements OnInit, AfterViewInit {
     await toast.present();
     
     this.destroyAllCharts();
-    await new Promise(resolve => setTimeout(resolve, 300));
+    this.chartsReady = false;
+    
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Reload everything
     await this.loadReports();
     
+    // Re-initialize charts
+    setTimeout(() => {
+      this.initializeChartsWhenReady();
+    }, 100);
+    
     const successToast = await this.toastController.create({
-      message: '✅ Charts refreshed successfully!',
+      message: '✅ Reports refreshed successfully!',
       duration: 2000,
       color: 'success',
       position: 'top'
@@ -758,9 +757,8 @@ export class ReportsPage implements OnInit, AfterViewInit {
   }
 
   ngOnDestroy() {
-    if (this.salesChart) this.salesChart.destroy();
-    if (this.categoryChart) this.categoryChart.destroy();
-    if (this.topSellersChart) this.topSellersChart.destroy();
-    if (this.statusChart) this.statusChart.destroy();
+    console.log('🧹 Cleaning up charts...');
+    this.destroyAllCharts();
+    this.chartsReady = false;
   }
 }
