@@ -97,6 +97,31 @@
             </ion-radio-group>
           </ion-list>
 
+          <!-- Shipping Location for COD -->
+          @if (checkoutData.paymentMethod === 'cod') {
+            <div class="shipping-location-section">
+              <h3>Delivery Location</h3>
+              <ion-item>
+                <ion-label position="stacked">Campus Location</ion-label>
+                <ion-select 
+                  [(ngModel)]="checkoutData.shippingLocation" 
+                  (ionChange)="onLocationChange()"
+                  interface="action-sheet"
+                  placeholder="Select location">
+                  @for (location of campusLocations; track location.name) {
+                    <ion-select-option [value]="location.name">
+                      {{ location.name }} (₱{{ location.fee }})
+                    </ion-select-option>
+                  }
+                </ion-select>
+              </ion-item>
+              <ion-note color="primary">
+                <ion-icon name="location"></ion-icon>
+                Shipping fee: ₱{{ checkoutData.shippingFee }} • Max ₱50 within campus
+              </ion-note>
+            </div>
+          }
+
           <!-- Meetup Location Input -->
           @if (checkoutData.paymentMethod === 'meet_and_pay') {
             <div class="meetup-location-section">
@@ -209,9 +234,15 @@
             <span>Items ({{ getItemCount() }})</span>
             <span>₱{{ getTotal() | number:'1.2-2' }}</span>
           </div>
+          @if (checkoutData.paymentMethod === 'cod') {
+            <div class="summary-row">
+              <span>Shipping Fee ({{ checkoutData.shippingLocation }})</span>
+              <span>₱{{ checkoutData.shippingFee | number:'1.2-2' }}</span>
+            </div>
+          }
           <div class="summary-row total">
             <strong>Total</strong>
-            <strong>₱{{ getTotal() | number:'1.2-2' }}</strong>
+            <strong>₱{{ getTotalWithShipping() | number:'1.2-2' }}</strong>
           </div>
 
           <ion-button 

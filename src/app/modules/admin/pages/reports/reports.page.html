@@ -109,13 +109,13 @@
         <ion-row>
           <!-- Sales Chart -->
           <ion-col size="12" sizeMd="6">
-            <ion-card>
+            <ion-card class="chart-card">
               <ion-card-header>
-                <ion-card-title>Sales Over Time</ion-card-title>
+                <ion-card-title>📈 Sales Over Time</ion-card-title>
               </ion-card-header>
-              <ion-card-content>
-                <div class="chart-container">
-                  <canvas #salesChart></canvas>
+              <ion-card-content class="chart-content">
+                <div class="chart-wrapper">
+                  <canvas #salesChart id="salesChart"></canvas>
                 </div>
               </ion-card-content>
             </ion-card>
@@ -123,13 +123,13 @@
 
           <!-- Category Chart -->
           <ion-col size="12" sizeMd="6">
-            <ion-card>
+            <ion-card class="chart-card">
               <ion-card-header>
-                <ion-card-title>Products by Category</ion-card-title>
+                <ion-card-title>📊 Products by Category</ion-card-title>
               </ion-card-header>
-              <ion-card-content>
-                <div class="chart-container">
-                  <canvas #categoryChart></canvas>
+              <ion-card-content class="chart-content">
+                <div class="chart-wrapper">
+                  <canvas #categoryChart id="categoryChart"></canvas>
                 </div>
               </ion-card-content>
             </ion-card>
@@ -137,13 +137,13 @@
 
           <!-- Top Sellers Chart -->
           <ion-col size="12" sizeMd="6">
-            <ion-card>
+            <ion-card class="chart-card">
               <ion-card-header>
-                <ion-card-title>Top 10 Sellers</ion-card-title>
+                <ion-card-title>🏆 Top 10 Sellers</ion-card-title>
               </ion-card-header>
-              <ion-card-content>
-                <div class="chart-container">
-                  <canvas #topSellersChart></canvas>
+              <ion-card-content class="chart-content">
+                <div class="chart-wrapper">
+                  <canvas #topSellersChart id="topSellersChart"></canvas>
                 </div>
               </ion-card-content>
             </ion-card>
@@ -151,13 +151,13 @@
 
           <!-- Status Chart -->
           <ion-col size="12" sizeMd="6">
-            <ion-card>
+            <ion-card class="chart-card">
               <ion-card-header>
-                <ion-card-title>Order Status Breakdown</ion-card-title>
+                <ion-card-title>📋 Order Status Breakdown</ion-card-title>
               </ion-card-header>
-              <ion-card-content>
-                <div class="chart-container">
-                  <canvas #statusChart></canvas>
+              <ion-card-content class="chart-content">
+                <div class="chart-wrapper">
+                  <canvas #statusChart id="statusChart"></canvas>
                 </div>
               </ion-card-content>
             </ion-card>

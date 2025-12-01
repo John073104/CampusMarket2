@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1763434788475,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1764588866274,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,8 +5,10 @@\n   sellerId: string;\r\n   sellerName: string;\r\n   items: OrderItem[];\r\n   totalPrice: number;\r\n+  shippingFee?: number;\r\n+  shippingLocation?: string;\r\n   status: OrderStatus;\r\n   pickupLocation?: string;\r\n   notes?: string;\r\n   paymentMethod?: 'cod' | 'gcash' | 'bank_transfer' | 'meet_and_pay';\r\n"
                 }
             ],
             "date": 1763434788475,

@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 4,
+            "activePatchIndex": 5,
             "patches": [
                 {
                     "date": 1763388132033,
@@ -24,6 +24,10 @@
                 {
                     "date": 1763886735700,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -50,8 +50,12 @@\n       },\r\n       {\r\n         path: 'profile',\r\n         loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule)\r\n+      },\r\n+      {\r\n+        path: 'messages',\r\n+        loadChildren: () => import('./pages/messages/messages.module').then(m => m.MessagesPageModule)\r\n       }\r\n     ]\r\n   }\r\n ];\r\n"
+                },
+                {
+                    "date": 1764592203201,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -54,8 +54,12 @@\n       },\r\n       {\r\n         path: 'messages',\r\n         loadChildren: () => import('./pages/messages/messages.module').then(m => m.MessagesPageModule)\r\n+      },\r\n+      {\r\n+        path: 'chat/:id',\r\n+        loadComponent: () => import('./pages/chat/chat.page').then(m => m.ChatPage)\r\n       }\r\n     ]\r\n   }\r\n ];\r\n"
                 }
             ],
             "date": 1763388132033,

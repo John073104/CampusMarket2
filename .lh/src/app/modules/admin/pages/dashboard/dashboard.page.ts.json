@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 3,
+            "activePatchIndex": 4,
             "patches": [
                 {
                     "date": 1763642147081,
@@ -20,6 +20,10 @@
                 {
                     "date": 1763885776734,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -74,10 +74,10 @@\n   goToUsersMap() {\r\n     this.router.navigate(['/admin/users-map']);\r\n   }\r\n \r\n-  goToFixProducts() {\r\n-    this.router.navigate(['/fix-products']);\r\n+  goToMessages() {\r\n+    this.router.navigate(['/admin/messages']);\r\n   }\r\n \r\n   goToProfile() {\r\n     this.router.navigate(['/admin/profile']);\r\n"
+                },
+                {
+                    "date": 1764588059918,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -78,8 +78,12 @@\n   goToMessages() {\r\n     this.router.navigate(['/admin/messages']);\r\n   }\r\n \r\n+  goToReports() {\r\n+    this.router.navigate(['/admin/reports']);\r\n+  }\r\n+\r\n   goToProfile() {\r\n     this.router.navigate(['/admin/profile']);\r\n   }\r\n \r\n"
                 }
             ],
             "date": 1763642147081,

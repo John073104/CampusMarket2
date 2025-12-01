@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, AlertController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../../../services/product.service';
 import { CartService } from '../../../../services/cart.service';
@@ -28,7 +28,8 @@ export class ProductDetailPage implements OnInit {
     private productService: ProductService,
     private cartService: CartService,
     private chatService: ChatService,
-    private authService: AuthService
+    private authService: AuthService,
+    private alertController: AlertController
   ) { }
 
   ngOnInit() {
@@ -80,19 +81,28 @@ export class ProductDetailPage implements OnInit {
       };
       await this.cartService.addToCart(cartItem);
       
-      // Show success toast
-      const toast = document.createElement('ion-toast');
-      toast.message = `✅ ${this.product.title} added to cart!`;
-      toast.duration = 2000;
-      toast.color = 'success';
-      toast.position = 'top';
-      document.body.appendChild(toast);
-      await toast.present();
+      // Show success modal with checkout option
+      const alert = await this.alertController.create({
+        header: '✅ Added to Cart!',
+        message: `${this.product.title} has been added to your cart successfully.`,
+        buttons: [
+          {
+            text: 'Continue Shopping',
+            role: 'cancel',
+            handler: () => {
+              this.router.navigate(['/customer/products']);
+            }
+          },
+          {
+            text: 'Checkout Now',
+            handler: () => {
+              this.router.navigate(['/customer/cart']);
+            }
+          }
+        ]
+      });
       
-      // Navigate after a brief delay
-      setTimeout(() => {
-        this.router.navigate(['/customer/cart']);
-      }, 500);
+      await alert.present();
     } catch (error) {
       console.error('Error adding to cart:', error);
       const toast = document.createElement('ion-toast');

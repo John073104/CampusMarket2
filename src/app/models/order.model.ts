@@ -6,6 +6,8 @@ export interface Order {
   sellerName: string;
   items: OrderItem[];
   totalPrice: number;
+  shippingFee?: number;
+  shippingLocation?: string;
   status: OrderStatus;
   pickupLocation?: string;
   notes?: string;

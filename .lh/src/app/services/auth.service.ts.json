@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 1,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1763385225714,
@@ -12,6 +12,10 @@
                 {
                     "date": 1763888577875,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -190,8 +190,24 @@\n   getCurrentUser(): User | null {\r\n     return this.currentUserSubject.value;\r\n   }\r\n \r\n+  async refreshCurrentUser(): Promise<void> {\r\n+    const currentUser = this.currentUserSubject.value;\r\n+    if (currentUser && currentUser.userId) {\r\n+      try {\r\n+        const userDoc = await getDoc(doc(this.firestore, 'users', currentUser.userId));\r\n+        if (userDoc.exists()) {\r\n+          const userData = userDoc.data() as User;\r\n+          this.currentUserSubject.next(userData);\r\n+          localStorage.setItem('currentUser', JSON.stringify(userData));\r\n+        }\r\n+      } catch (error) {\r\n+        console.error('Error refreshing user:', error);\r\n+      }\r\n+    }\r\n+  }\r\n+\r\n   isAuthenticated(): boolean {\r\n     return this.currentUserSubject.value !== null;\r\n   }\r\n \r\n"
+                },
+                {
+                    "date": 1764141446066,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -34,14 +34,31 @@\n     this.initAuthListener();\r\n   }\r\n \r\n   private initAuthListener() {\r\n+    // Check localStorage first for immediate user state\r\n+    const storedUser = localStorage.getItem('currentUser');\r\n+    if (storedUser) {\r\n+      try {\r\n+        const userData = JSON.parse(storedUser);\r\n+        this.currentUserSubject.next(userData);\r\n+      } catch (error) {\r\n+        console.error('Error parsing stored user:', error);\r\n+        localStorage.removeItem('currentUser');\r\n+      }\r\n+    }\r\n+\r\n+    // Then listen for auth state changes\r\n     onAuthStateChanged(this.auth, async (firebaseUser) => {\r\n       if (firebaseUser) {\r\n         const userData = await this.getUserData(firebaseUser.uid);\r\n         this.currentUserSubject.next(userData);\r\n+        if (userData) {\r\n+          localStorage.setItem('currentUser', JSON.stringify(userData));\r\n+        }\r\n       } else {\r\n         this.currentUserSubject.next(null);\r\n+        localStorage.removeItem('currentUser');\r\n       }\r\n     });\r\n   }\r\n \r\n@@ -126,8 +143,9 @@\n         throw new Error('User profile not found. Please contact support.');\r\n       }\r\n       \r\n       this.currentUserSubject.next(userData);\r\n+      localStorage.setItem('currentUser', JSON.stringify(userData));\r\n       \r\n       await this.redirectByRole(userData.role);\r\n     } catch (error: any) {\r\n       console.error('Login error details:', {\r\n@@ -162,8 +180,9 @@\n \r\n   async signOut(): Promise<void> {\r\n     await signOut(this.auth);\r\n     this.currentUserSubject.next(null);\r\n+    localStorage.removeItem('currentUser');\r\n     this.router.navigate(['/landing']);\r\n   }\r\n \r\n   private async getUserData(userId: string): Promise<User | null> {\r\n"
                 }
             ],
             "date": 1763385225714,

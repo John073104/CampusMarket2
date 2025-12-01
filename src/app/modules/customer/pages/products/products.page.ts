@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { ProductService } from '../../../../services/product.service';
 import { CartService } from '../../../../services/cart.service';
@@ -25,7 +25,8 @@ export class ProductsPage implements OnInit {
   constructor(
     private productService: ProductService,
     private cartService: CartService,
-    private router: Router
+    private router: Router,
+    private alertController: AlertController
   ) { }
 
   ngOnInit() {
@@ -95,7 +96,26 @@ export class ProductsPage implements OnInit {
         sellerName: product.sellerName
       };
       await this.cartService.addToCart(cartItem);
-      // Show success toast
+      
+      // Show success modal with checkout option
+      const alert = await this.alertController.create({
+        header: '✅ Added to Cart!',
+        message: `${product.title} has been added to your cart successfully.`,
+        buttons: [
+          {
+            text: 'Continue Shopping',
+            role: 'cancel'
+          },
+          {
+            text: 'Checkout Now',
+            handler: () => {
+              this.router.navigate(['/customer/cart']);
+            }
+          }
+        ]
+      });
+      
+      await alert.present();
     } catch (error) {
       console.error('Error adding to cart:', error);
     }

@@ -141,12 +141,20 @@
         <div class="stats-row">
           <div class="stat-item">
             <ion-icon name="people" color="primary"></ion-icon>
-            <h3>1000+</h3>
+            @if (loading) {
+              <ion-spinner name="dots"></ion-spinner>
+            } @else {
+              <h3>{{ activeUsers }}</h3>
+            }
             <p>Active Users</p>
           </div>
           <div class="stat-item">
             <ion-icon name="cart" color="success"></ion-icon>
-            <h3>5000+</h3>
+            @if (loading) {
+              <ion-spinner name="dots"></ion-spinner>
+            } @else {
+              <h3>{{ productsSold }}</h3>
+            }
             <p>Products Sold</p>
           </div>
           <div class="stat-item">

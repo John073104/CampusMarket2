@@ -22,7 +22,8 @@ export class OrderDetailPage implements OnInit {
   isEditing = false;
   editData = {
     pickupLocation: '',
-    notes: ''
+    notes: '',
+    items: [] as any[]
   };
 
   constructor(
@@ -155,8 +156,26 @@ export class OrderDetailPage implements OnInit {
     this.isEditing = true;
     this.editData = {
       pickupLocation: this.order.pickupLocation || '',
-      notes: this.order.notes || ''
+      notes: this.order.notes || '',
+      items: JSON.parse(JSON.stringify(this.order.items)) // Deep copy items
     };
+  }
+  
+  updateItemQuantity(index: number, change: number) {
+    if (!this.editData.items[index]) return;
+    
+    const newQty = this.editData.items[index].quantity + change;
+    if (newQty > 0) {
+      this.editData.items[index].quantity = newQty;
+    }
+  }
+  
+  removeItem(index: number) {
+    this.editData.items.splice(index, 1);
+  }
+  
+  getEditTotal(): number {
+    return this.editData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   }
 
   cancelEdit() {
@@ -165,12 +184,27 @@ export class OrderDetailPage implements OnInit {
 
   async saveOrderChanges() {
     if (!this.order?.orderId) return;
+    
+    if (this.editData.items.length === 0) {
+      const toast = await this.toastController.create({
+        message: 'Order must have at least one item',
+        duration: 2000,
+        color: 'warning',
+        position: 'top'
+      });
+      await toast.present();
+      return;
+    }
 
     this.loading = true;
     try {
+      const newTotal = this.getEditTotal();
+      
       await this.orderService.updateOrderDetails(this.order.orderId, {
         pickupLocation: this.editData.pickupLocation,
-        notes: this.editData.notes
+        notes: this.editData.notes,
+        items: this.editData.items,
+        totalPrice: newTotal
       });
       
       const toast = await this.toastController.create({

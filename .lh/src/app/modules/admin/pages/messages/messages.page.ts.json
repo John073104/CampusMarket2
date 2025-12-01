@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 2,
+            "activePatchIndex": 3,
             "patches": [
                 {
                     "date": 1763885776637,
@@ -16,6 +16,10 @@
                 {
                     "date": 1763888387792,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -38,9 +38,9 @@\n     this.loadAllChats();\r\n   }\r\n \r\n   loadAllChats() {\r\n-    console.log('Loading all platform chats...');\r\n+    console.log('Loading admin chats...');\r\n     \r\n     const timeout = setTimeout(() => {\r\n       if (this.loading) {\r\n         console.warn('Chat loading timeout');\r\n@@ -49,9 +49,10 @@\n         this.filteredChats = [];\r\n       }\r\n     }, 10000);\r\n     \r\n-    this.chatService.getAllChats().subscribe({\r\n+    // Only load chats where current admin is a participant\r\n+    this.chatService.getUserChats(this.currentUserId).subscribe({\r\n       next: (chats: Chat[]) => {\r\n         clearTimeout(timeout);\r\n         this.allChats = chats;\r\n         this.filteredChats = chats;\r\n"
+                },
+                {
+                    "date": 1764592203196,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -92,10 +92,9 @@\n   }\r\n \r\n   viewChat(chat: Chat) {\r\n     if (chat.chatId) {\r\n-      // Navigate to a detailed view (you can create this later)\r\n-      this.router.navigate(['/admin/chat-detail', chat.chatId]);\r\n+      this.router.navigate(['/admin/chat', chat.chatId]);\r\n     }\r\n   }\r\n \r\n   getLastMessageTime(chat: Chat): Date | null {\r\n"
                 }
             ],
             "date": 1763885776637,

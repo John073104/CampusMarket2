@@ -27,9 +27,25 @@ export class CartPage implements OnInit {
     phone: '',
     address: '',
     meetupLocation: '',
+    shippingLocation: 'CTE Building' as string,
+    shippingFee: 20,
     paymentMethod: 'cod' as 'cod' | 'gcash' | 'bank_transfer' | 'meet_and_pay',
     paymentProofImage: ''
   };
+  
+  // Campus locations with shipping fees
+  campusLocations = [
+    { name: 'CTE Building', fee: 20 },
+    { name: 'Main Building', fee: 20 },
+    { name: 'Library', fee: 15 },
+    { name: 'Gymnasium', fee: 25 },
+    { name: 'Cafeteria', fee: 15 },
+    { name: 'Science Laboratory', fee: 30 },
+    { name: 'Engineering Building', fee: 25 },
+    { name: 'Dorm Area', fee: 35 },
+    { name: 'Sports Complex', fee: 40 },
+    { name: 'Admin Office', fee: 20 }
+  ];
 
   showPaymentProofUpload: boolean = false;
   uploadingProof: boolean = false;
@@ -104,6 +120,19 @@ export class CartPage implements OnInit {
 
   getItemCount(): number {
     return this.cartService.getCartCount();
+  }
+  
+  onLocationChange() {
+    const location = this.campusLocations.find(loc => loc.name === this.checkoutData.shippingLocation);
+    if (location) {
+      this.checkoutData.shippingFee = location.fee;
+    }
+  }
+  
+  getTotalWithShipping(): number {
+    const cartTotal = this.getTotal();
+    return this.checkoutData.paymentMethod === 'cod' ? 
+      cartTotal + this.checkoutData.shippingFee : cartTotal;
   }
 
   async checkout() {
@@ -262,17 +291,20 @@ export class CartPage implements OnInit {
           deliveryInfo: this.checkoutData
         });
         
+        const totalWithShipping = this.checkoutData.paymentMethod === 'cod' ? 
+          total + this.checkoutData.shippingFee : total;
+        
         const orderId = await this.orderService.createOrder(
           user.userId!,
           user.name || user.email,
           sellerId,
           items[0].sellerName,
           orderItems,
-          total,
+          totalWithShipping,
           this.checkoutData,
           this.checkoutData.paymentMethod,
           this.checkoutData.paymentProofImage,
-          `Payment: ${this.checkoutData.paymentMethod}`
+          `Payment: ${this.checkoutData.paymentMethod}${this.checkoutData.paymentMethod === 'cod' ? ' | Location: ' + this.checkoutData.shippingLocation + ' | Shipping: ₱' + this.checkoutData.shippingFee : ''}`
         );
         
         console.log('Order created successfully:', orderId);

@@ -33,3 +33,28 @@ ion-thumbnail {
   --size: 60px;
   --border-radius: 8px;
 }
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+
+  .quantity {
+    min-width: 30px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  ion-button {
+    margin: 0;
+  }
+}
+
+.item-end-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}

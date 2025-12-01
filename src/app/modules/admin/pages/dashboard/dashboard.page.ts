@@ -79,6 +79,10 @@ export class DashboardPage implements OnInit {
     this.router.navigate(['/admin/messages']);
   }
 
+  goToReports() {
+    this.router.navigate(['/admin/reports']);
+  }
+
   goToProfile() {
     this.router.navigate(['/admin/profile']);
   }

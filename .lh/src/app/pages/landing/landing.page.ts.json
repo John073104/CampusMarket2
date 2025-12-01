@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1763460442679,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1764589550769,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,20 +1,39 @@\n-import { Component } from '@angular/core';\r\n+import { Component, OnInit } from '@angular/core';\r\n import { CommonModule } from '@angular/common';\r\n import { FormsModule } from '@angular/forms';\r\n import { IonicModule } from '@ionic/angular';\r\n import { Router } from '@angular/router';\r\n+import { UserService } from '../../services/user.service';\r\n+import { OrderService } from '../../services/order.service';\r\n \r\n @Component({\r\n   selector: 'app-landing',\r\n   templateUrl: './landing.page.html',\r\n   styleUrls: ['./landing.page.scss'],\r\n   standalone: true,\r\n   imports: [CommonModule, FormsModule, IonicModule]\r\n })\r\n-export class LandingPage {\r\n-  constructor(private router: Router) {}\r\n+export class LandingPage implements OnInit {\r\n+  showMobileMenu = false;\r\n+  activeUsers = 0;\r\n+  productsSold = 0;\r\n+  loading = true;\r\n \r\n+  constructor(\r\n+    private router: Router,\r\n+    private userService: UserService,\r\n+    private orderService: OrderService\r\n+  ) {}\r\n+\r\n+  async ngOnInit() {\r\n+    await this.loadStats();\r\n+  }\r\n+\r\n+  toggleMobileMenu() {\r\n+    this.showMobileMenu = !this.showMobileMenu;\r\n+  }\r\n+\r\n   scrollToSection(sectionId: string) {\r\n     const element = document.getElementById(sectionId);\r\n     if (element) {\r\n       element.scrollIntoView({ behavior: 'smooth', block: 'start' });\r\n@@ -31,5 +50,26 @@\n \r\n   goToInitDemo() {\r\n     this.router.navigate(['/init-demo']);\r\n   }\r\n+\r\n+  async loadStats() {\r\n+    try {\r\n+      this.loading = true;\r\n+      \r\n+      // Get active users count\r\n+      const users = await this.userService.getAllUsers();\r\n+      this.activeUsers = users.length;\r\n+      \r\n+      // Get completed orders count\r\n+      const allOrders = await this.orderService.getAllOrders();\r\n+      this.productsSold = allOrders.filter((o: any) => o.status === 'completed').length;\r\n+      \r\n+    } catch (error) {\r\n+      console.error('Error loading landing stats:', error);\r\n+      this.activeUsers = 0;\r\n+      this.productsSold = 0;\r\n+    } finally {\r\n+      this.loading = false;\r\n+    }\r\n+  }\r\n }\n\\ No newline at end of file\n"
                 }
             ],
             "date": 1763460442679,

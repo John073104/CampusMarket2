@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 4,
+            "activePatchIndex": 6,
             "patches": [
                 {
                     "date": 1763384538018,
@@ -24,6 +24,14 @@
                 {
                     "date": 1763883857782,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -132,19 +132,45 @@\n   }\r\n \r\n   // Get orders by seller\r\n   async getOrdersBySeller(sellerId: string): Promise<Order[]> {\r\n-    const q = query(\r\n-      collection(this.firestore, 'orders'),\r\n-      where('sellerId', '==', sellerId),\r\n-      orderBy('createdAt', 'desc')\r\n-    );\r\n-    \r\n-    const snapshot = await getDocs(q);\r\n-    return snapshot.docs.map(doc => ({\r\n-      orderId: doc.id,\r\n-      ...doc.data()\r\n-    } as Order));\r\n+    try {\r\n+      const q = query(\r\n+        collection(this.firestore, 'orders'),\r\n+        where('sellerId', '==', sellerId),\r\n+        orderBy('createdAt', 'desc')\r\n+      );\r\n+      \r\n+      const snapshot = await getDocs(q);\r\n+      console.log('Seller orders found:', snapshot.size);\r\n+      return snapshot.docs.map(doc => ({\r\n+        orderId: doc.id,\r\n+        ...doc.data()\r\n+      } as Order));\r\n+    } catch (error: any) {\r\n+      console.warn('Composite index not available for seller orders, using fallback...', error);\r\n+      // Fallback: Query without orderBy\r\n+      const fallbackQuery = query(\r\n+        collection(this.firestore, 'orders'),\r\n+        where('sellerId', '==', sellerId)\r\n+      );\r\n+      \r\n+      const snapshot = await getDocs(fallbackQuery);\r\n+      const orders = snapshot.docs.map(doc => ({\r\n+        orderId: doc.id,\r\n+        ...doc.data()\r\n+      } as Order));\r\n+      \r\n+      // Sort manually by createdAt\r\n+      orders.sort((a, b) => {\r\n+        const aTime = a.createdAt?.seconds || 0;\r\n+        const bTime = b.createdAt?.seconds || 0;\r\n+        return bTime - aTime;\r\n+      });\r\n+      \r\n+      console.log('Seller orders (fallback):', orders.length);\r\n+      return orders;\r\n+    }\r\n   }\r\n \r\n   // Get all orders (Admin)\r\n   async getAllOrders(): Promise<Order[]> {\r\n"
+                },
+                {
+                    "date": 1764589032696,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -40,8 +40,10 @@\n     deliveryInfo?: {\r\n       name: string;\r\n       phone: string;\r\n       address: string;\r\n+      shippingLocation?: string;\r\n+      shippingFee?: number;\r\n       paymentMethod: string;\r\n     },\r\n     paymentMethod?: 'cod' | 'gcash' | 'bank_transfer' | 'meet_and_pay',\r\n     paymentProofImage?: string,\r\n@@ -60,8 +62,10 @@\n       sellerId,\r\n       sellerName,\r\n       items,\r\n       totalPrice,\r\n+      shippingFee: deliveryInfo?.shippingFee || 0,\r\n+      shippingLocation: deliveryInfo?.shippingLocation || '',\r\n       status: 'placed',\r\n       pickupLocation: deliveryInfo?.address,\r\n       paymentMethod: paymentMethod || 'cod',\r\n       paymentProofImage,\r\n"
+                },
+                {
+                    "date": 1764589550711,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -352,12 +352,14 @@\n       );\r\n     }\r\n   }\r\n \r\n-  // Update order details (customer can edit delivery info and notes)\r\n+  // Update order details (customer can edit delivery info, notes, and items if status is 'placed')\r\n   async updateOrderDetails(orderId: string, updates: {\r\n     pickupLocation?: string;\r\n     notes?: string;\r\n+    items?: OrderItem[];\r\n+    totalPrice?: number;\r\n   }): Promise<void> {\r\n     await updateDoc(doc(this.firestore, 'orders', orderId), {\r\n       ...updates,\r\n       updatedAt: serverTimestamp()\r\n"
                 }
             ],
             "date": 1763384538018,

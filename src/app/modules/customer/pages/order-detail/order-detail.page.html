@@ -108,31 +108,76 @@
       <ion-card>
         <ion-card-header>
           <ion-card-title>Order Items</ion-card-title>
+          @if (isEditing && canEditOrder()) {
+            <ion-note color="warning">
+              <ion-icon name="information-circle"></ion-icon>
+              You can adjust quantities or remove items
+            </ion-note>
+          }
         </ion-card-header>
         <ion-card-content>
-          @for (item of order.items; track item.productId) {
-            <ion-item>
-              <ion-thumbnail slot="start">
-                <img [src]="item.productImage || 'assets/placeholder.png'" [alt]="item.productName" />
-              </ion-thumbnail>
+          @if (isEditing) {
+            @for (item of editData.items; track $index) {
+              <ion-item>
+                <ion-thumbnail slot="start">
+                  <img [src]="item.productImage || 'assets/placeholder.png'" [alt]="item.productName" />
+                </ion-thumbnail>
+                <ion-label>
+                  <h3>{{ item.productName }}</h3>
+                  <p>₱{{ item.price | number:'1.2-2' }} each</p>
+                  <div class="quantity-controls">
+                    <ion-button fill="clear" size="small" (click)="updateItemQuantity($index, -1)">
+                      <ion-icon name="remove-circle"></ion-icon>
+                    </ion-button>
+                    <span class="quantity">{{ item.quantity }}</span>
+                    <ion-button fill="clear" size="small" (click)="updateItemQuantity($index, 1)">
+                      <ion-icon name="add-circle"></ion-icon>
+                    </ion-button>
+                  </div>
+                </ion-label>
+                <div slot="end" class="item-end-section">
+                  <ion-note>
+                    ₱{{ (item.price * item.quantity) | number:'1.2-2' }}
+                  </ion-note>
+                  <ion-button fill="clear" color="danger" size="small" (click)="removeItem($index)">
+                    <ion-icon name="trash" slot="icon-only"></ion-icon>
+                  </ion-button>
+                </div>
+              </ion-item>
+            }
+            <ion-item lines="none">
               <ion-label>
-                <h3>{{ item.productName }}</h3>
-                <p>Quantity: {{ item.quantity }}</p>
-                <p>₱{{ item.price | number:'1.2-2' }} each</p>
+                <h2><strong>New Total</strong></h2>
               </ion-label>
-              <ion-note slot="end">
-                ₱{{ (item.price * item.quantity) | number:'1.2-2' }}
+              <ion-note slot="end" color="primary">
+                <h2><strong>₱{{ getEditTotal() | number:'1.2-2' }}</strong></h2>
+              </ion-note>
+            </ion-item>
+          } @else {
+            @for (item of order.items; track item.productId) {
+              <ion-item>
+                <ion-thumbnail slot="start">
+                  <img [src]="item.productImage || 'assets/placeholder.png'" [alt]="item.productName" />
+                </ion-thumbnail>
+                <ion-label>
+                  <h3>{{ item.productName }}</h3>
+                  <p>Quantity: {{ item.quantity }}</p>
+                  <p>₱{{ item.price | number:'1.2-2' }} each</p>
+                </ion-label>
+                <ion-note slot="end">
+                  ₱{{ (item.price * item.quantity) | number:'1.2-2' }}
+                </ion-note>
+              </ion-item>
+            }
+            <ion-item lines="none">
+              <ion-label>
+                <h2><strong>Total</strong></h2>
+              </ion-label>
+              <ion-note slot="end" color="primary">
+                <h2><strong>₱{{ order.totalPrice | number:'1.2-2' }}</strong></h2>
               </ion-note>
             </ion-item>
           }
-          <ion-item lines="none">
-            <ion-label>
-              <h2><strong>Total</strong></h2>
-            </ion-label>
-            <ion-note slot="end" color="primary">
-              <h2><strong>₱{{ order.totalPrice | number:'1.2-2' }}</strong></h2>
-            </ion-note>
-          </ion-item>
         </ion-card-content>
       </ion-card>
 

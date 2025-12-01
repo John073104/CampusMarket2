@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1764141014734,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1764141446069,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,16 +14,14 @@\n     private router: Router\n   ) {}\n \n   ngOnInit() {\n-    // Check if user is already logged in on app start\n-    this.authService.currentUser$.subscribe(user => {\n-      const currentUrl = this.router.url;\n-      // Only redirect if on root or landing page when logged in\n-      if (user && (currentUrl === '/' || currentUrl === '/landing')) {\n-        // Redirect to appropriate dashboard if on landing page\n-        this.router.navigate([`/${user.role}/dashboard`]);\n-      }\n-      // Let auth guard handle redirects for protected routes\n-    });\n+    // Initialize auth - check if user is logged in\n+    const user = this.authService.getCurrentUser();\n+    const currentUrl = this.router.url;\n+    \n+    // Only redirect if on landing or root and user is logged in\n+    if (user && (currentUrl === '/' || currentUrl === '/landing')) {\n+      this.router.navigate([`/${user.role}/dashboard`]);\n+    }\n   }\n }\n"
                 }
             ],
             "date": 1764141014734,

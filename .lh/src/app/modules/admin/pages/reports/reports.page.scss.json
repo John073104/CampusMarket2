@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 1,
+            "activePatchIndex": 7,
             "patches": [
                 {
                     "date": 1763388132037,
@@ -12,6 +12,30 @@
                 {
                     "date": 1763884797297,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -39,13 +39,25 @@\n }\r\n \r\n .chart-container {\r\n   height: 300px;\r\n+  min-height: 300px;\r\n   position: relative;\r\n+  display: flex;\r\n+  align-items: center;\r\n+  justify-content: center;\r\n   \r\n   canvas {\r\n     max-height: 300px;\r\n+    width: 100% !important;\r\n+    height: 100% !important;\r\n   }\r\n+  \r\n+  .no-data-message {\r\n+    text-align: center;\r\n+    color: var(--ion-color-medium);\r\n+    padding: 40px;\r\n+  }\r\n }\r\n \r\n @media print {\r\n   ion-header,\r\n"
+                },
+                {
+                    "date": 1764510303494,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -44,13 +44,17 @@\n   position: relative;\r\n   display: flex;\r\n   align-items: center;\r\n   justify-content: center;\r\n+  background-color: #ffffff;\r\n+  padding: 10px;\r\n+  border-radius: 8px;\r\n   \r\n   canvas {\r\n     max-height: 300px;\r\n     width: 100% !important;\r\n     height: 100% !important;\r\n+    background-color: #ffffff !important;\r\n   }\r\n   \r\n   .no-data-message {\r\n     text-align: center;\r\n"
+                },
+                {
+                    "date": 1764586750412,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -38,22 +38,22 @@\n   }\r\n }\r\n \r\n .chart-container {\r\n-  height: 300px;\r\n-  min-height: 300px;\r\n+  height: 300px !important;\r\n+  min-height: 300px !important;\r\n   position: relative;\r\n-  display: flex;\r\n-  align-items: center;\r\n-  justify-content: center;\r\n+  display: block !important;\r\n+  width: 100%;\r\n   background-color: #ffffff;\r\n   padding: 10px;\r\n   border-radius: 8px;\r\n   \r\n   canvas {\r\n-    max-height: 300px;\r\n+    display: block !important;\r\n     width: 100% !important;\r\n-    height: 100% !important;\r\n+    height: 300px !important;\r\n+    max-width: 100%;\r\n     background-color: #ffffff !important;\r\n   }\r\n   \r\n   .no-data-message {\r\n"
+                },
+                {
+                    "date": 1764586989943,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -37,8 +37,46 @@\n     }\r\n   }\r\n }\r\n \r\n+.chart-card {\r\n+  margin: 16px 0;\r\n+  \r\n+  ion-card-header {\r\n+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\r\n+    color: white;\r\n+    padding: 12px 16px;\r\n+    \r\n+    ion-card-title {\r\n+      font-size: 16px;\r\n+      font-weight: 600;\r\n+    }\r\n+  }\r\n+}\r\n+\r\n+.chart-content {\r\n+  padding: 20px !important;\r\n+  background-color: #ffffff;\r\n+  min-height: 350px;\r\n+}\r\n+\r\n+.chart-wrapper {\r\n+  width: 100%;\r\n+  height: 320px;\r\n+  min-height: 320px;\r\n+  position: relative;\r\n+  display: block;\r\n+  background-color: #ffffff;\r\n+  \r\n+  canvas {\r\n+    display: block !important;\r\n+    width: 100% !important;\r\n+    height: 100% !important;\r\n+    max-width: 100% !important;\r\n+    background-color: #ffffff !important;\r\n+  }\r\n+}\r\n+\r\n .chart-container {\r\n   height: 300px !important;\r\n   min-height: 300px !important;\r\n   position: relative;\r\n"
+                },
+                {
+                    "date": 1764587520910,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -62,18 +62,25 @@\n .chart-wrapper {\r\n   width: 100%;\r\n   height: 320px;\r\n   min-height: 320px;\r\n+  max-height: 320px;\r\n   position: relative;\r\n-  display: block;\r\n+  display: block !important;\r\n   background-color: #ffffff;\r\n+  overflow: hidden;\r\n   \r\n   canvas {\r\n     display: block !important;\r\n     width: 100% !important;\r\n-    height: 100% !important;\r\n+    height: 320px !important;\r\n     max-width: 100% !important;\r\n+    max-height: 320px !important;\r\n     background-color: #ffffff !important;\r\n+    \r\n+    @media (min-width: 768px) {\r\n+      min-width: 350px;\r\n+    }\r\n   }\r\n }\r\n \r\n .chart-container {\r\n"
+                },
+                {
+                    "date": 1764587626078,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -39,12 +39,13 @@\n }\r\n \r\n .chart-card {\r\n   margin: 16px 0;\r\n+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\r\n   \r\n   ion-card-header {\r\n-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\r\n-    color: white;\r\n+    background: linear-gradient(135deg, #ffc409 0%, #ffab00 100%);\r\n+    color: #000;\r\n     padding: 12px 16px;\r\n     \r\n     ion-card-title {\r\n       font-size: 16px;\r\n"
+                },
+                {
+                    "date": 1764588059901,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -54,34 +54,27 @@\n   }\r\n }\r\n \r\n .chart-content {\r\n-  padding: 20px !important;\r\n+  padding: 16px !important;\r\n   background-color: #ffffff;\r\n-  min-height: 350px;\r\n+  min-height: 340px;\r\n }\r\n \r\n .chart-wrapper {\r\n-  width: 100%;\r\n-  height: 320px;\r\n-  min-height: 320px;\r\n-  max-height: 320px;\r\n-  position: relative;\r\n+  width: 100% !important;\r\n+  height: 300px !important;\r\n+  min-height: 300px !important;\r\n+  position: relative !important;\r\n   display: block !important;\r\n-  background-color: #ffffff;\r\n-  overflow: hidden;\r\n+  background-color: #ffffff !important;\r\n   \r\n   canvas {\r\n     display: block !important;\r\n     width: 100% !important;\r\n-    height: 320px !important;\r\n-    max-width: 100% !important;\r\n-    max-height: 320px !important;\r\n+    height: 100% !important;\r\n+    min-height: 300px !important;\r\n     background-color: #ffffff !important;\r\n-    \r\n-    @media (min-width: 768px) {\r\n-      min-width: 350px;\r\n-    }\r\n   }\r\n }\r\n \r\n .chart-container {\r\n"
                 }
             ],
             "date": 1763388132037,

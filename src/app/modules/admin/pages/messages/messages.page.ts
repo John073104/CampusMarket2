@@ -93,8 +93,7 @@ export class MessagesPage implements OnInit {
 
   viewChat(chat: Chat) {
     if (chat.chatId) {
-      // Navigate to a detailed view (you can create this later)
-      this.router.navigate(['/admin/chat-detail', chat.chatId]);
+      this.router.navigate(['/admin/chat', chat.chatId]);
     }
   }
 

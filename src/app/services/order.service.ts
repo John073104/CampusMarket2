@@ -41,6 +41,8 @@ export class OrderService {
       name: string;
       phone: string;
       address: string;
+      shippingLocation?: string;
+      shippingFee?: number;
       paymentMethod: string;
     },
     paymentMethod?: 'cod' | 'gcash' | 'bank_transfer' | 'meet_and_pay',
@@ -61,6 +63,8 @@ export class OrderService {
       sellerName,
       items,
       totalPrice,
+      shippingFee: deliveryInfo?.shippingFee || 0,
+      shippingLocation: deliveryInfo?.shippingLocation || '',
       status: 'placed',
       pickupLocation: deliveryInfo?.address,
       paymentMethod: paymentMethod || 'cod',
@@ -349,10 +353,12 @@ export class OrderService {
     }
   }
 
-  // Update order details (customer can edit delivery info and notes)
+  // Update order details (customer can edit delivery info, notes, and items if status is 'placed')
   async updateOrderDetails(orderId: string, updates: {
     pickupLocation?: string;
     notes?: string;
+    items?: OrderItem[];
+    totalPrice?: number;
   }): Promise<void> {
     await updateDoc(doc(this.firestore, 'orders', orderId), {
       ...updates,

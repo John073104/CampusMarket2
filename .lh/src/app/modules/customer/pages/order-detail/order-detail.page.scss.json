@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1763390335142,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1764589550710,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,4 +32,29 @@\n ion-thumbnail {\r\n   --size: 60px;\r\n   --border-radius: 8px;\r\n }\r\n+\r\n+.quantity-controls {\r\n+  display: flex;\r\n+  align-items: center;\r\n+  gap: 8px;\r\n+  margin-top: 8px;\r\n+\r\n+  .quantity {\r\n+    min-width: 30px;\r\n+    text-align: center;\r\n+    font-weight: 600;\r\n+    font-size: 16px;\r\n+  }\r\n+\r\n+  ion-button {\r\n+    margin: 0;\r\n+  }\r\n+}\r\n+\r\n+.item-end-section {\r\n+  display: flex;\r\n+  flex-direction: column;\r\n+  align-items: flex-end;\r\n+  gap: 4px;\r\n+}\r\n"
                 }
             ],
             "date": 1763390335142,
