@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/environments/environment.prod.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1764599032190,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1764599032190,
+            "name": "Commit-0",
+            "content": "export const environment = {\n  production: true,\n  firebaseConfig: {\n    apiKey: \"AIzaSyC0LEbqs7CtdWwa9rF7yv0IiyKm27Q_WTk\",\n    authDomain: \"surveyform-6c48b.firebaseapp.com\",\n    projectId: \"surveyform-6c48b\",\n    storageBucket: \"surveyform-6c48b.firebasestorage.app\",\n    messagingSenderId: \"314477273372\",\n    appId: \"1:314477273372:web:96d17464a79ee1a650dad9\",\n    measurementId: \"G-6PDVVW11BF\"\n  }\n};\n"
+        }
+    ]
+}

@@ -69,21 +69,46 @@ export class ReportsPage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    console.log('🚀 View initialized, loading reports...');
-    // Delay to ensure canvas elements are fully rendered
+    console.log('🚀 View initialized');
+    // Wait longer for Ionic to fully render the view
     setTimeout(() => {
-      this.loadReports();
-    }, 400);
+      this.checkAndLoadReports();
+    }, 800);
   }
 
   ionViewDidEnter() {
-    console.log('🚀 View entered, ensuring charts render...');
-    // Only load if charts don't exist
-    if (!this.salesChart && !this.categoryChart) {
-      setTimeout(() => {
-        this.loadReports();
-      }, 300);
+    console.log('🚀 View entered');
+    // Only reload if charts don't exist
+    setTimeout(() => {
+      if (!this.salesChart || !this.categoryChart || !this.topSellersChart || !this.statusChart) {
+        console.log('⚠️ Charts missing, reloading...');
+        this.checkAndLoadReports();
+      }
+    }, 500);
+  }
+
+  private checkAndLoadReports() {
+    // Verify all canvas elements exist before attempting to load
+    const salesCanvas = this.salesChartRef?.nativeElement;
+    const categoryCanvas = this.categoryChartRef?.nativeElement;
+    const topSellersCanvas = this.topSellersChartRef?.nativeElement;
+    const statusCanvas = this.statusChartRef?.nativeElement;
+
+    console.log('Canvas elements check:', {
+      salesCanvas: !!salesCanvas,
+      categoryCanvas: !!categoryCanvas,
+      topSellersCanvas: !!topSellersCanvas,
+      statusCanvas: !!statusCanvas
+    });
+
+    if (!salesCanvas || !categoryCanvas || !topSellersCanvas || !statusCanvas) {
+      console.error('❌ Some canvas elements not found, retrying in 1 second...');
+      setTimeout(() => this.checkAndLoadReports(), 1000);
+      return;
     }
+
+    console.log('✅ All canvas elements found, loading reports...');
+    this.loadReports();
   }
 
   private destroyAllCharts() {
@@ -111,41 +136,48 @@ export class ReportsPage implements OnInit, AfterViewInit {
   }
 
   async loadReports() {
+    console.log('📊 Starting loadReports...');
     this.loading = true;
+    
     try {
       // Load stats first
       await this.loadStats();
+      console.log('✅ Stats loaded');
       
-      // Wait a bit then load charts sequentially
-      await new Promise(resolve => setTimeout(resolve, 150));
+      // Load all charts with delays between each
+      await new Promise(resolve => setTimeout(resolve, 250));
       await this.loadSalesChart();
       
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 250));
       await this.loadCategoryChart();
       
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 250));
       await this.loadTopSellersChart();
       
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 250));
       await this.loadStatusChart();
       
       // Force final update after all charts loaded
       await new Promise(resolve => setTimeout(resolve, 300));
       this.forceChartsUpdate();
       
-      console.log('✅ ALL CHARTS LOADED');
+      console.log('✅✅✅ ALL CHARTS LOADED SUCCESSFULLY ✅✅✅');
     } catch (error) {
-      console.error('Error loading reports:', error);
+      console.error('❌❌❌ Error loading reports:', error);
       const toast = await this.toastController.create({
-        message: 'Failed to load reports',
-        duration: 3000,
-        color: 'danger'
+        message: 'Failed to load reports. Click refresh to try again.',
+        duration: 4000,
+        color: 'danger',
+        position: 'top'
       });
       await toast.present();
     } finally {
       this.loading = false;
       // One more update after loading state changes
-      setTimeout(() => this.forceChartsUpdate(), 100);
+      setTimeout(() => {
+        this.forceChartsUpdate();
+        console.log('🔄 Final chart update completed');
+      }, 300);
     }
   }
   
@@ -197,14 +229,13 @@ export class ReportsPage implements OnInit, AfterViewInit {
 
   async loadSalesChart() {
     try {
-      console.log('🔥 SALES CHART START');
+      console.log('🔥 Loading Sales Chart...');
       
-      if (!this.salesChartRef?.nativeElement) {
-        console.error('❌ Canvas not found');
+      const canvas = this.salesChartRef?.nativeElement;
+      if (!canvas) {
+        console.error('❌ Sales canvas not found');
         return;
       }
-
-      const canvas = this.salesChartRef.nativeElement as HTMLCanvasElement;
       
       // FORCE CANVAS TO BE VISIBLE
       canvas.style.display = 'block';
@@ -259,14 +290,14 @@ export class ReportsPage implements OnInit, AfterViewInit {
           datasets: [{
             label: 'Sales (₱)',
             data: salesByDay,
-            borderColor: '#ffc409',
-            backgroundColor: 'rgba(255, 196, 9, 0.1)',
+            borderColor: '#2dd36f',
+            backgroundColor: 'rgba(45, 211, 111, 0.2)',
             borderWidth: 3,
             tension: 0.4,
             fill: true,
             pointRadius: 6,
             pointHoverRadius: 8,
-            pointBackgroundColor: '#ffc409',
+            pointBackgroundColor: '#2dd36f',
             pointBorderColor: '#fff',
             pointBorderWidth: 2
           }]
@@ -299,9 +330,9 @@ export class ReportsPage implements OnInit, AfterViewInit {
       });
 
       this.salesChart.update();
-      console.log('✅ SALES CHART CREATED WITH REAL DATA');
+      console.log('✅ Sales chart created successfully');
     } catch (error) {
-      console.error('❌ SALES CHART ERROR:', error);
+      console.error('❌ Sales chart error:', error);
     }
   }
   
@@ -317,10 +348,10 @@ export class ReportsPage implements OnInit, AfterViewInit {
 
   async loadCategoryChart() {
     try {
-      console.log('🔥 CATEGORY CHART START');
+      console.log('🔥 Loading Category Chart...');
 
       if (!this.categoryChartRef?.nativeElement) {
-        console.error('❌ Canvas not found');
+        console.error('❌ Category canvas not found');
         return;
       }
 
@@ -376,16 +407,16 @@ export class ReportsPage implements OnInit, AfterViewInit {
           datasets: [{
             data: counts,
             backgroundColor: [
-              '#ffc409',
-              '#eb445a',
-              '#3dc2ff',
               '#2dd36f',
-              '#ffc409',
-              '#92949c',
-              '#c5cae9',
-              '#a5d6a7',
-              '#ffccbc',
-              '#ce93d8'
+              '#3dc2ff',
+              '#1aa051',
+              '#0d8fd9',
+              '#47e095',
+              '#5fc8f5',
+              '#2dd36f',
+              '#3dc2ff',
+              '#1aa051',
+              '#0d8fd9'
             ],
             borderColor: '#ffffff',
             borderWidth: 3,
@@ -414,18 +445,18 @@ export class ReportsPage implements OnInit, AfterViewInit {
       });
 
       this.categoryChart.update();
-      console.log('✅ CATEGORY CHART CREATED WITH REAL DATA');
+      console.log('✅ Category chart created successfully');
     } catch (error) {
-      console.error('❌ CATEGORY CHART ERROR:', error);
+      console.error('❌ Category chart error:', error);
     }
   }
 
   async loadTopSellersChart() {
     try {
-      console.log('🔥 TOP SELLERS CHART START');
+      console.log('🔥 Loading Top Sellers Chart...');
 
       if (!this.topSellersChartRef?.nativeElement) {
-        console.error('❌ Canvas not found');
+        console.error('❌ Top sellers canvas not found');
         return;
       }
 
@@ -490,8 +521,8 @@ export class ReportsPage implements OnInit, AfterViewInit {
           datasets: [{
             label: 'Total Sales (₱)',
             data: sellerTotals,
-            backgroundColor: '#2dd36f',
-            borderColor: '#1aa051',
+            backgroundColor: '#3dc2ff',
+            borderColor: '#0d8fd9',
             borderWidth: 2,
             borderRadius: 8
           }]
@@ -523,18 +554,18 @@ export class ReportsPage implements OnInit, AfterViewInit {
       });
 
       this.topSellersChart.update();
-      console.log('✅ TOP SELLERS CHART CREATED WITH REAL DATA');
+      console.log('✅ Top sellers chart created successfully');
     } catch (error) {
-      console.error('❌ TOP SELLERS CHART ERROR:', error);
+      console.error('❌ Top sellers chart error:', error);
     }
   }
 
   async loadStatusChart() {
     try {
-      console.log('🔥 STATUS CHART START');
+      console.log('🔥 Loading Status Chart...');
 
       if (!this.statusChartRef?.nativeElement) {
-        console.error('❌ Canvas not found');
+        console.error('❌ Status canvas not found');
         return;
       }
 
@@ -595,11 +626,11 @@ export class ReportsPage implements OnInit, AfterViewInit {
               statusCount.cancelled
             ],
             backgroundColor: [
-              '#ffc409',
               '#3dc2ff',
-              '#a966ff',
               '#2dd36f',
-              '#eb445a'
+              '#5fc8f5',
+              '#47e095',
+              '#1aa051'
             ],
             borderColor: '#ffffff',
             borderWidth: 3,
@@ -628,9 +659,9 @@ export class ReportsPage implements OnInit, AfterViewInit {
       });
 
       this.statusChart.update();
-      console.log('✅ STATUS CHART CREATED WITH REAL DATA');
+      console.log('✅ Status chart created successfully');
     } catch (error) {
-      console.error('❌ STATUS CHART ERROR:', error);
+      console.error('❌ Status chart error:', error);
     }
   }
 
@@ -703,9 +734,27 @@ export class ReportsPage implements OnInit, AfterViewInit {
   }
 
   async refreshReports() {
-    console.log('🔄 Refreshing reports...');
+    console.log('🔄 Manually refreshing reports...');
+    
+    const toast = await this.toastController.create({
+      message: '🔄 Refreshing charts...',
+      duration: 1500,
+      color: 'primary',
+      position: 'top'
+    });
+    await toast.present();
+    
     this.destroyAllCharts();
+    await new Promise(resolve => setTimeout(resolve, 300));
     await this.loadReports();
+    
+    const successToast = await this.toastController.create({
+      message: '✅ Charts refreshed successfully!',
+      duration: 2000,
+      color: 'success',
+      position: 'top'
+    });
+    await successToast.present();
   }
 
   ngOnDestroy() {

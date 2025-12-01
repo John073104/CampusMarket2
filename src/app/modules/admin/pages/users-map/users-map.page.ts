@@ -72,12 +72,20 @@ export class UsersMapPage implements OnInit, AfterViewInit, OnDestroy {
         this.map = null;
       }
 
-      // Default center: Philippines
-      this.map = L.map('map').setView([14.5995, 120.9842], 12);
+      // Default center: Victoria, Oriental Mindoro, Philippines
+      this.map = L.map('map', {
+        minZoom: 6,
+        maxBounds: [
+          [4.5, 116.0],   // Southwest corner
+          [21.0, 127.0]   // Northeast corner
+        ],
+        maxBoundsViscosity: 1.0
+      }).setView([13.1640, 121.3279], 12);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
-        maxZoom: 19
+        maxZoom: 19,
+        minZoom: 6
       }).addTo(this.map);
 
       this.updateMapMarkers();

@@ -1,0 +1,18 @@
+{
+    "sourceFile": "capacitor.config.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1764598700996,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1764598700996,
+            "name": "Commit-0",
+            "content": "import type { CapacitorConfig } from '@capacitor/cli';\n\nconst config: CapacitorConfig = {\n  appId: 'com.campusmarket.app',\n  appName: 'CampusMarket',\n  webDir: 'www',\n  server: {\n    androidScheme: 'https'\n  }\n};\n\nexport default config;\n"
+        }
+    ]
+}

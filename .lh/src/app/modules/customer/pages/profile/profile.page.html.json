@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 2,
+            "activePatchIndex": 3,
             "patches": [
                 {
                     "date": 1763384538025,
@@ -16,6 +16,10 @@
                 {
                     "date": 1763883484463,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -140,12 +140,7 @@\n             </div>\r\n           }\r\n         </ion-card-content>\r\n       </ion-card>\r\n-\r\n-      <ion-button expand=\"block\" color=\"danger\" (click)=\"logout()\">\r\n-        <ion-icon name=\"log-out\" slot=\"start\"></ion-icon>\r\n-        Logout\r\n-      </ion-button>\r\n     </div>\r\n   }\r\n </ion-content>\r\n"
+                },
+                {
+                    "date": 1764595849104,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -130,10 +130,10 @@\n \r\n           @if (showLocationPicker) {\r\n             <div class=\"map-wrapper\">\r\n               <app-location-map\r\n-                [latitude]=\"user.location?.latitude || 14.5995\"\r\n-                [longitude]=\"user.location?.longitude || 120.9842\"\r\n+                [latitude]=\"user.location?.latitude || 13.1640\"\r\n+                [longitude]=\"user.location?.longitude || 121.3279\"\r\n                 [editable]=\"true\"\r\n                 [height]=\"'350px'\"\r\n                 (locationSelected)=\"onLocationSelected($event)\">\r\n               </app-location-map>\r\n"
                 }
             ],
             "date": 1763384538025,

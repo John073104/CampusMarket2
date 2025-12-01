@@ -11,8 +11,8 @@ import * as L from 'leaflet';
   imports: [CommonModule, IonicModule]
 })
 export class LocationMapComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Input() latitude: number = 14.5995; // Default: Manila, Philippines
-  @Input() longitude: number = 120.9842;
+  @Input() latitude: number = 13.1640; // Default: Victoria, Alcate, Oriental Mindoro
+  @Input() longitude: number = 121.3279;
   @Input() editable: boolean = false; // Can user pick location?
   @Input() height: string = '400px';
   @Output() locationSelected = new EventEmitter<{ latitude: number; longitude: number; address?: string }>();
@@ -47,35 +47,30 @@ export class LocationMapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     L.Marker.prototype.options.icon = iconDefault;
 
-    // Create map
-    this.map = L.map('map').setView([this.latitude, this.longitude], 13);
+    // Create map centered on Oriental Mindoro, Philippines
+    this.map = L.map('map', {
+      minZoom: 6,  // Prevent zooming out too far
+      maxBounds: [  // Restrict map to Philippines bounds
+        [4.5, 116.0],   // Southwest corner (southernmost Philippines)
+        [21.0, 127.0]   // Northeast corner (northernmost Philippines)
+      ],
+      maxBoundsViscosity: 1.0  // Make bounds solid
+    }).setView([this.latitude, this.longitude], 13);
 
     // Add OpenStreetMap tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
-      maxZoom: 19
+      maxZoom: 19,
+      minZoom: 6
     }).addTo(this.map);
 
-    // Add marker
+    // Add marker - NEVER draggable, always fixed to GPS position
     this.marker = L.marker([this.latitude, this.longitude], {
-      draggable: this.editable
+      draggable: false  // Always false - marker cannot be moved manually
     }).addTo(this.map);
 
-    if (this.editable) {
-      // Allow clicking on map to set location
-      this.map.on('click', (e: L.LeafletMouseEvent) => {
-        this.updateMarkerPosition(e.latlng);
-      });
-
-      // Handle marker drag
-      this.marker.on('dragend', () => {
-        const position = this.marker!.getLatLng();
-        this.updateMarkerPosition(position);
-      });
-    }
-
-    // Get initial address
-    this.getAddressFromCoordinates(this.latitude, this.longitude);
+    // Always get real GPS location automatically
+    this.getCurrentLocation();
   }
 
   private updateMarkerPosition(latlng: L.LatLng) {
@@ -93,13 +88,43 @@ export class LocationMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private async getAddressFromCoordinates(lat: number, lng: number) {
     try {
-      // Using Nominatim (OpenStreetMap's geocoding service)
+      // Using Nominatim (OpenStreetMap's geocoding service) with higher zoom for accuracy
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=19&addressdetails=1&accept-language=en`
       );
       const data = await response.json();
       
-      if (data.display_name) {
+      if (data.address) {
+        // Build more accurate address from components
+        const addressParts = [];
+        
+        // Add specific location details first
+        if (data.address.road) addressParts.push(data.address.road);
+        if (data.address.village) addressParts.push(data.address.village);
+        if (data.address.suburb) addressParts.push(data.address.suburb);
+        if (data.address.hamlet) addressParts.push(data.address.hamlet);
+        
+        // Add municipality/town
+        if (data.address.municipality) addressParts.push(data.address.municipality);
+        if (data.address.town) addressParts.push(data.address.town);
+        if (data.address.city) addressParts.push(data.address.city);
+        
+        // Add province
+        if (data.address.state) addressParts.push(data.address.state);
+        if (data.address.province) addressParts.push(data.address.province);
+        
+        const address = addressParts.length > 0 ? addressParts.join(', ') : data.display_name;
+        
+        this.locationSelected.emit({ latitude: lat, longitude: lng, address });
+        
+        if (this.marker) {
+          this.marker.bindPopup(`
+            <strong>Coordinates:</strong> ${lat.toFixed(6)}, ${lng.toFixed(6)}<br>
+            <strong>Address:</strong> ${address}
+          `).openPopup();
+        }
+      } else if (data.display_name) {
+        // Fallback to display name
         const address = data.display_name;
         this.locationSelected.emit({ latitude: lat, longitude: lng, address });
         
@@ -109,6 +134,12 @@ export class LocationMapComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error getting address:', error);
+      // Emit coordinates anyway so user can save location
+      this.locationSelected.emit({ 
+        latitude: lat, 
+        longitude: lng, 
+        address: `Coordinates: ${lat.toFixed(6)}, ${lng.toFixed(6)}` 
+      });
     }
   }
 

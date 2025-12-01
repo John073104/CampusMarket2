@@ -47,9 +47,54 @@
                 <p>₱{{ order.totalPrice | number:'1.2-2' }}</p>
               </ion-label>
             </ion-item>
+            <ion-item>
+              <ion-icon name="card" slot="start"></ion-icon>
+              <ion-label>
+                <h3>Payment Method</h3>
+                <p>{{ getPaymentMethodLabel(order.paymentMethod) }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-icon name="shield-checkmark" slot="start"></ion-icon>
+              <ion-label>
+                <h3>Payment Status</h3>
+                <ion-badge [color]="getPaymentStatusColor(order.paymentStatus)">
+                  {{ (order.paymentStatus || 'pending') | uppercase }}
+                </ion-badge>
+              </ion-label>
+            </ion-item>
           </ion-list>
         </ion-card-content>
       </ion-card>
+
+      <!-- Payment Method (Editable when status is 'placed') -->
+      @if (canEditOrder() && isEditing) {
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="card"></ion-icon>
+              Payment Method
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item>
+              <ion-label>Select Payment Method</ion-label>
+              <ion-select [(ngModel)]="editData.paymentMethod" interface="action-sheet">
+                <ion-select-option value="cod">Cash on Delivery</ion-select-option>
+                <ion-select-option value="gcash">GCash Transfer</ion-select-option>
+                <ion-select-option value="bank_transfer">Bank Transfer</ion-select-option>
+                <ion-select-option value="meet_and_pay">Meet and Pay</ion-select-option>
+              </ion-select>
+            </ion-item>
+            @if (editData.paymentMethod === 'gcash' || editData.paymentMethod === 'bank_transfer') {
+              <ion-note color="warning" class="payment-note">
+                <ion-icon name="information-circle"></ion-icon>
+                Changing to {{ getPaymentMethodLabel(editData.paymentMethod) }} will require you to upload payment proof after saving.
+              </ion-note>
+            }
+          </ion-card-content>
+        </ion-card>
+      }
 
       <!-- Delivery Information -->
       <ion-card>

@@ -58,3 +58,19 @@ ion-thumbnail {
   align-items: flex-end;
   gap: 4px;
 }
+
+.payment-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  margin-top: 12px;
+  background: var(--ion-color-warning-tint);
+  border-radius: 8px;
+  font-size: 14px;
+
+  ion-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+}

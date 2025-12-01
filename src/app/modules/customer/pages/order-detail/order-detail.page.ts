@@ -23,7 +23,8 @@ export class OrderDetailPage implements OnInit {
   editData = {
     pickupLocation: '',
     notes: '',
-    items: [] as any[]
+    items: [] as any[],
+    paymentMethod: 'cod' as 'cod' | 'gcash' | 'bank_transfer' | 'meet_and_pay'
   };
 
   constructor(
@@ -63,6 +64,25 @@ export class OrderDetailPage implements OnInit {
       'cancelled': 'danger'
     };
     return colors[status] || 'medium';
+  }
+
+  getPaymentMethodLabel(method?: string): string {
+    const labels: Record<string, string> = {
+      'cod': 'Cash on Delivery',
+      'gcash': 'GCash Transfer',
+      'bank_transfer': 'Bank Transfer',
+      'meet_and_pay': 'Meet and Pay'
+    };
+    return labels[method || ''] || 'Not specified';
+  }
+
+  getPaymentStatusColor(status?: string): string {
+    const colors: Record<string, string> = {
+      'pending': 'warning',
+      'verified': 'success',
+      'rejected': 'danger'
+    };
+    return colors[status || ''] || 'medium';
   }
 
   async messageSeller() {
@@ -157,7 +177,8 @@ export class OrderDetailPage implements OnInit {
     this.editData = {
       pickupLocation: this.order.pickupLocation || '',
       notes: this.order.notes || '',
-      items: JSON.parse(JSON.stringify(this.order.items)) // Deep copy items
+      items: JSON.parse(JSON.stringify(this.order.items)), // Deep copy items
+      paymentMethod: this.order.paymentMethod || 'cod'
     };
   }
   
@@ -200,12 +221,27 @@ export class OrderDetailPage implements OnInit {
     try {
       const newTotal = this.getEditTotal();
       
-      await this.orderService.updateOrderDetails(this.order.orderId, {
+      // Reset payment status if payment method changed
+      const updateData: any = {
         pickupLocation: this.editData.pickupLocation,
         notes: this.editData.notes,
         items: this.editData.items,
-        totalPrice: newTotal
-      });
+        totalPrice: newTotal,
+        paymentMethod: this.editData.paymentMethod
+      };
+
+      // If payment method changed, reset payment status
+      if (this.editData.paymentMethod !== this.order.paymentMethod) {
+        if (this.editData.paymentMethod === 'cod' || this.editData.paymentMethod === 'meet_and_pay') {
+          updateData.paymentStatus = 'verified';
+          updateData.paymentProofImage = null;
+        } else {
+          updateData.paymentStatus = 'pending';
+          updateData.paymentProofImage = null; // Clear old proof if exists
+        }
+      }
+      
+      await this.orderService.updateOrderDetails(this.order.orderId, updateData);
       
       const toast = await this.toastController.create({
         message: 'Order updated successfully',
